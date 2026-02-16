@@ -38,11 +38,10 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID lpReserved)
 }
 
 //---------------------------------------------------------------------------
-// Afficher le clavier virtuel
-// mode: 0 = clavier simple, 1 = clavier avec pavé numérique
-// targetHandle: HWND du contrôle cible pour recevoir les caractères
+// Show the virtual keyboard
+// targetHandle: HWND of target control to receive characters
 //---------------------------------------------------------------------------
-extern "C" __declspec(dllexport) void __stdcall ShowKeyboard(int mode, HWND targetHandle)
+extern "C" __declspec(dllexport) void __stdcall ShowKeyboard(HWND targetHandle)
 {
     try {
         if (!g_KeyboardForm) {
@@ -52,11 +51,10 @@ extern "C" __declspec(dllexport) void __stdcall ShowKeyboard(int mode, HWND targ
         
         if (g_KeyboardForm) {
             g_KeyboardForm->SetTargetHandle(targetHandle);
-            g_KeyboardForm->SetKeyboardMode(mode);
             g_KeyboardForm->Show();
         }
     } catch (...) {
-        // Gestion des erreurs silencieuse
+        // Silent error handling
     }
 }
 
@@ -87,21 +85,6 @@ extern "C" __declspec(dllexport) bool __stdcall IsKeyboardVisible()
         // Gestion des erreurs silencieuse
     }
     return false;
-}
-
-//---------------------------------------------------------------------------
-// Changer le mode du clavier
-// mode: 0 = clavier simple, 1 = clavier avec pavé numérique
-//---------------------------------------------------------------------------
-extern "C" __declspec(dllexport) void __stdcall SetKeyboardMode(int mode)
-{
-    try {
-        if (g_KeyboardForm) {
-            g_KeyboardForm->SetKeyboardMode(mode);
-        }
-    } catch (...) {
-        // Gestion des erreurs silencieuse
-    }
 }
 
 //---------------------------------------------------------------------------

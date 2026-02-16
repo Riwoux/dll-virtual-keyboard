@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------
-// MainForm.h - Formulaire principal de l'application de test
+// MainForm.h - Simple Test Application Form
 //---------------------------------------------------------------------------
 #ifndef MainFormH
 #define MainFormH
@@ -11,39 +11,33 @@
 #include <windows.h>
 //---------------------------------------------------------------------------
 
-// Types des fonctions exportées de la DLL
-typedef void (__stdcall *TShowKeyboardProc)(int mode, HWND targetHandle);
+// DLL exported function types
+typedef void (__stdcall *TShowKeyboardProc)(HWND targetHandle);
 typedef void (__stdcall *THideKeyboardProc)();
 typedef bool (__stdcall *TIsKeyboardVisibleProc)();
-typedef void (__stdcall *TSetKeyboardModeProc)(int mode);
 
 class TFormMain : public TForm
 {
-__published:	// Composants gérés par l'IDE
+__published:
     TMemo *MemoTest;
-    TButton *BtnShowSimple;
-    TButton *BtnShowWithNumpad;
+    TButton *BtnShow;
     TButton *BtnHide;
     TLabel *Label1;
-    TLabel *LabelStatus;
-    void __fastcall BtnShowSimpleClick(TObject *Sender);
-    void __fastcall BtnShowWithNumpadClick(TObject *Sender);
+    void __fastcall BtnShowClick(TObject *Sender);
     void __fastcall BtnHideClick(TObject *Sender);
     void __fastcall FormCreate(TObject *Sender);
     void __fastcall FormDestroy(TObject *Sender);
     
-private:	// Déclarations utilisateur
+private:
     HINSTANCE FDllHandle;
     TShowKeyboardProc FShowKeyboard;
     THideKeyboardProc FHideKeyboard;
     TIsKeyboardVisibleProc FIsKeyboardVisible;
-    TSetKeyboardModeProc FSetKeyboardMode;
     
     bool LoadKeyboardDLL();
     void UnloadKeyboardDLL();
-    void UpdateStatus();
     
-public:		// Déclarations utilisateur
+public:
     __fastcall TFormMain(TComponent* Owner);
 };
 //---------------------------------------------------------------------------
