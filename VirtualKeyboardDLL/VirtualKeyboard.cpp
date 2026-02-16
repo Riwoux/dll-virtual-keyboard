@@ -7,7 +7,9 @@
 
 #include "VirtualKeyboard.h"
 #include "KeyboardForm.h"
-
+//---------------------------------------------------------------------------
+// Directive USEFORM pour C++ Builder - nécessaire pour lier le formulaire à la DLL
+#pragma link "KeyboardForm"
 //---------------------------------------------------------------------------
 // Variables globales
 //---------------------------------------------------------------------------
@@ -15,8 +17,9 @@ static TFormKeyboard* g_KeyboardForm = NULL;
 
 //---------------------------------------------------------------------------
 // Point d'entrée de la DLL
+// Utilise DllMain pour compatibilité C++ Builder 13 / RAD Studio 12 Athens
 //---------------------------------------------------------------------------
-int WINAPI DllEntryPoint(HINSTANCE hinst, unsigned long reason, void* lpReserved)
+BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID lpReserved)
 {
     try {
         if (reason == DLL_PROCESS_ATTACH) {
@@ -29,9 +32,9 @@ int WINAPI DllEntryPoint(HINSTANCE hinst, unsigned long reason, void* lpReserved
             }
         }
     } catch (...) {
-        return 0;
+        return FALSE;
     }
-    return 1;
+    return TRUE;
 }
 
 //---------------------------------------------------------------------------
