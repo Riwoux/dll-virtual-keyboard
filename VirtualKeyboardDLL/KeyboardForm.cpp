@@ -167,37 +167,39 @@ void __fastcall TFormKeyboard::CreateMainKeyboard()
     // Bouton Maj
     FBtnShift = CreateButton(PanelMain, "Maj", 10, row, 70, btnHeight);
     FBtnShift->OnClick = OnShiftClick;
-    FBtnShift->Color = clBtnFace;
+    // Note: TButton ne supporte pas la propriété Color publiquement en C++ Builder
+    // La propriété Color est protected dans TControl et n'est pas accessible sur TButton
+    // Pour des boutons avec couleurs personnalisées, il faudrait utiliser TSpeedButton ou TBitBtn
     FMainKeyButtons.push_back(FBtnShift);
     
     // Bouton Caps Lock
     FBtnCapsLock = CreateButton(PanelMain, "Caps", 85, row, 70, btnHeight);
     FBtnCapsLock->OnClick = OnCapsLockClick;
-    FBtnCapsLock->Color = clBtnFace;
+    // Note: TButton ne supporte pas la propriété Color (voir commentaire bouton Maj ci-dessus)
     FMainKeyButtons.push_back(FBtnCapsLock);
     
     // Bouton Espace
     TButton* btnSpace = CreateButton(PanelMain, "Espace", 160, row, 200, btnHeight);
     btnSpace->OnClick = OnSpaceClick;
-    btnSpace->Color = clInfoBk;
+    // Note: TButton ne supporte pas la propriété Color (voir commentaire bouton Maj ci-dessus)
     FMainKeyButtons.push_back(btnSpace);
     
     // Bouton Tab
     TButton* btnTab = CreateButton(PanelMain, "Tab", 365, row, 70, btnHeight);
     btnTab->OnClick = OnTabClick;
-    btnTab->Color = clInfoBk;
+    // Note: TButton ne supporte pas la propriété Color (voir commentaire bouton Maj ci-dessus)
     FMainKeyButtons.push_back(btnTab);
     
     // Bouton Backspace
     TButton* btnBackspace = CreateButton(PanelMain, "←", 440, row, 70, btnHeight);
     btnBackspace->OnClick = OnBackspaceClick;
-    btnBackspace->Color = clInfoBk;
+    // Note: TButton ne supporte pas la propriété Color (voir commentaire bouton Maj ci-dessus)
     FMainKeyButtons.push_back(btnBackspace);
     
     // Bouton Enter
     TButton* btnEnter = CreateButton(PanelMain, "Entrée", 515, row, 100, btnHeight);
     btnEnter->OnClick = OnEnterClick;
-    btnEnter->Color = clInfoBk;
+    // Note: TButton ne supporte pas la propriété Color (voir commentaire bouton Maj ci-dessus)
     FMainKeyButtons.push_back(btnEnter);
 }
 
@@ -271,7 +273,7 @@ void __fastcall TFormKeyboard::CreateNumpad()
     TButton* btnEnter = CreateButton(PanelNumpad, "↵", 
                                     130, row, btnWidth - 10, btnHeight);
     btnEnter->OnClick = OnEnterClick;
-    btnEnter->Color = clInfoBk;
+    // Note: TButton ne supporte pas la propriété Color (voir commentaire dans CreateMainKeyboard)
     FNumpadButtons.push_back(btnEnter);
 }
 
@@ -373,11 +375,21 @@ void __fastcall TFormKeyboard::OnToggleModeClick(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TFormKeyboard::UpdateShiftDisplay()
 {
+    // Note: TButton ne supporte pas la propriété Color en C++ Builder
+    // La visualisation de l'état Shift/CapsLock pourrait être implémentée avec:
+    // - TSpeedButton ou TBitBtn au lieu de TButton (supportent Color)
+    // - Modification du Caption (ex: "Maj*" quand actif)
+    // - Style propriétaire (OwnerDraw) pour dessiner la couleur manuellement
+    // Pour l'instant, l'état est géré en interne mais pas visuellement affiché
     if (FBtnShift) {
-        FBtnShift->Color = FShiftActive ? clLime : clBtnFace;
+        // Impossible d'utiliser: FBtnShift->Color = FShiftActive ? clLime : clBtnFace;
+        // Alternative: modifier le caption pour indiquer l'état
+        FBtnShift->Caption = FShiftActive ? "Maj*" : "Maj";
     }
     if (FBtnCapsLock) {
-        FBtnCapsLock->Color = FCapsLockActive ? clLime : clBtnFace;
+        // Impossible d'utiliser: FBtnCapsLock->Color = FCapsLockActive ? clLime : clBtnFace;
+        // Alternative: modifier le caption pour indiquer l'état
+        FBtnCapsLock->Caption = FCapsLockActive ? "Caps*" : "Caps";
     }
 }
 
