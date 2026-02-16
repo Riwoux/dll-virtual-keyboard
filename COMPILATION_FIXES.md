@@ -131,6 +131,49 @@ if (FShiftActive || FCapsLockActive) {
 - Compatible avec tous les compilateurs
 - Fonctionne correctement pour les caractères ASCII (A-Z, a-z)
 
+#### 2.4 Suppression des accès à la propriété Color de TButton
+
+**Problème identifié:**
+- Tentative d'accès à la propriété `Color` sur des objets `TButton`
+- **Erreur de compilation:** `[bcc32 Erreur] KeyboardForm.cpp(170): E2247 'TControl::Color' n'est pas accessible`
+- La propriété `Color` est `protected` dans `TControl` et n'est pas accessible publiquement sur `TButton`
+- Lignes concernées : 170, 176, 182, 188, 194, 200, 274, 377, 380
+
+**Correction appliquée:**
+```cpp
+// AVANT (lignes 170, 176, etc.):
+FBtnShift->Color = clBtnFace;
+FBtnCapsLock->Color = clBtnFace;
+btnSpace->Color = clInfoBk;
+btnTab->Color = clInfoBk;
+btnBackspace->Color = clInfoBk;
+btnEnter->Color = clInfoBk;
+
+// AVANT (UpdateShiftDisplay, lignes 377, 380):
+FBtnShift->Color = FShiftActive ? clLime : clBtnFace;
+FBtnCapsLock->Color = FCapsLockActive ? clLime : clBtnFace;
+
+// APRÈS:
+// Note: TButton ne supporte pas la propriété Color publiquement en C++ Builder
+// La propriété Color est protected dans TControl et n'est pas accessible sur TButton
+// Pour des boutons avec couleurs personnalisées, il faudrait utiliser TSpeedButton ou TBitBtn
+// [Les lignes d'assignation de Color ont été supprimées]
+
+// APRÈS (UpdateShiftDisplay - alternative avec Caption):
+FBtnShift->Caption = FShiftActive ? "Maj*" : "Maj";
+FBtnCapsLock->Caption = FCapsLockActive ? "Caps*" : "Caps";
+```
+
+**Justification:**
+- `TButton` en C++ Builder/VCL ne permet pas l'accès public à la propriété `Color`
+- La propriété `Color` héritée de `TControl` est `protected` et non disponible publiquement
+- Solutions alternatives pour des couleurs personnalisées :
+  - Utiliser `TSpeedButton` (Vcl.Buttons) qui supporte la propriété `Color`
+  - Utiliser `TBitBtn` qui supporte la propriété `Color`
+  - Implémenter un style propriétaire (OwnerDraw) pour dessiner manuellement
+- Pour l'indication visuelle de l'état Shift/CapsLock, utilisation de la modification du `Caption` avec un astérisque (*) comme indicateur
+- Cette correction élimine définitivement l'erreur E2247 à la compilation
+
 ---
 
 ### 3. VirtualKeyboardDLL/VirtualKeyboard.cpp
@@ -206,9 +249,13 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID lpReserved)
 6. ✅ Changement `DllEntryPoint` -> `DllMain`
 7. ✅ Ajout du `#pragma link` pour KeyboardForm
 
+### Corrections d'accessibilité des propriétés
+8. ✅ Suppression des accès à la propriété `Color` de `TButton` (erreur E2247)
+9. ✅ Remplacement par modification du `Caption` pour indication visuelle d'état
+
 ### Corrections de documentation
-8. ✅ Ajout de commentaires explicatifs pour chaque modification
-9. ✅ Documentation du comportement de String VCL (indexation 1-based)
+10. ✅ Ajout de commentaires explicatifs pour chaque modification
+11. ✅ Documentation du comportement de String VCL (indexation 1-based)
 
 ---
 
@@ -286,6 +333,13 @@ Si erreur sur l'indexation de String:
 - C'est normal, VCL String utilise l'indexation 1-based
 - `String s = "ABC"; s[1]` retourne 'A'
 - Ne pas confondre avec std::string (indexation 0-based)
+
+### Erreur E2247: 'TControl::Color' n'est pas accessible
+Si vous rencontrez cette erreur sur TButton:
+- ✅ **CORRIGÉ:** Toutes les tentatives d'accès à `TButton->Color` ont été supprimées
+- La propriété `Color` est `protected` dans `TControl` et non accessible sur `TButton`
+- Pour des boutons avec couleurs, utiliser `TSpeedButton` (Vcl.Buttons) ou `TBitBtn`
+- L'indication d'état Shift/CapsLock se fait maintenant via le Caption (ex: "Maj*" quand actif)
 
 ---
 
