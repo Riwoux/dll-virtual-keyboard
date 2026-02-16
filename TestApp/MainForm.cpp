@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------
-// MainForm.cpp - Implémentation du formulaire principal de test
+// MainForm.cpp - Simple Test Application Implementation
 //---------------------------------------------------------------------------
 #include <vcl.h>
 #pragma hdrstop
@@ -11,32 +11,29 @@
 TFormMain *FormMain;
 
 //---------------------------------------------------------------------------
-// Constructeur
+// Constructor
 //---------------------------------------------------------------------------
 __fastcall TFormMain::TFormMain(TComponent* Owner)
     : TForm(Owner), FDllHandle(NULL), FShowKeyboard(NULL),
-      FHideKeyboard(NULL), FIsKeyboardVisible(NULL), FSetKeyboardMode(NULL)
+      FHideKeyboard(NULL), FIsKeyboardVisible(NULL)
 {
 }
 
 //---------------------------------------------------------------------------
-// Événement de création du formulaire
+// Form creation event
 //---------------------------------------------------------------------------
 void __fastcall TFormMain::FormCreate(TObject *Sender)
 {
     if (!LoadKeyboardDLL()) {
-        ShowMessage("Erreur: Impossible de charger VirtualKeyboardDLL.dll\n\n"
-                   "Assurez-vous que le fichier DLL est présent dans le même répertoire "
-                   "que l'application ou dans le PATH système.");
-        BtnShowSimple->Enabled = false;
-        BtnShowWithNumpad->Enabled = false;
+        ShowMessage("Error: Cannot load VirtualKeyboardDLL.dll\n\n"
+                   "Make sure the DLL file is in the same directory as the application or in the system PATH.");
+        BtnShow->Enabled = false;
         BtnHide->Enabled = false;
     }
-    UpdateStatus();
 }
 
 //---------------------------------------------------------------------------
-// Événement de destruction du formulaire
+// Form destruction event
 //---------------------------------------------------------------------------
 void __fastcall TFormMain::FormDestroy(TObject *Sender)
 {
@@ -44,16 +41,16 @@ void __fastcall TFormMain::FormDestroy(TObject *Sender)
 }
 
 //---------------------------------------------------------------------------
-// Charger la DLL du clavier virtuel
+// Load the virtual keyboard DLL
 //---------------------------------------------------------------------------
 bool TFormMain::LoadKeyboardDLL()
 {
-    // Chercher d'abord dans le répertoire de l'application
+    // First try to load from application directory
     String dllPath = ExtractFilePath(Application->ExeName) + "VirtualKeyboardDLL.dll";
     FDllHandle = LoadLibrary(dllPath.c_str());
     
     if (!FDllHandle) {
-        // Essayer de charger depuis le PATH système
+        // Try to load from system PATH
         FDllHandle = LoadLibrary(L"VirtualKeyboardDLL.dll");
     }
     
@@ -61,13 +58,12 @@ bool TFormMain::LoadKeyboardDLL()
         return false;
     }
     
-    // Charger les fonctions exportées
+    // Load exported functions
     FShowKeyboard = (TShowKeyboardProc)GetProcAddress(FDllHandle, "ShowKeyboard");
     FHideKeyboard = (THideKeyboardProc)GetProcAddress(FDllHandle, "HideKeyboard");
     FIsKeyboardVisible = (TIsKeyboardVisibleProc)GetProcAddress(FDllHandle, "IsKeyboardVisible");
-    FSetKeyboardMode = (TSetKeyboardModeProc)GetProcAddress(FDllHandle, "SetKeyboardMode");
     
-    if (!FShowKeyboard || !FHideKeyboard || !FIsKeyboardVisible || !FSetKeyboardMode) {
+    if (!FShowKeyboard || !FHideKeyboard || !FIsKeyboardVisible) {
         UnloadKeyboardDLL();
         return false;
     }
@@ -76,7 +72,7 @@ bool TFormMain::LoadKeyboardDLL()
 }
 
 //---------------------------------------------------------------------------
-// Décharger la DLL
+// Unload the DLL
 //---------------------------------------------------------------------------
 void TFormMain::UnloadKeyboardDLL()
 {
@@ -86,52 +82,26 @@ void TFormMain::UnloadKeyboardDLL()
         FShowKeyboard = NULL;
         FHideKeyboard = NULL;
         FIsKeyboardVisible = NULL;
-        FSetKeyboardMode = NULL;
     }
 }
 
 //---------------------------------------------------------------------------
-// Mettre à jour l'état
+// Show keyboard button click
 //---------------------------------------------------------------------------
-void TFormMain::UpdateStatus()
-{
-    if (FIsKeyboardVisible && FIsKeyboardVisible()) {
-        LabelStatus->Caption = "État: Clavier visible";
-    } else {
-        LabelStatus->Caption = "État: Clavier masqué";
-    }
-}
-
-//---------------------------------------------------------------------------
-// Afficher le clavier simple (Mode 0)
-//---------------------------------------------------------------------------
-void __fastcall TFormMain::BtnShowSimpleClick(TObject *Sender)
+void __fastcall TFormMain::BtnShowClick(TObject *Sender)
 {
     if (FShowKeyboard) {
-        FShowKeyboard(0, MemoTest->Handle);
-        UpdateStatus();
+        FShowKeyboard(MemoTest->Handle);
     }
 }
 
 //---------------------------------------------------------------------------
-// Afficher le clavier avec pavé numérique (Mode 1)
-//---------------------------------------------------------------------------
-void __fastcall TFormMain::BtnShowWithNumpadClick(TObject *Sender)
-{
-    if (FShowKeyboard) {
-        FShowKeyboard(1, MemoTest->Handle);
-        UpdateStatus();
-    }
-}
-
-//---------------------------------------------------------------------------
-// Masquer le clavier
+// Hide keyboard button click
 //---------------------------------------------------------------------------
 void __fastcall TFormMain::BtnHideClick(TObject *Sender)
 {
     if (FHideKeyboard) {
         FHideKeyboard();
-        UpdateStatus();
     }
 }
 

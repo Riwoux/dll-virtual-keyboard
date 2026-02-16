@@ -2,9 +2,9 @@ object FormKeyboard: TFormKeyboard
   Left = 0
   Top = 0
   BorderStyle = bsToolWindow
-  Caption = 'Clavier Virtuel'
-  ClientHeight = 300
-  ClientWidth = 800
+  Caption = 'Virtual Keyboard'
+  ClientHeight = 250
+  ClientWidth = 660
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,7 +12,6 @@ object FormKeyboard: TFormKeyboard
   Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsStayOnTop
-  KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
   PixelsPerInch = 96

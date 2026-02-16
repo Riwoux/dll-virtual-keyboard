@@ -1,278 +1,155 @@
-# Clavier Virtuel DLL - C++ Builder 13
+# Virtual Keyboard DLL - C++ Builder 13
 
-Projet complet de clavier virtuel en DLL pour C++ Builder 13 avec deux modes d'affichage.
+Simple virtual keyboard implementation as a DLL for C++ Builder 13 with a test application.
 
-## 📋 Description
+## Description
 
-Ce projet fournit une DLL de clavier virtuel professionnel avec interface VCL, conçue pour être intégrée dans n'importe quelle application C++ Builder ou Win32. Le clavier supporte deux modes d'affichage :
+This project provides a simple virtual keyboard DLL that can be integrated into any C++ Builder or Win32 application. The keyboard features a basic AZERTY layout with essential keys.
 
-- **Mode 0 (Simple)** : Clavier AZERTY complet avec touches spéciales
-- **Mode 1 (Avec pavé numérique)** : Clavier complet + pavé numérique intégré
+## Features
 
-## ✨ Fonctionnalités principales
+- AZERTY keyboard layout (French)
+- Numbers 0-9
+- Letters A-Z
+- Shift key for uppercase
+- Special keys: Space, Backspace, Enter
+- Stays on top of other windows
+- Easy integration via DLL
 
-### Clavier complet AZERTY
-- Toutes les lettres (disposition AZERTY française)
-- Chiffres et caractères spéciaux (&, é, ", ', (, -, è, _, ç, à, =, +)
-- Symboles additionnels (^, $, ù, *, ;, :)
-
-### Gestion des majuscules
-- **Maj (Shift)** : Majuscule temporaire (une seule touche)
-- **Caps Lock** : Verrouillage permanent des majuscules
-- Indication visuelle de l'état (boutons verts quand actifs)
-
-### Touches spéciales
-- **Backspace** : Suppression du caractère précédent
-- **Entrée** : Nouvelle ligne ou validation
-- **Espace** : Insertion d'un espace
-- **Tab** : Insertion d'une tabulation
-
-### Pavé numérique (Mode 1)
-- Chiffres 0-9 organisés en pavé
-- Opérateurs mathématiques : +, -, *, /
-- Point décimal (.)
-- Touche Entrée dédiée
-
-### Basculement de mode dynamique
-- Bouton pour basculer entre les deux modes
-- Redimensionnement automatique de la fenêtre
-- Conservation de l'état pendant le basculement
-
-## 🏗️ Structure du projet
+## Project Structure
 
 ```
 testclaviervirtuel/
-├── VirtualKeyboardDLL/          # Projet de la DLL
-│   ├── VirtualKeyboard.h        # Déclarations des exports
-│   ├── VirtualKeyboard.cpp      # Implémentation de la DLL
-│   ├── KeyboardForm.h           # Header du formulaire
-│   ├── KeyboardForm.cpp         # Implémentation du clavier
-│   ├── KeyboardForm.dfm         # Design VCL
-│   ├── VirtualKeyboardDLL.cbproj # Projet C++ Builder
-│   └── README.md                # Documentation de la DLL
+├── VirtualKeyboardDLL/          # DLL Project
+│   ├── VirtualKeyboard.h        # Export declarations
+│   ├── VirtualKeyboard.cpp      # DLL implementation
+│   ├── KeyboardForm.h           # Form header
+│   ├── KeyboardForm.cpp         # Keyboard implementation
+│   ├── KeyboardForm.dfm         # VCL design
+│   └── VirtualKeyboardDLL.cbproj # C++ Builder project
 │
-├── TestApp/                     # Application de test
-│   ├── TestApp.cpp              # Point d'entrée
-│   ├── MainForm.h               # Header du formulaire
-│   ├── MainForm.cpp             # Implémentation
-│   ├── MainForm.dfm             # Design VCL
-│   ├── TestApp.cbproj           # Projet C++ Builder
-│   └── README.md                # Documentation de test
+├── TestApp/                     # Test Application
+│   ├── TestApp.cpp              # Entry point
+│   ├── MainForm.h               # Form header
+│   ├── MainForm.cpp             # Implementation
+│   ├── MainForm.dfm             # VCL design
+│   └── TestApp.cbproj           # C++ Builder project
 │
-└── README.md                    # Ce fichier
+└── README.md                    # This file
 ```
 
-## 🚀 Démarrage rapide
+## Requirements
 
-### Prérequis
+- C++ Builder 13 (RAD Studio 12 Athens) or compatible version
+- VCL Framework (included with C++ Builder)
+- Windows SDK (included with RAD Studio)
+- Windows 32-bit or 64-bit
 
-- **C++ Builder 13** (RAD Studio 12 Athens) ou version compatible
-- **VCL Framework** (inclus avec C++ Builder)
-- **Windows SDK** (inclus avec RAD Studio)
-- **Windows 32-bit ou 64-bit**
+## Building
 
-### Compilation
-
-> **Note:** Le projet a été corrigé pour assurer une compilation sans erreur sous C++ Builder 13 / RAD Studio 12 Athens. Consultez [COMPILATION_FIXES.md](COMPILATION_FIXES.md) pour les détails des corrections appliquées.
-
-#### 1. Compiler la DLL
+### 1. Build the DLL
 
 ```bash
 cd VirtualKeyboardDLL
-# Ouvrir VirtualKeyboardDLL.cbproj dans C++ Builder
+# Open VirtualKeyboardDLL.cbproj in C++ Builder
 # Menu: Project → Build VirtualKeyboardDLL
 ```
 
-La DLL sera générée dans `VirtualKeyboardDLL/Win32/Debug/` ou `Win32/Release/`
+The DLL will be generated in `VirtualKeyboardDLL/Win32/Debug/` or `Win32/Release/`
 
-#### 2. Compiler l'application de test
+### 2. Build the Test Application
 
 ```bash
 cd TestApp
-# Ouvrir TestApp.cbproj dans C++ Builder
+# Open TestApp.cbproj in C++ Builder
 # Menu: Project → Build TestApp
 ```
 
-L'exécutable sera généré dans `TestApp/Win32/Debug/` ou `Win32/Release/`
+The executable will be generated in `TestApp/Win32/Debug/` or `Win32/Release/`
 
-#### 3. Déploiement
+### 3. Deployment
 
-Copiez `VirtualKeyboardDLL.dll` dans le même répertoire que `TestApp.exe` ou dans le PATH système.
+Copy `VirtualKeyboardDLL.dll` to the same directory as `TestApp.exe` or to the system PATH.
 
-### Premier test
+## Usage
 
-1. Lancez `TestApp.exe`
-2. Cliquez sur **"Afficher Clavier Simple"**
-3. Le clavier virtuel s'affiche
-4. Cliquez sur les touches pour saisir du texte dans le Memo
-5. Testez le bouton **"Afficher Clavier avec Pavé"** pour voir le mode avec pavé numérique
+### Testing
 
-## 📖 Utilisation de la DLL
+1. Launch `TestApp.exe`
+2. Click **"Show Keyboard"**
+3. The virtual keyboard appears
+4. Click keys to type in the memo
+5. Click **"Hide Keyboard"** to close it
 
-### Fonctions exportées
+### DLL Integration
+
+#### Exported Functions
 
 ```cpp
-// Afficher le clavier (mode: 0=simple, 1=avec pavé)
-extern "C" __declspec(dllexport) void __stdcall ShowKeyboard(int mode, HWND targetHandle);
+// Show the keyboard
+extern "C" __declspec(dllexport) void __stdcall ShowKeyboard(HWND targetHandle);
 
-// Masquer le clavier
+// Hide the keyboard
 extern "C" __declspec(dllexport) void __stdcall HideKeyboard();
 
-// Vérifier si le clavier est visible
+// Check if keyboard is visible
 extern "C" __declspec(dllexport) bool __stdcall IsKeyboardVisible();
-
-// Changer le mode du clavier
-extern "C" __declspec(dllexport) void __stdcall SetKeyboardMode(int mode);
 ```
 
-### Exemple d'intégration
+#### Integration Example
 
 ```cpp
 #include <windows.h>
 
-// Types des fonctions
-typedef void (__stdcall *TShowKeyboardProc)(int mode, HWND targetHandle);
+// Function types
+typedef void (__stdcall *TShowKeyboardProc)(HWND targetHandle);
 typedef void (__stdcall *THideKeyboardProc)();
 
-// Charger la DLL
+// Load the DLL
 HINSTANCE hDll = LoadLibrary(L"VirtualKeyboardDLL.dll");
 if (hDll) {
     auto ShowKeyboard = (TShowKeyboardProc)GetProcAddress(hDll, "ShowKeyboard");
     auto HideKeyboard = (THideKeyboardProc)GetProcAddress(hDll, "HideKeyboard");
     
-    // Afficher le clavier en mode simple
+    // Show the keyboard
     if (ShowKeyboard) {
-        ShowKeyboard(0, MyEdit->Handle);
+        ShowKeyboard(MyEdit->Handle);
     }
     
-    // Masquer le clavier
+    // Hide the keyboard
     if (HideKeyboard) {
         HideKeyboard();
     }
     
-    // Décharger la DLL
+    // Unload the DLL
     FreeLibrary(hDll);
 }
 ```
 
-Pour plus de détails, consultez [VirtualKeyboardDLL/README.md](VirtualKeyboardDLL/README.md)
+## Keyboard Layout
 
-## 🎨 Caractéristiques de l'interface
+```
+[1] [2] [3] [4] [5] [6] [7] [8] [9] [0]
+[A] [Z] [E] [R] [T] [Y] [U] [I] [O] [P]
+  [Q] [S] [D] [F] [G] [H] [J] [K] [L] [M]
+    [W] [X] [C] [V] [B] [N]
+[Shift] [     Space     ] [←] [Enter]
+```
 
-### Design
-- Formulaire VCL non modal (reste au premier plan)
-- Bordure de style `bsToolWindow` (compacte)
-- Boutons de taille appropriée (40x40 pixels minimum)
-- Espacement optimal pour faciliter le clic
-- Redimensionnement automatique selon le mode
+## Technical Notes
 
-### Couleurs
-- **Boutons normaux** : Couleur système standard (clBtnFace)
-- **Boutons actifs** : Vert clair (clLime) pour Maj et Caps Lock
-- **Touches spéciales** : Beige clair (clInfoBk) pour différenciation
+- The keyboard sends characters using Windows messages (WM_CHAR, WM_KEYDOWN, WM_KEYUP)
+- Compatible with TEdit, TMemo, TRichEdit and all standard Windows controls
+- Thread-safe for single-threaded usage per process
+- Requires VCL runtimes from C++ Builder
 
-### Comportement
-- Clavier toujours au premier plan (fsStayOnTop)
-- Compatible avec tous les contrôles Windows standards
-- Envoi des caractères via messages Windows (WM_CHAR)
-- Gestion propre des majuscules temporaires et permanentes
+## License
 
-## 🔧 Architecture technique
-
-### Communication avec les contrôles
-
-La DLL utilise l'API Windows standard :
-- **WM_CHAR** : Pour envoyer les caractères normaux
-- **WM_KEYDOWN/WM_KEYUP** : Pour les touches spéciales (Backspace, Enter, Tab)
-
-### Compatibilité
-
-**Contrôles supportés** :
-- TEdit, TMemo, TRichEdit (VCL)
-- Edit Control, RichEdit Control (Win32)
-- Tout contrôle acceptant les messages WM_CHAR
-
-**Plateformes** :
-- Windows 32-bit (Win32)
-- Windows 64-bit (Win64)
-
-### Gestion de la mémoire
-
-- Formulaire créé à la première utilisation
-- Persiste pendant toute la durée de vie du processus
-- Nettoyage automatique à la décharge de la DLL
-- Pas de fuites mémoire
-
-## 📚 Documentation
-
-Consultez les README spécifiques pour plus de détails :
-
-- [Documentation de la DLL](VirtualKeyboardDLL/README.md) - Guide complet de la DLL
-- [Documentation de l'application de test](TestApp/README.md) - Guide de l'application de test
-
-## 🎯 Tests suggérés
-
-1. **Saisie de texte basique** - Lettres, chiffres, caractères spéciaux
-2. **Majuscules** - Maj temporaire et Caps Lock permanent
-3. **Touches spéciales** - Backspace, Enter, Espace, Tab
-4. **Pavé numérique** - Chiffres, opérateurs, point décimal
-5. **Basculement de mode** - Changement dynamique entre les modes
-6. **Compatibilité** - Test avec différents contrôles (Edit, Memo, RichEdit)
-
-## ⚙️ Configuration de compilation
-
-### Debug vs Release
-
-- **Debug** : Avec symboles de débogage, optimisations désactivées
-- **Release** : Optimisé pour la performance, taille réduite
-
-### Win32 vs Win64
-
-- **Win32** : Compatible avec applications 32-bit
-- **Win64** : Compatible avec applications 64-bit
-
-**Important** : La DLL et l'application doivent être compilées pour la même plateforme.
-
-## 🐛 Dépannage
-
-### La DLL ne se charge pas
-- Vérifiez que la DLL est dans le même répertoire que l'application
-- Vérifiez que la plateforme correspond (Win32 ou Win64)
-- Utilisez Dependency Walker pour identifier les DLL manquantes
-
-### Les caractères ne sont pas envoyés
-- Vérifiez que le HWND est valide avec `IsWindow(handle)`
-- Assurez-vous que le contrôle accepte WM_CHAR
-- Testez avec un contrôle simple comme TEdit
-
-### Le clavier ne reste pas au premier plan
-- C'est normal, le formulaire utilise `fsStayOnTop`
-- Si ce n'est pas le cas, vérifiez la propriété FormStyle
-
-## 📝 Notes techniques
-
-1. **Thread-safety** : La DLL est conçue pour un usage mono-thread par processus
-2. **Dépendances** : Nécessite les runtimes VCL de C++ Builder
-3. **Encodage** : Support complet Unicode (wchar_t)
-4. **Performances** : Optimisé pour une latence minimale
-
-## 📄 Licence
-
-Ce projet est un exemple de démonstration pour C++ Builder 13.
-Libre d'utilisation pour des projets personnels et commerciaux.
-
-## 👤 Auteur
-
-Projet de démonstration - Clavier Virtuel DLL pour C++ Builder 13
-
-## 🔗 Ressources
-
-- [Documentation C++ Builder](https://www.embarcadero.com/products/cbuilder)
-- [VCL Documentation](https://docwiki.embarcadero.com/RADStudio/en/VCL)
-- [Windows API Reference](https://docs.microsoft.com/en-us/windows/win32/)
+This project is a demonstration example for C++ Builder 13.
+Free to use for personal and commercial projects.
 
 ---
 
-**Version** : 1.0.0  
-**Date** : 2026  
-**Compatible avec** : C++ Builder 13 (RAD Studio 12 Athens)
+**Version**: 2.0 (Simplified)  
+**Date**: 2026  
+**Compatible with**: C++ Builder 13 (RAD Studio 12 Athens)
