@@ -73,6 +73,8 @@ testclaviervirtuel/
 
 ### Compilation
 
+> **Note:** Le projet a été corrigé pour assurer une compilation sans erreur sous C++ Builder 13 / RAD Studio 12 Athens. Consultez [COMPILATION_FIXES.md](COMPILATION_FIXES.md) pour les détails des corrections appliquées.
+
 #### 1. Compiler la DLL
 
 ```bash
