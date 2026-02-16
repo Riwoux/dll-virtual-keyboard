@@ -120,13 +120,15 @@ void __fastcall TFormKeyboard::CreateMainKeyboard()
     }
     
     // Ligne 2: A-Z-E-R-T-Y-U-I-O-P-^-$
+    // Correction: Utiliser [1] pour accéder au premier caractère de la String (index 1-based en VCL)
     String row2Keys[] = {"A", "Z", "E", "R", "T", "Y", "U", "I", "O", "P", "^", "$"};
     row += btnHeight + spacing;
     for (int i = 0; i < 12; i++) {
         TButton* btn = CreateButton(PanelMain, row2Keys[i], 
                                    10 + i * (btnWidth + spacing), row, 
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)row2Keys[i][1];
+        // String VCL utilise un index 1-based, donc [1] donne le premier caractère
+        btn->Tag = (NativeInt)(wchar_t)row2Keys[i][1];
         btn->OnClick = OnKeyButtonClick;
         FMainKeyButtons.push_back(btn);
     }
@@ -138,7 +140,8 @@ void __fastcall TFormKeyboard::CreateMainKeyboard()
         TButton* btn = CreateButton(PanelMain, row3Keys[i], 
                                    35 + i * (btnWidth + spacing), row, 
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)row3Keys[i][1];
+        // String VCL utilise un index 1-based, donc [1] donne le premier caractère
+        btn->Tag = (NativeInt)(wchar_t)row3Keys[i][1];
         btn->OnClick = OnKeyButtonClick;
         FMainKeyButtons.push_back(btn);
     }
@@ -150,7 +153,8 @@ void __fastcall TFormKeyboard::CreateMainKeyboard()
         TButton* btn = CreateButton(PanelMain, row4Keys[i], 
                                    60 + i * (btnWidth + spacing), row, 
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)row4Keys[i][1];
+        // String VCL utilise un index 1-based, donc [1] donne le premier caractère
+        btn->Tag = (NativeInt)(wchar_t)row4Keys[i][1];
         btn->OnClick = OnKeyButtonClick;
         FMainKeyButtons.push_back(btn);
     }
@@ -219,7 +223,8 @@ void __fastcall TFormKeyboard::CreateNumpad()
         TButton* btn = CreateButton(PanelNumpad, nums1[i], 
                                    10 + i * (btnWidth - 10), row, 
                                    btnWidth - 10, btnHeight);
-        btn->Tag = (NativeInt)nums1[i][1];
+        // String VCL utilise un index 1-based, donc [1] donne le premier caractère
+        btn->Tag = (NativeInt)(wchar_t)nums1[i][1];
         btn->OnClick = OnKeyButtonClick;
         FNumpadButtons.push_back(btn);
     }
@@ -231,7 +236,7 @@ void __fastcall TFormKeyboard::CreateNumpad()
         TButton* btn = CreateButton(PanelNumpad, nums2[i], 
                                    10 + i * (btnWidth - 10), row, 
                                    btnWidth - 10, btnHeight);
-        btn->Tag = (NativeInt)nums2[i][1];
+        btn->Tag = (NativeInt)(wchar_t)nums2[i][1];
         btn->OnClick = OnKeyButtonClick;
         FNumpadButtons.push_back(btn);
     }
@@ -243,7 +248,7 @@ void __fastcall TFormKeyboard::CreateNumpad()
         TButton* btn = CreateButton(PanelNumpad, nums3[i], 
                                    10 + i * (btnWidth - 10), row, 
                                    btnWidth - 10, btnHeight);
-        btn->Tag = (NativeInt)nums3[i][1];
+        btn->Tag = (NativeInt)(wchar_t)nums3[i][1];
         btn->OnClick = OnKeyButtonClick;
         FNumpadButtons.push_back(btn);
     }
@@ -255,7 +260,7 @@ void __fastcall TFormKeyboard::CreateNumpad()
         TButton* btn = CreateButton(PanelNumpad, nums4[i], 
                                    10 + i * (btnWidth - 10), row, 
                                    btnWidth - 10, btnHeight);
-        btn->Tag = (NativeInt)nums4[i][1];
+        btn->Tag = (NativeInt)(wchar_t)nums4[i][1];
         btn->OnClick = OnKeyButtonClick;
         FNumpadButtons.push_back(btn);
     }
@@ -279,11 +284,18 @@ void __fastcall TFormKeyboard::OnKeyButtonClick(TObject *Sender)
     wchar_t ch = (wchar_t)btn->Tag;
     
     // Gérer les majuscules pour les lettres
+    // Utilisation des fonctions Windows API pour compatibilité C++ Builder
     if ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')) {
         if (FShiftActive || FCapsLockActive) {
-            ch = towupper(ch);
+            // Convertir en majuscule
+            if (ch >= 'a' && ch <= 'z') {
+                ch = ch - 'a' + 'A';
+            }
         } else {
-            ch = towlower(ch);
+            // Convertir en minuscule
+            if (ch >= 'A' && ch <= 'Z') {
+                ch = ch - 'A' + 'a';
+            }
         }
         
         // Désactiver Maj temporaire après utilisation
