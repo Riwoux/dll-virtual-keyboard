@@ -14,7 +14,9 @@ TFormKeyboard *FormKeyboard;
 // Constructeur
 //---------------------------------------------------------------------------
 __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
-    : TForm(Owner), FTargetHandle(NULL), FCurrentMode(0), 
+    : TForm(Owner), 
+      PanelMain(NULL), PanelNumpad(NULL), BtnToggleMode(NULL),
+      FTargetHandle(NULL), FCurrentMode(0), 
       FShiftActive(false), FCapsLockActive(false),
       FBtnShift(NULL), FBtnCapsLock(NULL)
 {

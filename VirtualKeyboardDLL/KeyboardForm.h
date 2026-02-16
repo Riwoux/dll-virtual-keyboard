@@ -14,12 +14,15 @@
 
 class TFormKeyboard : public TForm
 {
-__published:	// Composants gérés par l'IDE
+__published:	// Composants gérés par l'IDE (aucun pour l'instant - tout est créé dynamiquement)
+    
+private:	// Déclarations utilisateur
+    // Composants créés dynamiquement
     TPanel *PanelMain;
     TPanel *PanelNumpad;
     TButton *BtnToggleMode;
     
-private:	// Déclarations utilisateur
+    // Variables d'état
     HWND FTargetHandle;           // Handle du contrôle cible
     int FCurrentMode;             // Mode actuel (0=simple, 1=avec pavé)
     bool FShiftActive;            // État Maj temporaire
