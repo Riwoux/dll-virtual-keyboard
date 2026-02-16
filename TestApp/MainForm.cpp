@@ -26,8 +26,7 @@ void __fastcall TFormMain::FormCreate(TObject *Sender)
 {
     if (!LoadKeyboardDLL()) {
         ShowMessage("Error: Cannot load VirtualKeyboardDLL.dll\n\n"
-                   "Make sure the DLL file is in the same directory "
-                   "as the application or in the system PATH.");
+                   "Make sure the DLL file is in the same directory as the application or in the system PATH.");
         BtnShow->Enabled = false;
         BtnHide->Enabled = false;
     }

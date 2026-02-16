@@ -20,7 +20,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     BorderStyle = bsToolWindow;
     FormStyle = fsStayOnTop;
     Position = poScreenCenter;
-    Caption = "Clavier Virtuel";
+    Caption = "Virtual Keyboard";
     ClientWidth = 660;
     ClientHeight = 250;
     
@@ -76,11 +76,11 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     row += btnHeight + spacing;
     
     // Shift button
-    TButton* btnShift = CreateButton("Maj", 10, row, 70, btnHeight);
+    TButton* btnShift = CreateButton("Shift", 10, row, 70, btnHeight);
     btnShift->OnClick = OnShiftClick;
     
     // Space button
-    TButton* btnSpace = CreateButton("Espace", 85, row, 200, btnHeight);
+    TButton* btnSpace = CreateButton("Space", 85, row, 200, btnHeight);
     btnSpace->OnClick = OnSpaceClick;
     
     // Backspace button
@@ -88,7 +88,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     btnBackspace->OnClick = OnBackspaceClick;
     
     // Enter button
-    TButton* btnEnter = CreateButton("Entrée", 365, row, 100, btnHeight);
+    TButton* btnEnter = CreateButton("Enter", 365, row, 100, btnHeight);
     btnEnter->OnClick = OnEnterClick;
 }
 
