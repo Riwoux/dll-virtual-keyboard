@@ -1,0 +1,41 @@
+# C++ Builder artifacts
+*.~*
+*.local
+*.identcache
+*.tds
+*.dcu
+*.lib
+*.bpi
+*.dcp
+*.so
+*.apk
+*.drc
+*.map
+*.dres
+*.rsm
+*.tlog
+*.obj
+*.ilc
+*.ild
+*.ilf
+*.ils
+*.tds
+*.log
+
+# Build directories
+Win32/
+Win64/
+Debug/
+Release/
+__history/
+__recovery/
+
+# IDE files
+*.cbproj.local
+*.groupproj.local
+*.stat
+
+# Temporary files
+*.tmp
+*.temp
+~*
