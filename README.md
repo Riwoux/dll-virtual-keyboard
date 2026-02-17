@@ -45,6 +45,10 @@ testclaviervirtuel/
 │   ├── MainForm.dfm             # VCL design
 │   └── TestApp.cbproj           # C++ Builder project
 │
+├── .editorconfig                # Editor configuration
+├── .gitignore                   # Git ignore rules
+├── CONTRIBUTING.md              # Contribution guidelines
+├── LICENSE                      # MIT License
 └── README.md                    # This file
 ```
 
@@ -219,6 +223,10 @@ testclaviervirtuel/
 │   ├── MainForm.dfm             # Design VCL
 │   └── TestApp.cbproj           # Projet C++ Builder
 │
+├── .editorconfig                # Configuration éditeur
+├── .gitignore                   # Règles d'exclusion Git
+├── CONTRIBUTING.md              # Guide de contribution
+├── LICENSE                      # Licence MIT
 └── README.md                    # Ce fichier
 ```
 
