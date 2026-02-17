@@ -10,16 +10,14 @@ object FormMain: TFormMain
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
     Left = 24
     Top = 24
-    Width = 200
+    Width = 205
     Height = 13
     Caption = 'Click in the text area to test the keyboard:'
   end

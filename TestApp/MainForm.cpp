@@ -47,11 +47,11 @@ bool TFormMain::LoadKeyboardDLL()
 {
     // First try to load from application directory
     String dllPath = ExtractFilePath(Application->ExeName) + "VirtualKeyboardDLL.dll";
-    FDllHandle = LoadLibrary(dllPath.c_str());
+    FDllHandle = LoadLibraryW(dllPath.c_str());
     
     if (!FDllHandle) {
         // Try to load from system PATH
-        FDllHandle = LoadLibrary(L"VirtualKeyboardDLL.dll");
+        FDllHandle = LoadLibraryW(L"VirtualKeyboardDLL.dll");
     }
     
     if (!FDllHandle) {

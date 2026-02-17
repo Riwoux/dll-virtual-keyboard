@@ -12,8 +12,6 @@ object FormKeyboard: TFormKeyboard
   Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsStayOnTop
-  OldCreateOrder = False
   Position = poScreenCenter
-  PixelsPerInch = 96
   TextHeight = 13
 end
