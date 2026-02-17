@@ -1,0 +1,65 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Source code
+*.cpp text diff=cpp
+*.h text diff=cpp
+*.c text diff=cpp
+*.hpp text diff=cpp
+
+# C++ Builder specific files
+*.dfm text
+*.pas text
+*.dpr text
+*.dpk text
+*.cbproj text
+*.groupproj text
+
+# Documentation
+*.md text diff=markdown
+*.txt text
+*.rtf text
+
+# Scripts
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+*.sh text eol=lf
+
+# Configuration files
+*.json text
+*.xml text
+*.yaml text
+*.yml text
+*.toml text
+*.ini text
+
+# Binary files
+*.dll binary
+*.exe binary
+*.so binary
+*.dylib binary
+*.a binary
+*.lib binary
+*.obj binary
+*.o binary
+*.res binary
+*.bmp binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.7z binary
+*.gz binary
+*.tar binary
+
+# Archives
+*.jar binary
+*.war binary
+*.ear binary
+*.zip binary
+*.tar.gz binary
+*.rar binary
