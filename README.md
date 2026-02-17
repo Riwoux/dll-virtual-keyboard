@@ -1,5 +1,15 @@
 # Virtual Keyboard DLL - C++ Builder 13
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![C++ Builder](https://img.shields.io/badge/C%2B%2B%20Builder-13-blue.svg)](https://www.embarcadero.com/products/cbuilder)
+[![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)](https://www.microsoft.com/windows)
+
+**[English](#english) | [Français](#français)**
+
+---
+
+## English
+
 Simple virtual keyboard implementation as a DLL for C++ Builder 13 with a test application.
 
 ## Description
@@ -143,13 +153,209 @@ if (hDll) {
 - Thread-safe for single-threaded usage per process
 - Requires VCL runtimes from C++ Builder
 
+## Troubleshooting
+
+### DLL not found
+- Ensure `VirtualKeyboardDLL.dll` is in the same directory as your executable
+- Or add the DLL's directory to your system PATH
+
+### Keyboard doesn't show
+- Verify you're passing the correct window handle to `ShowKeyboard()`
+- Check that the DLL is properly loaded (no missing dependencies)
+
+### Characters not appearing
+- The target control must have focus
+- Verify the target control supports WM_CHAR messages
+
+## Contributing
+
+Contributions are welcome! Please feel free to:
+- Report bugs via issues
+- Suggest new features
+- Submit pull requests
+
 ## License
 
-This project is a demonstration example for C++ Builder 13.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 Free to use for personal and commercial projects.
 
 ---
 
-**Version**: 2.0 (Simplified)  
+## Français
+
+Implémentation simple d'un clavier virtuel sous forme de DLL pour C++ Builder 13 avec une application de test.
+
+## Description
+
+Ce projet fournit une DLL de clavier virtuel simple qui peut être intégrée dans n'importe quelle application C++ Builder ou Win32. Le clavier dispose d'une disposition AZERTY de base avec les touches essentielles.
+
+## Fonctionnalités
+
+- Disposition de clavier AZERTY (Français)
+- Chiffres 0-9
+- Lettres A-Z
+- Touche Shift pour les majuscules
+- Touches spéciales : Espace, Retour arrière, Entrée
+- Reste au-dessus des autres fenêtres
+- Intégration facile via DLL
+
+## Structure du Projet
+
+```
+testclaviervirtuel/
+├── VirtualKeyboardDLL/          # Projet DLL
+│   ├── VirtualKeyboard.h        # Déclarations d'export
+│   ├── VirtualKeyboard.cpp      # Implémentation DLL
+│   ├── KeyboardForm.h           # En-tête du formulaire
+│   ├── KeyboardForm.cpp         # Implémentation du clavier
+│   ├── KeyboardForm.dfm         # Design VCL
+│   └── VirtualKeyboardDLL.cbproj # Projet C++ Builder
+│
+├── TestApp/                     # Application de Test
+│   ├── TestApp.cpp              # Point d'entrée
+│   ├── MainForm.h               # En-tête du formulaire
+│   ├── MainForm.cpp             # Implémentation
+│   ├── MainForm.dfm             # Design VCL
+│   └── TestApp.cbproj           # Projet C++ Builder
+│
+└── README.md                    # Ce fichier
+```
+
+## Prérequis
+
+- C++ Builder 13 (RAD Studio 12 Athens) ou version compatible
+- Framework VCL (inclus avec C++ Builder)
+- Windows SDK (inclus avec RAD Studio)
+- Windows 32 bits ou 64 bits
+
+## Compilation
+
+### 1. Compiler la DLL
+
+```bash
+cd VirtualKeyboardDLL
+# Ouvrir VirtualKeyboardDLL.cbproj dans C++ Builder
+# Menu : Projet → Compiler VirtualKeyboardDLL
+```
+
+La DLL sera générée dans `VirtualKeyboardDLL/Win32/Debug/` ou `Win32/Release/`
+
+### 2. Compiler l'Application de Test
+
+```bash
+cd TestApp
+# Ouvrir TestApp.cbproj dans C++ Builder
+# Menu : Projet → Compiler TestApp
+```
+
+L'exécutable sera généré dans `TestApp/Win32/Debug/` ou `Win32/Release/`
+
+### 3. Déploiement
+
+Copier `VirtualKeyboardDLL.dll` dans le même répertoire que `TestApp.exe` ou dans le PATH système.
+
+## Utilisation
+
+### Test
+
+1. Lancer `TestApp.exe`
+2. Cliquer sur **"Show Keyboard"**
+3. Le clavier virtuel apparaît
+4. Cliquer sur les touches pour taper dans le mémo
+5. Cliquer sur **"Hide Keyboard"** pour le fermer
+
+### Intégration de la DLL
+
+#### Fonctions Exportées
+
+```cpp
+// Afficher le clavier
+extern "C" __declspec(dllexport) void __stdcall ShowKeyboard(HWND targetHandle);
+
+// Masquer le clavier
+extern "C" __declspec(dllexport) void __stdcall HideKeyboard();
+
+// Vérifier si le clavier est visible
+extern "C" __declspec(dllexport) bool __stdcall IsKeyboardVisible();
+```
+
+#### Exemple d'Intégration
+
+```cpp
+#include <windows.h>
+
+// Types de fonction
+typedef void (__stdcall *TShowKeyboardProc)(HWND targetHandle);
+typedef void (__stdcall *THideKeyboardProc)();
+
+// Charger la DLL
+HINSTANCE hDll = LoadLibrary(L"VirtualKeyboardDLL.dll");
+if (hDll) {
+    auto ShowKeyboard = (TShowKeyboardProc)GetProcAddress(hDll, "ShowKeyboard");
+    auto HideKeyboard = (THideKeyboardProc)GetProcAddress(hDll, "HideKeyboard");
+    
+    // Afficher le clavier
+    if (ShowKeyboard) {
+        ShowKeyboard(MyEdit->Handle);
+    }
+    
+    // Masquer le clavier
+    if (HideKeyboard) {
+        HideKeyboard();
+    }
+    
+    // Décharger la DLL
+    FreeLibrary(hDll);
+}
+```
+
+## Disposition du Clavier
+
+```
+[1] [2] [3] [4] [5] [6] [7] [8] [9] [0]
+[A] [Z] [E] [R] [T] [Y] [U] [I] [O] [P]
+  [Q] [S] [D] [F] [G] [H] [J] [K] [L] [M]
+    [W] [X] [C] [V] [B] [N]
+[Shift] [     Espace     ] [←] [Entrée]
+```
+
+## Notes Techniques
+
+- Le clavier envoie des caractères en utilisant les messages Windows (WM_CHAR, WM_KEYDOWN, WM_KEYUP)
+- Compatible avec TEdit, TMemo, TRichEdit et tous les contrôles Windows standard
+- Thread-safe pour une utilisation mono-thread par processus
+- Nécessite les runtimes VCL de C++ Builder
+
+## Dépannage
+
+### DLL non trouvée
+- Assurez-vous que `VirtualKeyboardDLL.dll` est dans le même répertoire que votre exécutable
+- Ou ajoutez le répertoire de la DLL à votre PATH système
+
+### Le clavier ne s'affiche pas
+- Vérifiez que vous passez le bon handle de fenêtre à `ShowKeyboard()`
+- Vérifiez que la DLL est correctement chargée (pas de dépendances manquantes)
+
+### Les caractères n'apparaissent pas
+- Le contrôle cible doit avoir le focus
+- Vérifiez que le contrôle cible supporte les messages WM_CHAR
+
+## Contribuer
+
+Les contributions sont les bienvenues ! N'hésitez pas à :
+- Signaler des bugs via les issues
+- Suggérer de nouvelles fonctionnalités
+- Soumettre des pull requests
+
+## Licence
+
+Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+Libre d'utilisation pour les projets personnels et commerciaux.
+
+---
+
+**Version**: 2.0 (Simplifié)  
 **Date**: 2026  
-**Compatible with**: C++ Builder 13 (RAD Studio 12 Athens)
+**Compatible avec**: C++ Builder 13 (RAD Studio 12 Athens)

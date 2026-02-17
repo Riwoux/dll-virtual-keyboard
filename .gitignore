@@ -1,41 +1,107 @@
-# C++ Builder artifacts
+# C++ Builder / Embarcadero RAD Studio
+# Compiled Object files
+*.obj
+*.o
+*.dcu
+*.bpi
+*.lib
+*.a
+
+# Compiled Dynamic libraries
+*.dll
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.lo
+
+# Executables
+*.exe
+*.out
+*.app
+
+# C++ Builder specific
 *.~*
 *.local
 *.identcache
 *.tds
-*.dcu
-*.lib
-*.bpi
 *.dcp
-*.so
-*.apk
 *.drc
 *.map
 *.dres
 *.rsm
 *.tlog
-*.obj
 *.ilc
 *.ild
 *.ilf
 *.ils
-*.tds
 *.log
+*.stat
+*.cbk
+
+# APK files (for mobile)
+*.apk
+*.ipa
 
 # Build directories
 Win32/
 Win64/
+Android/
+iOSDevice/
+iOSSimulator/
+OSX32/
+OSX64/
+Linux64/
 Debug/
 Release/
 __history/
 __recovery/
+ModelSupport*/
 
 # IDE files
 *.cbproj.local
 *.groupproj.local
-*.stat
+*.cbproj.*.local
+*.groupproj.*.local
+*.dsk
+desktop.ini
 
 # Temporary files
 *.tmp
 *.temp
+*.bak
+*.swp
+*~
 ~*
+
+# Package files
+*.bpl
+
+# Code Coverage
+*.coverage
+
+# Visual Studio / MSBuild
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# OS specific
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# CodeQL
+_codeql_detected_source_root
+.codeql/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
