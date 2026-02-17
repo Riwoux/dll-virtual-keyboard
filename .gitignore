@@ -100,7 +100,6 @@ _codeql_detected_source_root
 .codeql/
 
 # Logs
-*.log
 logs/
 npm-debug.log*
 yarn-debug.log*
