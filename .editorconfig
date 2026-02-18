@@ -1,0 +1,36 @@
+# EditorConfig for C++ Builder project
+# https://editorconfig.org
+
+root = true
+
+# All files
+[*]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# C++ files
+[*.{cpp,h,hpp}]
+indent_style = space
+indent_size = 4
+
+# DFM files (Delphi Form)
+[*.dfm]
+indent_style = space
+indent_size = 2
+
+# Project files
+[*.cbproj]
+indent_style = space
+indent_size = 2
+
+# Markdown
+[*.md]
+trim_trailing_whitespace = false
+indent_size = 2
+
+# YAML
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
