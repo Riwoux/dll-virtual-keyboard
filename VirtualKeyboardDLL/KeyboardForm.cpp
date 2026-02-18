@@ -4,176 +4,201 @@
 #include <vcl.h>
 #include <vector>
 #pragma hdrstop
-
 #include "KeyboardForm.h"
-//---------------------------------------------------------------------------
+
 #pragma package(smart_init)
 #pragma resource "*.dfm"
+#pragma resource "keyboard_resources.res"
 TFormKeyboard *FormKeyboard;
 
 #define AZERTY 0
 #define QWERTY 1
 int langues[2]={AZERTY, QWERTY};
 
-//---------------------------------------------------------------------------
-// Constructor
-//---------------------------------------------------------------------------
 __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
-    : TForm(Owner), FTargetHandle(NULL), FShiftActive(false), NumPadActive(false), etatlangue(AZERTY)
+    : TForm(Owner), FTargetHandle(NULL), FShiftActive(false), FMajActive(false),
+    NumPadActive(false), etatlangue(QWERTY), MajOffImage(NULL), MajOnImage(NULL),
+    imgMaj(NULL), pnlMaj(NULL)
 {
+    LoadPNGFromResource();
+
+    SizeRatio = 1.3; // Modifier cette valeur pour changer la taille du clavier
+
+    const int BASE_BTN_WIDTH = 50;
+    const int BASE_BTN_HEIGHT = 45;
+    const int BASE_SPACING = 5;
+    const int BASE_FORM_WIDTH = 800;
+    const int BASE_FORM_HEIGHT = 270;
+    const int BASE_NUMPAD_WIDTH = 220;
+    const int btnWidth = (int)(BASE_BTN_WIDTH * SizeRatio);
+    const int btnHeight = (int)(BASE_BTN_HEIGHT * SizeRatio);
+    const int spacing = (int)(BASE_SPACING * SizeRatio);
+
     // Form configuration
-    BorderStyle = bsToolWindow;
+    BorderStyle = bsNone;
     FormStyle = fsStayOnTop;
     Position = poScreenCenter;
     Caption = "Virtual Keyboard";
-    ClientWidth = 700;
-    ClientHeight = 270;
-
+    ClientWidth = (int)(BASE_FORM_WIDTH * SizeRatio);
+    ClientHeight = (int)(BASE_FORM_HEIGHT * SizeRatio);
+    Color = (TColor)0x00cccccc;
+    OnMouseDown = FormMouseDown;
     OnShow = FormShow;
 
-    const int btnWidth = 50;
-    const int btnHeight = 45;
-    const int spacing = 5;
-    int row = 10;
+    int row = (int)(10 * SizeRatio);
 
-	// Azerty Row 1
-	String azerty1Keys[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "="};
-    for (int i = 0; i < 11; i++) {
-		TButton* btn = CreateButton(azerty1Keys[i],
-                                   10 + i * (btnWidth + spacing), row,
-                                   btnWidth, btnHeight);
+    // Azerty Row 1
+    String azerty1Keys[] = {"&&", "é", '"', "'", "(", "-", "è", "_", "ç", "à", ")","="};
+    for (int i = 0; i < 12; i++) {
+        TButton* btn = CreateButton(azerty1Keys[i],
+                                    (int)(10 * SizeRatio) + i * (btnWidth + spacing),
+                                    row, btnWidth, btnHeight);
         btn->Tag = (NativeInt)(wchar_t)azerty1Keys[i][1];
-		btn->OnMouseDown = OnKeyButtonMouseDown;
+        btn->OnMouseDown = OnKeyButtonMouseDown;
         azerty.push_back(btn);
-	}
-	// Qwerty Row 1
-	String qwerty1Keys[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "="};
-	for (int i = 0; i < 11; i++) {
-		TButton* btn = CreateButton(qwerty1Keys[i],
-								   10 + i * (btnWidth + spacing), row,
-								   btnWidth, btnHeight);
-		btn->Tag = (NativeInt)(wchar_t)qwerty1Keys[i][1];
-		btn->OnMouseDown = OnKeyButtonMouseDown;
-		qwerty.push_back(btn);
-	}
-    // Changer la langue
-	TButton* btnLanguage = CreateButton("Language", 560 , row, 75, btnHeight);
-	btnLanguage->OnClick = OnLanguageClick;
-
-	row += btnHeight + spacing;
-	// Azerty Row 2
-	String azerty2Keys[] = {"A", "Z", "E", "R", "T", "Y", "U", "I", "O", "P"};
-    for (int i = 0; i < 10; i++) {
-		TButton* btn = CreateButton(azerty2Keys[i],
-                                   10 + i * (btnWidth + spacing), row,
+    }
+    // Qwerty Row 1
+    String qwerty1Keys[] = {"!", "@", "#", "$", "%", "^", "&&", "*", "(", ")", "_", "-"};
+    for (int i = 0; i < 12; i++) {
+        TButton* btn = CreateButton(qwerty1Keys[i],
+                                   (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-		btn->Tag = (NativeInt)(wchar_t)azerty2Keys[i][1];
-		btn->OnMouseDown = OnKeyButtonMouseDown;
-		azerty.push_back(btn);
-	}
-	// Qwerty Row 2
-	String qwerty2Keys[] = {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"};
-	for (int i = 0; i < 10; i++) {
-		TButton* btn = CreateButton(qwerty2Keys[i],
-								   10 + i * (btnWidth + spacing), row,
-								   btnWidth, btnHeight);
-		btn->Tag = (NativeInt)(wchar_t)qwerty2Keys[i][1];
-		btn->OnMouseDown = OnKeyButtonMouseDown;
-		qwerty.push_back(btn);
-	}
-
-    // Backspace button
-    TButton* btnBackspace = CreateButton("Delete", 560, row, 100, btnHeight);
-    btnBackspace->OnMouseDown = OnBackspaceMouseDown;
-
-	row += btnHeight + spacing;
-	// Azerty Row 3
-	String azerty3Keys[] = {"Q", "S", "D", "F", "G", "H", "J", "K", "L", "M"};
-	for (int i = 0; i < 10; i++) {
-		TButton* btn = CreateButton(azerty3Keys[i],
-                                   35 + i * (btnWidth + spacing), row,
-                                   btnWidth, btnHeight);
-		btn->Tag = (NativeInt)(wchar_t)azerty3Keys[i][1];
-		btn->OnMouseDown = OnKeyButtonMouseDown;
-		azerty.push_back(btn);
-	}
-    // Qwerty Row 3
-	String qwerty3Keys[] = {"A", "S", "D", "F", "G", "H", "J", "K", "L"};
-	for (int i = 0; i < 9; i++) {
-		TButton* btn = CreateButton(qwerty3Keys[i],
-                                   35 + i * (btnWidth + spacing), row,
-                                   btnWidth, btnHeight);
-		btn->Tag = (NativeInt)(wchar_t)qwerty3Keys[i][1];
-		btn->OnMouseDown = OnKeyButtonMouseDown;
-		qwerty.push_back(btn);
+        btn->Tag = (NativeInt)(wchar_t)qwerty1Keys[i][1];
+        btn->OnMouseDown = OnKeyButtonMouseDown;
+        qwerty.push_back(btn);
     }
 
-	row += btnHeight + spacing;
-	// Azerty Row 4
-	String azerty4Keys[] = {"W", "X", "C", "V", "B", "N"};
-    for (int i = 0; i < 6; i++) {
-		TButton* btn = CreateButton(azerty4Keys[i],
-                                   60 + i * (btnWidth + spacing), row,
+    // Changer la langue
+    TButton* btnLanguage = CreateButton("Language", (int)(670 * SizeRatio), row,
+                                       (int)(75 * SizeRatio), btnHeight);
+    btnLanguage->OnClick = OnLanguageClick;
+
+    row += btnHeight + spacing;
+    // Azerty Row 2
+    String azerty2Keys[] = {"A", "Z", "E", "R", "T", "Y", "U", "I", "O", "P", "^", "$"};
+    for (int i = 0; i < 12; i++) {
+        TButton* btn = CreateButton(azerty2Keys[i],
+                                   (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
+                                   btnWidth, btnHeight);
+        btn->Tag = (NativeInt)(wchar_t)azerty2Keys[i][1];
+        btn->OnMouseDown = OnKeyButtonMouseDown;
+        azerty.push_back(btn);
+    }
+    // Qwerty Row 2
+    String qwerty2Keys[] = {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]"};
+    for (int i = 0; i < 12; i++) {
+        TButton* btn = CreateButton(qwerty2Keys[i],
+                                   (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
+                                   btnWidth, btnHeight);
+        btn->Tag = (NativeInt)(wchar_t)qwerty2Keys[i][1];
+        btn->OnMouseDown = OnKeyButtonMouseDown;
+        qwerty.push_back(btn);
+    }
+
+    // Backspace button
+    TButton* btnBackspace = CreateButton("Delete", (int)(670 * SizeRatio), row,
+                                        (int)(100 * SizeRatio), btnHeight);
+    btnBackspace->OnMouseDown = OnBackspaceMouseDown;
+
+    row += btnHeight + spacing;
+    // Azerty Row 3
+    String azerty3Keys[] = {"Q", "S", "D", "F", "G", "H", "J", "K", "L", "M", "ù", "*"};
+    for (int i = 0; i < 12; i++) {
+        TButton* btn = CreateButton(azerty3Keys[i],
+                                   (int)(35 * SizeRatio) + i * (btnWidth + spacing), row,
+                                   btnWidth, btnHeight);
+        btn->Tag = (NativeInt)(wchar_t)azerty3Keys[i][1];
+        btn->OnMouseDown = OnKeyButtonMouseDown;
+        azerty.push_back(btn);
+    }
+    // Qwerty Row 3
+    String qwerty3Keys[] = {"A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", "\\"};
+    for (int i = 0; i < 12; i++) {
+        TButton* btn = CreateButton(qwerty3Keys[i],
+                                   (int)(35 * SizeRatio) + i * (btnWidth + spacing), row,
+                                   btnWidth, btnHeight);
+        btn->Tag = (NativeInt)(wchar_t)qwerty3Keys[i][1];
+        btn->OnMouseDown = OnKeyButtonMouseDown;
+        qwerty.push_back(btn);
+    }
+
+    // Enter button
+    TButton* btnEnter = CreateButton("Enter", (int)(695 * SizeRatio), row,
+                                    (int)(100 * SizeRatio), btnHeight);
+    btnEnter->OnMouseDown = OnEnterMouseDown;
+
+    row += btnHeight + spacing;
+    // Azerty Row 4
+    String azerty4Keys[] = {"<", "W", "X", "C", "V", "B", "N", ",", ";",":"};
+    for (int i = 0; i < 10; i++) {
+        TButton* btn = CreateButton(azerty4Keys[i],
+                                   (int)(5 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
         btn->Tag = (NativeInt)(wchar_t)azerty4Keys[i][1];
-		btn->OnMouseDown = OnKeyButtonMouseDown;
-		azerty.push_back(btn);
-	}
+        btn->OnMouseDown = OnKeyButtonMouseDown;
+        azerty.push_back(btn);
+    }
     // Qwerty Row 4
-	String qwerty4Keys[] = {"W", "X", "C", "V", "B", "N", "M"};
-    for (int i = 0; i < 7; i++) {
-		TButton* btn = CreateButton(qwerty4Keys[i],
-                                   60 + i * (btnWidth + spacing), row,
+    String qwerty4Keys[] = {"<", "Z", "X", "C", "V", "B", "N", "M", ",", "."};
+    for (int i = 0; i < 10; i++) {
+        TButton* btn = CreateButton(qwerty4Keys[i],
+                                   (int)(5 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-		btn->Tag = (NativeInt)(wchar_t)qwerty4Keys[i][1];
-		btn->OnMouseDown = OnKeyButtonMouseDown;
-		qwerty.push_back(btn);
-	}
+        btn->Tag = (NativeInt)(wchar_t)qwerty4Keys[i][1];
+        btn->OnMouseDown = OnKeyButtonMouseDown;
+        qwerty.push_back(btn);
+    }
 
-	// Special keys
+    // Special keys
 
     // Activer et desactiver NumPad
-    TButton* btnNumPad = CreateButton("NumPad", 590 , row, 75, 1.5*btnHeight);
+    TButton* btnNumPad = CreateButton("NumPad", (int)(670 * SizeRatio), row,
+                                     (int)(75 * SizeRatio), (int)(1.5 * btnHeight));
     btnNumPad->OnClick = OnNumPadClick;
 
-	// Up button
-	TButton* btnUp = CreateButton("Up", 460, row, 50, btnHeight);
-	btnUp->Tag = VK_UP;
-	btnUp->OnMouseDown = OnArrowMouseDown;
+    // Up button
+    TButton* btnUp = CreateButton("Up", (int)(555 * SizeRatio), row, btnWidth, btnHeight);
+    btnUp->Tag = VK_UP;
+    btnUp->OnMouseDown = OnArrowMouseDown;
 
     row += btnHeight + spacing;
 
     // Left button
-    TButton* btnLeft = CreateButton("Left", 405, row, 50, btnHeight);
+    TButton* btnLeft = CreateButton("Left", (int)(500 * SizeRatio), row, btnWidth, btnHeight);
     btnLeft->Tag = VK_LEFT;
     btnLeft->OnMouseDown = OnArrowMouseDown;
 
     // Down button
-    TButton* btnDown = CreateButton("Down", 460, row, 50, btnHeight);
+    TButton* btnDown = CreateButton("Down", (int)(555 * SizeRatio), row, btnWidth, btnHeight);
     btnDown->Tag = VK_DOWN;
     btnDown->OnMouseDown = OnArrowMouseDown;
 
     // Right button
-    TButton* btnRight = CreateButton("Right", 515, row, 50, btnHeight);
+    TButton* btnRight = CreateButton("Right", (int)(610 * SizeRatio), row, btnWidth, btnHeight);
     btnRight->Tag = VK_RIGHT;
     btnRight->OnMouseDown = OnArrowMouseDown;
 
     // Shift button
-    TButton* btnShift = CreateButton("Shift", 10, row, 70, btnHeight);
+    TButton* btnShift = CreateButton("Shift", (int)(85 * SizeRatio), row,
+                                    (int)(70 * SizeRatio), btnHeight);
     btnShift->OnMouseDown = OnShiftMouseDown;
 
-    // Space button
-    TButton* btnSpace = CreateButton("Space", 85, row, 200, btnHeight);
-    btnSpace->OnMouseDown = OnSpaceMouseDown;
+    // Maj button
+    pnlMaj = CreateImageButton((int)(10 * SizeRatio), row,
+                                  (int)(70 * SizeRatio), btnHeight);
+    pnlMaj->OnMouseDown = OnMajMouseDown;
 
-    // Enter button
-    TButton* btnEnter = CreateButton("Enter", 295, row, 100, btnHeight);
-    btnEnter->OnMouseDown = OnEnterMouseDown;
+    // Space button
+    TButton* btnSpace = CreateButton("Space", (int)(160 * SizeRatio), row,
+                                    (int)(200 * SizeRatio), btnHeight);
+    btnSpace->OnMouseDown = OnSpaceMouseDown;
 
     // Row PadNum1
     String row1PadNum[] = {"/","*","-"};
     for (int i=0; i < 3; i++) {
-        TButton* btn = CreateButton(row1PadNum[i], 10 + (i+12)*55, 10, 50, 45);
+        TButton* btn = CreateButton(row1PadNum[i],
+                                   (int)((10 + (i+15)*55) * SizeRatio),
+                                   (int)(10 * SizeRatio), btnWidth, btnHeight);
         btn->Tag = (NativeInt)(wchar_t)row1PadNum[i][1];
         btn->OnMouseDown = OnKeyButtonMouseDown;
         padbuttons.push_back(btn);
@@ -182,67 +207,86 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     // Row PadNum2
     String row2PadNum[] = {"7","8","9"};
     for (int i=0; i < 3; i++) {
-        TButton* btn = CreateButton(row2PadNum[i], 10 + (i+12)*55, 60, 50, 45);
+        TButton* btn = CreateButton(row2PadNum[i],
+                                   (int)((10 + (i+15)*55) * SizeRatio),
+                                   (int)(60 * SizeRatio), btnWidth, btnHeight);
         btn->Tag = (NativeInt)(wchar_t)row2PadNum[i][1];
         btn->OnMouseDown = OnKeyButtonMouseDown;
-		padbuttons.push_back(btn);
+        padbuttons.push_back(btn);
     }
 
     // Plus button NumPad
-    TButton* btnPlusNumPad = CreateButton("+", 835, 60, 50, 2*45);
+    TButton* btnPlusNumPad = CreateButton("+", (int)(1000 * SizeRatio),
+                                         (int)(60 * SizeRatio), btnWidth,
+                                         (int)(2 * btnHeight));
     btnPlusNumPad->Tag = (NativeInt)(wchar_t)'+';
     btnPlusNumPad->OnMouseDown = OnKeyButtonMouseDown;
-	padbuttons.push_back(btnPlusNumPad);
+    padbuttons.push_back(btnPlusNumPad);
 
     // Row PadNum3
     String row3PadNum[] = {"4","5","6"};
     for (int i=0; i < 3; i++) {
-        TButton* btn = CreateButton(row3PadNum[i], 10 + (i+12)*55, 110, 50, 45);
+        TButton* btn = CreateButton(row3PadNum[i],
+                                   (int)((10 + (i+15)*55) * SizeRatio),
+                                   (int)(110 * SizeRatio), btnWidth, btnHeight);
         btn->Tag = (NativeInt)(wchar_t)row3PadNum[i][1];
         btn->OnMouseDown = OnKeyButtonMouseDown;
-		padbuttons.push_back(btn);
+        padbuttons.push_back(btn);
     }
 
     // Row PadNum4
     String row4PadNum[] = {"1","2","3"};
     for (int i=0; i < 3; i++) {
-        TButton* btn = CreateButton(row4PadNum[i], 10 + (i+12)*55, 160, 50, 45);
+        TButton* btn = CreateButton(row4PadNum[i],
+                                   (int)((10 + (i+15)*55) * SizeRatio),
+                                   (int)(160 * SizeRatio), btnWidth, btnHeight);
         btn->Tag = (NativeInt)(wchar_t)row4PadNum[i][1];
         btn->OnMouseDown = OnKeyButtonMouseDown;
-		padbuttons.push_back(btn);
+        padbuttons.push_back(btn);
     }
 
     // Enter button NumPad
-    TButton* btnEnterNumPad = CreateButton("Enter", 835, 160, 50, 2*45);
+    TButton* btnEnterNumPad = CreateButton("Enter", (int)(1000 * SizeRatio),
+                                          (int)(160 * SizeRatio), btnWidth,
+                                          (int)(2 * btnHeight));
     btnEnterNumPad->OnMouseDown = OnEnterMouseDown;
-	padbuttons.push_back(btnEnterNumPad);
+    padbuttons.push_back(btnEnterNumPad);
 
     // Row PadNum5
     String row5PadNum[] = {"0","."};
     for (int i=0; i < 2; i++) {
-        TButton* btn = CreateButton(row5PadNum[i], 10 + (i+12)*55, 210, 50, 45);
+        TButton* btn = CreateButton(row5PadNum[i],
+                                   (int)((10 + (i+15)*55) * SizeRatio),
+                                   (int)(210 * SizeRatio), btnWidth, btnHeight);
         btn->Tag = (NativeInt)(wchar_t)row5PadNum[i][1];
         btn->OnMouseDown = OnKeyButtonMouseDown;
-		padbuttons.push_back(btn);
+        padbuttons.push_back(btn);
     }
 
     // Mettre le NumPad invisible
     for (int i = 0; i < padbuttons.size(); i++)
     {
-		padbuttons[i]->Visible = false;
-	}
+        padbuttons[i]->Visible = false;
+    }
     // Mettre les autres langues invisibles
-	for (int i = 0; i < qwerty.size(); i++)
-	{
-		qwerty[i]->Visible = false;
-	}
+    for (int i = 0; i < qwerty.size(); i++)
+    {
+        azerty[i]->Visible = false;
+    }
+}
+
+__fastcall TFormKeyboard::~TFormKeyboard()
+{
+    if (MajOffImage) delete MajOffImage;
+    if (MajOnImage) delete MajOnImage;
 }
 
 //---------------------------------------------------------------------------
-// Create a button
+// Create a normal button
 //---------------------------------------------------------------------------
 TButton* __fastcall TFormKeyboard::CreateButton(const String& Caption,
-                                                 int Left, int Top, int Width, int Height)
+                                                 int Left, int Top, int Width,
+                                                 int Height)
 {
     TButton* btn = new TButton(this);
     btn->Parent = this;
@@ -251,8 +295,42 @@ TButton* __fastcall TFormKeyboard::CreateButton(const String& Caption,
     btn->Top = Top;
     btn->Width = Width;
     btn->Height = Height;
-    btn->Font->Size = 10;
+    btn->Font->Size = (int)(10 * SizeRatio);
     return btn;
+}
+
+//---------------------------------------------------------------------------
+// Create an image button (Panel + TImage pour PNG)
+//---------------------------------------------------------------------------
+TPanel* __fastcall TFormKeyboard::CreateImageButton(int Left, int Top,
+                                                     int Width, int Height)
+{
+    // Créer un panel comme conteneur
+    TPanel* panel = new TPanel(this);
+    panel->Parent = this;
+    panel->Left = Left;
+    panel->Top = Top;
+    panel->Width = Width;
+    panel->Height = Height;
+    panel->BevelOuter = bvNone;
+    panel->Caption = "";
+    panel->Color = clBtnFace;
+    panel->Cursor = crHandPoint;
+
+    // Créer le composant TImage pour afficher le PNG
+    imgMaj = new TImage(panel);
+    imgMaj->Parent = panel;
+    imgMaj->Align = alClient;
+    imgMaj->Stretch = true;
+    imgMaj->Proportional = true;
+    imgMaj->Center = true;
+    imgMaj->Transparent = true;
+
+    imgMaj->OnMouseDown = OnMajMouseDown;
+
+    UpdateMajButtonImage();
+
+    return panel;
 }
 
 //---------------------------------------------------------------------------
@@ -305,11 +383,52 @@ void __fastcall TFormKeyboard::OnKeyButtonMouseDown(TObject *Sender,
     wchar_t ch = (wchar_t)btn->Tag;
 
     // Apply shift if active
-    if (FShiftActive) {
+    if (FShiftActive || FMajActive) {
         if (ch >= 'A' && ch <= 'Z') {
             // Already uppercase
         } else if (ch >= 'a' && ch <= 'z') {
             ch = ch - 'a' + 'A';
+        } else if (ch== '<') {
+            ch = '>';
+        } else if (etatlangue == AZERTY) {
+        	if (ch == '&') ch == '1';
+            else if (ch == 'é') ch = '2';
+            else if (ch == '"') ch = '3';
+            else if (ch == '\x27') ch = '4';
+            else if (ch == '(') ch = '5';
+            else if (ch == '-') ch = '6';
+            else if (ch == 'è') ch = '7';
+            else if (ch == '_') ch = '8';
+            else if (ch == 'ç') ch = '9';
+            else if (ch == 'à') ch = '0';
+            else if (ch == ')') ch = '°';
+            else if (ch == '=') ch = '+';
+            else if (ch == '^') ch = '¨';
+            else if (ch == '$') ch = '£';
+            else if (ch == 'ù') ch = '%';
+            else if (ch == '*') ch = 'µ';
+            else if (ch == ',') ch = '?';
+            else if (ch == ';') ch = '.';
+            else if (ch == ':') ch = '/';
+        } else if (etatlangue == QWERTY) {
+        	if (ch == '!') ch == '1';
+            else if (ch == '@') ch = '2';
+            else if (ch == '#') ch = '3';
+            else if (ch == '$') ch = '4';
+            else if (ch == '%') ch = '5';
+            else if (ch == '^') ch = '6';
+            else if (ch == '&') ch = '7';
+            else if (ch == '*') ch = '8';
+            else if (ch == '(') ch = '9';
+            else if (ch == ')') ch = '0';
+            else if (ch == '_') ch = '-';
+            else if (ch == '-') ch = '=';
+            else if (ch == '[') ch = '{';
+            else if (ch == ']') ch = '}';
+            else if (ch == ';') ch = ':';
+            else if (ch == '\x27') ch = '"';
+            else if (ch == '.') ch = '/';
+            else if (ch == '\\') ch = '\x7c';
         }
         FShiftActive = false; // Reset shift after one key
     } else {
@@ -332,6 +451,19 @@ void __fastcall TFormKeyboard::OnShiftMouseDown(TObject *Sender,
 {
     if (Button != mbLeft) return;
     FShiftActive = !FShiftActive;
+}
+
+//---------------------------------------------------------------------------
+// Maj button MouseDown handler
+//---------------------------------------------------------------------------
+void __fastcall TFormKeyboard::OnMajMouseDown(TObject *Sender,
+                                                 TMouseButton Button,
+                                                 TShiftState Shift,
+                                                 int X, int Y)
+{
+    if (Button != mbLeft) return;
+    FMajActive = !FMajActive;
+    UpdateMajButtonImage();
 }
 
 //---------------------------------------------------------------------------
@@ -402,17 +534,17 @@ void __fastcall TFormKeyboard::OnNumPadClick(TObject *Sender)
 {
     NumPadActive = !NumPadActive;
     if (NumPadActive) {
-        ClientWidth = 920;
+        ClientWidth = (int)(1100 * SizeRatio);
         for (int i = 0; i < padbuttons.size(); i++)
         {
-			padbuttons[i]->Visible = true;
+            padbuttons[i]->Visible = true;
         }
     }
     else {
-        ClientWidth = 700;
-		for (int i = 0; i < padbuttons.size(); i++)
+        ClientWidth = (int)(800 * SizeRatio);
+        for (int i = 0; i < padbuttons.size(); i++)
         {
-			padbuttons[i]->Visible = false;
+            padbuttons[i]->Visible = false;
         }
     }
 }
@@ -535,23 +667,80 @@ void __fastcall TFormKeyboard::SendArrowKeyToTarget(BYTE vkArrowCode)
 void __fastcall TFormKeyboard::OnLanguageClick(TObject *Sender)
 {
     etatlangue += 1;
-	if (etatlangue >= 2)
-	{
+    if (etatlangue >= 2)
+    {
         etatlangue=AZERTY;
-	}
-	if (etatlangue == AZERTY)
-	{
-		for (int i = 0; i < azerty.size(); i++)
-		{
-			azerty[i]->Visible = true;
-			qwerty[i]->Visible = false;
-		}
     }
-    else if (etatlangue == QWERTY) {
-		for (int i = 0; i < qwerty.size(); i++)
+    if (etatlangue == AZERTY)
+    {
+        for (int i = 0; i < azerty.size(); i++)
         {
-			qwerty[i]->Visible = true;
-			azerty[i]->Visible = false;
+            azerty[i]->Visible = true;
+            qwerty[i]->Visible = false;
         }
     }
+    else if (etatlangue == QWERTY) {
+        for (int i = 0; i < qwerty.size(); i++)
+        {
+            qwerty[i]->Visible = true;
+            azerty[i]->Visible = false;
+        }
+    }
+}
+
+void __fastcall TFormKeyboard::FormMouseDown(TObject *Sender, TMouseButton Button,
+  TShiftState Shift, int X, int Y)
+{
+    if (Button == mbLeft) {
+        ReleaseCapture();
+        SendMessage(Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+    }
+}
+
+void __fastcall TFormKeyboard::LoadPNGFromResource()
+{
+    try {
+        MajOffImage = new TPngImage();
+        MajOnImage = new TPngImage();
+
+        // Définir le type de ressource RCDATA
+        WideChar* ResTypeRCDATA = MAKEINTRESOURCEW(10);
+
+        TResourceStream* rsOff = new TResourceStream(
+            (NativeUInt)HInstance,
+            "MAJ_OFF",
+            ResTypeRCDATA
+        );
+
+        TResourceStream* rsOn = new TResourceStream(
+            (NativeUInt)HInstance,
+            "MAJ_ON",
+            ResTypeRCDATA
+        );
+
+        MajOffImage->LoadFromStream(rsOff);
+        MajOnImage->LoadFromStream(rsOn);
+
+        delete rsOff;
+        delete rsOn;
+    }
+    catch (Exception &e) {
+        ShowMessage("Erreur lors du chargement des PNG: " + e.Message);
+
+        if (!MajOffImage) MajOffImage = new TPngImage();
+        if (!MajOnImage) MajOnImage = new TPngImage();
+    }
+}
+
+void __fastcall TFormKeyboard::UpdateMajButtonImage()
+{
+    if (!imgMaj) return;
+
+    if (FMajActive) {
+        imgMaj->Picture->Assign(MajOnImage);
+    } else {
+        imgMaj->Picture->Assign(MajOffImage);
+    }
+
+    imgMaj->Refresh();
 }

@@ -5,10 +5,10 @@ object FormMain: TFormMain
   ClientHeight = 350
   ClientWidth = 500
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
+  Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
-  Font.Name = 'Tahoma'
+  Font.Name = 'Consolas'
   Font.Style = []
   Position = poScreenCenter
   OnCreate = FormCreate
@@ -17,7 +17,7 @@ object FormMain: TFormMain
   object Label1: TLabel
     Left = 24
     Top = 24
-    Width = 205
+    Width = 264
     Height = 13
     Caption = 'Click in the text area to test the keyboard:'
   end
