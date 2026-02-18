@@ -58,7 +58,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         azerty.push_back(btn);
     }
     // Qwerty Row 1
-    String qwerty1Keys[] = {"!", "@", "#", "$", "%", "^", "&&", "*", "(", ")", "_", "-"};
+    String qwerty1Keys[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="};
     for (int i = 0; i < 12; i++) {
         TButton* btn = CreateButton(qwerty1Keys[i],
                                    (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
@@ -391,7 +391,7 @@ void __fastcall TFormKeyboard::OnKeyButtonMouseDown(TObject *Sender,
         } else if (ch== '<') {
             ch = '>';
         } else if (etatlangue == AZERTY) {
-        	if (ch == '&') ch == '1';
+        	if (ch == '&') ch = '1';
             else if (ch == 'é') ch = '2';
             else if (ch == '"') ch = '3';
             else if (ch == '\x27') ch = '4';
@@ -411,23 +411,25 @@ void __fastcall TFormKeyboard::OnKeyButtonMouseDown(TObject *Sender,
             else if (ch == ';') ch = '.';
             else if (ch == ':') ch = '/';
         } else if (etatlangue == QWERTY) {
-        	if (ch == '!') ch == '1';
-            else if (ch == '@') ch = '2';
-            else if (ch == '#') ch = '3';
-            else if (ch == '$') ch = '4';
-            else if (ch == '%') ch = '5';
-            else if (ch == '^') ch = '6';
-            else if (ch == '&') ch = '7';
-            else if (ch == '*') ch = '8';
-            else if (ch == '(') ch = '9';
-            else if (ch == ')') ch = '0';
-            else if (ch == '_') ch = '-';
-            else if (ch == '-') ch = '=';
+        	if (ch == '1') ch = '!';
+            else if (ch == '2') ch = '@';
+            else if (ch == '3') ch = '#';
+            else if (ch == '4') ch = '$';
+            else if (ch == '5') ch = '%';
+            else if (ch == '6') ch = '^';
+            else if (ch == '7') ch = '&';
+            else if (ch == '8') ch = '*';
+            else if (ch == '9') ch = '(';
+            else if (ch == '0') ch = ')';
+            else if (ch == '-') ch = '_';
+            else if (ch == '=') ch = '+';
             else if (ch == '[') ch = '{';
             else if (ch == ']') ch = '}';
             else if (ch == ';') ch = ':';
             else if (ch == '\x27') ch = '"';
-            else if (ch == '.') ch = '/';
+            else if (ch == ',') ch = '<';
+            else if (ch == '.') ch = '>';
+            else if (ch == '/') ch = '?';
             else if (ch == '\\') ch = '\x7c';
         }
         FShiftActive = false; // Reset shift after one key
@@ -560,44 +562,21 @@ void __fastcall TFormKeyboard::SendCharToTarget(wchar_t ch)
     SetForegroundWindow(FTargetHandle);
     Sleep(20);
 
-    // Utiliser SendInput au lieu de PostMessage
-    INPUT allInputs[4] = {};  // Max : Shift down + Key down + Key up + Shift up
-    int inputCount = 0;
+    INPUT inputs[2] = {};
 
-    // Convertir le caractère en Virtual Key
-    SHORT vk = VkKeyScanW(ch);
-    BYTE vkCode = LOBYTE(vk);
-    BYTE shiftState = HIBYTE(vk);
+    // Key Down avec Unicode
+    inputs[0].type = INPUT_KEYBOARD;
+    inputs[0].ki.wVk = 0;
+    inputs[0].ki.wScan = ch;
+    inputs[0].ki.dwFlags = KEYEVENTF_UNICODE;
 
-    // Si le caractère nécessite Shift, l'ajouter
-    if (shiftState & 1) {
-        allInputs[inputCount].type = INPUT_KEYBOARD;
-        allInputs[inputCount].ki.wVk = VK_SHIFT;
-        allInputs[inputCount].ki.dwFlags = 0;
-        inputCount++;
-    }
+    // Key Up avec Unicode
+    inputs[1].type = INPUT_KEYBOARD;
+    inputs[1].ki.wVk = 0;
+    inputs[1].ki.wScan = ch;
+    inputs[1].ki.dwFlags = KEYEVENTF_UNICODE | KEYEVENTF_KEYUP;
 
-    // Key Down
-    allInputs[inputCount].type = INPUT_KEYBOARD;
-    allInputs[inputCount].ki.wVk = vkCode;
-    allInputs[inputCount].ki.dwFlags = 0;
-    inputCount++;
-
-    // Key Up
-    allInputs[inputCount].type = INPUT_KEYBOARD;
-    allInputs[inputCount].ki.wVk = vkCode;
-    allInputs[inputCount].ki.dwFlags = KEYEVENTF_KEYUP;
-    inputCount++;
-
-    // Si Shift était nécessaire, le relâcher
-    if (shiftState & 1) {
-        allInputs[inputCount].type = INPUT_KEYBOARD;
-        allInputs[inputCount].ki.wVk = VK_SHIFT;
-        allInputs[inputCount].ki.dwFlags = KEYEVENTF_KEYUP;
-        inputCount++;
-    }
-
-    SendInput(inputCount, allInputs, sizeof(INPUT));
+    SendInput(2, inputs, sizeof(INPUT));
 }
 
 //---------------------------------------------------------------------------
