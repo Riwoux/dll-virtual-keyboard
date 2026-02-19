@@ -49,7 +49,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     int row = (int)(10 * SizeRatio);
 
     // Azerty Row 1
-    wchar_t azerty1Chars[] = {L'&', L'é', L'"', L'\'', L'(', L'-', L'è', L'_', L'ç', L'à', L')', L'='};
+    wchar_t azerty1Chars[] = {L'\x26', L'é', L'"', L'\'', L'(', L'-', L'è', L'_', L'ç', L'à', L')', L'='};
     for (int i = 0; i < 12; i++) {
         TButton* btn = CreateButton(String((wchar_t)azerty1Chars[i]),
                                     (int)(10 * SizeRatio) + i * (btnWidth + spacing),
