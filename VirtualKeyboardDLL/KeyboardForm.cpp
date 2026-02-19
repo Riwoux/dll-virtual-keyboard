@@ -90,6 +90,7 @@ void __fastcall TFormKeyboard::InitializeKeyboardData()
     azertyData.push_back(MakeKey(",", "?", L',', L'?'));
     azertyData.push_back(MakeKey(";", ".", L';', L'.'));
     azertyData.push_back(MakeKey(":", "/", L':', L'/'));
+    azertyData.push_back(MakeKey("!", "§", L'!', L'\x00A7'));
     
     // QWERTY Layout Data
     // Row 1
@@ -145,6 +146,7 @@ void __fastcall TFormKeyboard::InitializeKeyboardData()
     qwertyData.push_back(MakeKey("m", "M", L'm', L'M'));
     qwertyData.push_back(MakeKey(",", "<", L',', L'<'));
     qwertyData.push_back(MakeKey(".", ">", L'.', L'>'));
+    qwertyData.push_back(MakeKey("/", "?", L'/', L'?'));
     
     // QWERTZ Layout Data
     // Row 1
@@ -200,6 +202,7 @@ void __fastcall TFormKeyboard::InitializeKeyboardData()
     qwertzData.push_back(MakeKey("m", "M", L'm', L'M'));
     qwertzData.push_back(MakeKey(",", ";", L',', L';'));
     qwertzData.push_back(MakeKey(".", ":", L'.', L':'));
+    qwertzData.push_back(MakeKey("-", "_", L'-', L'_'));
 }
 
 //---------------------------------------------------------------------------
@@ -266,8 +269,8 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     }
 
     // Changer la langue
-    TButton* btnLanguage = CreateButton("Language", (int)(670 * SizeRatio), row,
-                                       (int)(75 * SizeRatio), btnHeight);
+    TButton* btnLanguage = CreateButton("Language", (int)(695 * SizeRatio), row,
+                                       (int)(100 * SizeRatio), btnHeight);
     btnLanguage->OnClick = OnLanguageClick;
 
     row += btnHeight + spacing;
@@ -301,7 +304,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
 
     // Backspace button
     TButton* btnBackspace = CreateButton("Delete", (int)(670 * SizeRatio), row,
-                                        (int)(100 * SizeRatio), btnHeight);
+                                        (int)(125 * SizeRatio), btnHeight);
     btnBackspace->OnMouseDown = OnBackspaceMouseDown;
 
     row += btnHeight + spacing;
@@ -340,7 +343,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
 
     row += btnHeight + spacing;
     // Azerty Row 4
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 11; i++) {
         TButton* btn = CreateButton(azertyData[36 + i].normalCaption,
                                    (int)(5 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
@@ -349,7 +352,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         azerty.push_back(btn);
     }
     // Qwerty Row 4
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 11; i++) {
         TButton* btn = CreateButton(qwertyData[36 + i].normalCaption,
                                    (int)(5 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
@@ -358,7 +361,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         qwerty.push_back(btn);
     }
     // Qwertz Row 4
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 11; i++) {
         TButton* btn = CreateButton(qwertzData[36 + i].normalCaption,
                                    (int)(5 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
@@ -370,29 +373,29 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     // Special keys
 
     // Activer et desactiver NumPad
-    TButton* btnNumPad = CreateButton("NumPad", (int)(670 * SizeRatio), row,
+    TButton* btnNumPad = CreateButton("NumPad", (int)(720 * SizeRatio), row,
                                      (int)(75 * SizeRatio), (int)(1.5 * btnHeight));
     btnNumPad->OnClick = OnNumPadClick;
 
     // Up button
-    TButton* btnUp = CreateButton("Up", (int)(555 * SizeRatio), row, btnWidth, btnHeight);
+    TButton* btnUp = CreateButton("Up", (int)(610 * SizeRatio), row, btnWidth, btnHeight);
     btnUp->Tag = VK_UP;
     btnUp->OnMouseDown = OnArrowMouseDown;
 
     row += btnHeight + spacing;
 
     // Left button
-    TButton* btnLeft = CreateButton("Left", (int)(500 * SizeRatio), row, btnWidth, btnHeight);
+    TButton* btnLeft = CreateButton("Left", (int)(555 * SizeRatio), row, btnWidth, btnHeight);
     btnLeft->Tag = VK_LEFT;
     btnLeft->OnMouseDown = OnArrowMouseDown;
 
     // Down button
-    TButton* btnDown = CreateButton("Down", (int)(555 * SizeRatio), row, btnWidth, btnHeight);
+    TButton* btnDown = CreateButton("Down", (int)(610 * SizeRatio), row, btnWidth, btnHeight);
     btnDown->Tag = VK_DOWN;
     btnDown->OnMouseDown = OnArrowMouseDown;
 
     // Right button
-    TButton* btnRight = CreateButton("Right", (int)(610 * SizeRatio), row, btnWidth, btnHeight);
+    TButton* btnRight = CreateButton("Right", (int)(665 * SizeRatio), row, btnWidth, btnHeight);
     btnRight->Tag = VK_RIGHT;
     btnRight->OnMouseDown = OnArrowMouseDown;
 
@@ -410,7 +413,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
 
     // Space button
     TButton* btnSpace = CreateButton("Space", (int)(160 * SizeRatio), row,
-                                    (int)(200 * SizeRatio), btnHeight);
+                                    (int)(390 * SizeRatio), btnHeight);
     btnSpace->OnMouseDown = OnSpaceMouseDown;
 
     // Row PadNum1
@@ -482,16 +485,17 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
 
     // Row PadNum5
     String row5PadNum[] = {"0","."};
-    for (int i=0; i < 2; i++) {
-        TButton* btn = CreateButton(row5PadNum[i],
-                                   (int)((10 + (i+15)*55) * SizeRatio),
+    TButton* btn0 = CreateButton("0", (int)((10 + (15)*55) * SizeRatio),
+                                   (int)(210 * SizeRatio), 105*SizeRatio, btnHeight);
+    btn0->Tag = (NativeInt)(wchar_t)row5PadNum[0][1];
+    btn0->OnMouseDown = OnNumPadKeyMouseDown;  // Use separate handler
+    padbuttons.push_back(btn0);
+
+    TButton* btnpoint = CreateButton(".", (int)((10 + (17)*55) * SizeRatio),
                                    (int)(210 * SizeRatio), btnWidth, btnHeight);
-        if (row5PadNum[i].Length() > 0) {
-            btn->Tag = (NativeInt)(wchar_t)row5PadNum[i][1];
-        }
-        btn->OnMouseDown = OnNumPadKeyMouseDown;  // Use separate handler
-        padbuttons.push_back(btn);
-    }
+    btnpoint->Tag = (NativeInt)(wchar_t)row5PadNum[1][1];
+    btnpoint->OnMouseDown = OnNumPadKeyMouseDown;  // Use separate handler
+    padbuttons.push_back(btnpoint);
 
     // Mettre le NumPad invisible
     for (int i = 0; i < padbuttons.size(); i++)
