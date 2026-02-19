@@ -801,7 +801,7 @@ void __fastcall TFormKeyboard::UpdateMajButtonImage()
 void __fastcall TFormKeyboard::UpdateShiftButtonState()
 {
     if (!btnShift) return;
-    
+
     if (FShiftActive) {
         btnShift->Font->Style = TFontStyles() << fsBold;  // Gras quand actif
     } else {
