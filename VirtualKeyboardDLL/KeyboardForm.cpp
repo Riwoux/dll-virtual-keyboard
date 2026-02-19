@@ -229,10 +229,11 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     pnlShift->Caption    = "Shift";
     pnlShift->BevelOuter = bvRaised;
     pnlShift->ParentColor = false;
-    pnlShift->Color      = TColor(0x00ffffff);
+    pnlShift->Color      = clWhite;
     pnlShift->Cursor     = crHandPoint;
     pnlShift->Font->Size = (int)(10 * SizeRatio);
 	pnlShift->OnMouseDown = OnShiftMouseDown;
+    UpdateShiftButtonColor();
 
     // Maj button
     pnlMaj = CreateImageButton((int)(10 * SizeRatio), row,
@@ -811,13 +812,12 @@ void __fastcall TFormKeyboard::UpdateShiftButtonColor()
 {
     if (!pnlShift) return;
 	pnlShift->ParentColor = false;
+    pnlShift->Color      = clWhite;
     if (FShiftActive) {
-        pnlShift->Color = TColor(0x00FFD080);
         pnlShift->BevelOuter = bvLowered;
     } else {
-        pnlShift->Color = TColor(0x00ffffff);
         pnlShift->BevelOuter = bvRaised;
     }
     pnlShift->Refresh();
-	pnlShift->Update();
+    pnlShift->Update();
 }
