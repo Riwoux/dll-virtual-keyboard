@@ -344,21 +344,20 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     {
         padbuttons[i]->Visible = false;
     }
-    // Mettre les autres langues invisibles
-    for (int i = 0; i < qwerty.size(); i++)
-    {
-        azerty[i]->Visible = false;
-    }
-    
-    // Initialiser les labels des boutons selon l'état initial
-    UpdateAllButtonLabels();
-    etatlangue=AZERTY;
+
+    // D'abord définir la langue AVANT de mettre à jour les labels
+    etatlangue = AZERTY;
+
+    // Configurer la visibilité des boutons
     for (int i = 0; i < azerty.size(); i++)
     {
         azerty[i]->Visible = true;
         qwerty[i]->Visible = false;
         qwertz[i]->Visible = false;
     }
+
+    // Initialiser les labels des boutons selon l'état initial (maintenant en AZERTY)
+    UpdateAllButtonLabels();
 }
 
 __fastcall TFormKeyboard::~TFormKeyboard()
@@ -801,7 +800,7 @@ wchar_t __fastcall TFormKeyboard::TransformCharWithShift(wchar_t ch, bool applyS
     
     // Transformations spécifiques selon la langue
     if (etatlangue == AZERTY) {
-        if (ch == '&&') return '1';
+        if (ch == L'&') return '1';
         else if (ch == 'é') return '2';
         else if (ch == '"') return '3';
         else if (ch == '\x27') return '4';
@@ -827,7 +826,7 @@ wchar_t __fastcall TFormKeyboard::TransformCharWithShift(wchar_t ch, bool applyS
         else if (ch == '4') return '$';
         else if (ch == '5') return '%';
         else if (ch == '6') return '^';
-        else if (ch == '7') return '&&';
+        else if (ch == '7') return L'&';
         else if (ch == '8') return '*';
         else if (ch == '9') return '(';
         else if (ch == '0') return ')';
@@ -847,7 +846,7 @@ wchar_t __fastcall TFormKeyboard::TransformCharWithShift(wchar_t ch, bool applyS
         else if (ch == '3') return L'\x00A7';
         else if (ch == '4') return '$';
         else if (ch == '5') return '%';
-        else if (ch == '6') return '&&';
+        else if (ch == '6') return L'&';
         else if (ch == '7') return '/';
         else if (ch == '8') return '(';
         else if (ch == '9') return ')';
@@ -893,7 +892,12 @@ void __fastcall TFormKeyboard::UpdateAllButtonLabels()
         
         wchar_t originalChar = (wchar_t)btn->Tag;
         wchar_t displayChar = TransformCharWithShift(originalChar, isShifted);
-        btn->Caption = String(displayChar);
+        String caption = String(displayChar);
+        // VCL uses '&' as an accelerator prefix, so it must be escaped as '&&' to display literally
+        if (displayChar == L'&') {
+            caption = "&&";
+        }
+        btn->Caption = caption;
     }
 }
 
