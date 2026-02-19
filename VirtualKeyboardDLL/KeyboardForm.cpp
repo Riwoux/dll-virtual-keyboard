@@ -19,7 +19,7 @@ int langues[3]={AZERTY, QWERTY, QWERTZ};
 __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     : TForm(Owner), FTargetHandle(NULL), FShiftActive(false), FMajActive(false),
     NumPadActive(false), etatlangue(QWERTY), MajOffImage(NULL), MajOnImage(NULL),
-    imgMaj(NULL), pnlMaj(NULL), pnlShift(NULL)
+    imgMaj(NULL), pnlMaj(NULL), btnShift(NULL)
 {
     LoadPNGFromResource();
 
@@ -220,20 +220,10 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     btnRight->OnMouseDown = OnArrowMouseDown;
 
     // Shift button
-    pnlShift = new TPanel(this);
-    pnlShift->Parent = this;
-    pnlShift->Left   = (int)(85 * SizeRatio);
-    pnlShift->Top    = row;
-    pnlShift->Width  = (int)(70 * SizeRatio);
-    pnlShift->Height = btnHeight;
-    pnlShift->Caption    = "Shift";
-    pnlShift->BevelOuter = bvRaised;
-    pnlShift->ParentColor = false;
-    pnlShift->Color      = clWhite;
-    pnlShift->Cursor     = crHandPoint;
-    pnlShift->Font->Size = (int)(10 * SizeRatio);
-	pnlShift->OnMouseDown = OnShiftMouseDown;
-    UpdateShiftButtonColor();
+    btnShift = CreateButton("Shift", (int)(85 * SizeRatio), row,
+                            (int)(70 * SizeRatio), btnHeight);
+    btnShift->OnMouseDown = OnShiftMouseDown;
+    UpdateShiftButtonState();
 
     // Maj button
     pnlMaj = CreateImageButton((int)(10 * SizeRatio), row,
@@ -505,7 +495,7 @@ void __fastcall TFormKeyboard::OnKeyButtonMouseDown(TObject *Sender,
             else if (ch == '.') ch = ':';
         }
         FShiftActive = false; // Reset shift after one key
-        UpdateShiftButtonColor();
+        UpdateShiftButtonState();
     } else {
         // Lowercase
         if (ch >= 'A' && ch <= 'Z') {
@@ -526,7 +516,7 @@ void __fastcall TFormKeyboard::OnShiftMouseDown(TObject *Sender,
 {
     if (Button != mbLeft) return;
     FShiftActive = !FShiftActive;
-    UpdateShiftButtonColor();
+    UpdateShiftButtonState();
 }
 
 //---------------------------------------------------------------------------
@@ -806,18 +796,15 @@ void __fastcall TFormKeyboard::UpdateMajButtonImage()
     imgMaj->Refresh();
 }
 //---------------------------------------------------------------------------
-// Met à jour la couleur du bouton Shift selon son état
+// Met à jour l'apparence du bouton Shift selon son état
 //---------------------------------------------------------------------------
-void __fastcall TFormKeyboard::UpdateShiftButtonColor()
+void __fastcall TFormKeyboard::UpdateShiftButtonState()
 {
-    if (!pnlShift) return;
-	pnlShift->ParentColor = false;
-    pnlShift->Color      = clWhite;
+    if (!btnShift) return;
+
     if (FShiftActive) {
-        pnlShift->BevelOuter = bvLowered;
+        btnShift->Font->Style = TFontStyles() << fsBold;  // Gras quand actif
     } else {
-        pnlShift->BevelOuter = bvRaised;
+        btnShift->Font->Style = TFontStyles();  // Normal quand inactif
     }
-    pnlShift->Refresh();
-    pnlShift->Update();
 }
