@@ -16,6 +16,14 @@
 #define RT_RCDATA MAKEINTRESOURCEW(10)
 #endif
 //---------------------------------------------------------------------------
+// Structure to hold key data with both normal and shifted states
+struct KeyData {
+    String normalCaption;   // Display text when not shifted (VCL-safe, e.g., "&&" for ampersand)
+    String shiftedCaption;  // Display text when shifted (VCL-safe)
+    wchar_t normalChar;     // Character to send when not shifted
+    wchar_t shiftedChar;    // Character to send when shifted
+};
+//---------------------------------------------------------------------------
 class TFormKeyboard : public TForm
 {
 __published:
@@ -29,6 +37,9 @@ private:
 	std::vector<TButton*> azerty;
 	std::vector<TButton*> qwerty;
     std::vector<TButton*> qwertz;
+	std::vector<KeyData> azertyData;
+	std::vector<KeyData> qwertyData;
+	std::vector<KeyData> qwertzData;
 	int etatlangue;
 
     TImage* imgMaj;
@@ -59,14 +70,16 @@ private:
                                      TShiftState Shift, int X, int Y);
     void __fastcall OnSpaceMouseDown(TObject *Sender, TMouseButton Button,
                                      TShiftState Shift, int X, int Y);
+	void __fastcall OnNumPadKeyMouseDown(TObject *Sender, TMouseButton Button,
+                                         TShiftState Shift, int X, int Y);
 	void __fastcall OnNumPadClick(TObject *Sender);
 	void __fastcall OnLanguageClick(TObject *Sender);
     void __fastcall FormMouseDown(TObject *Sender, TMouseButton Button,
 									TShiftState Shift, int X, int Y);
     void __fastcall UpdateShiftButtonState();
     
-    // Fonction utilitaire pour transformer les caractères
-    wchar_t __fastcall TransformCharWithShift(wchar_t ch, bool applyShift);
+    // Initialize keyboard layout data
+    void __fastcall InitializeKeyboardData();
     
     // Mise à jour des labels de tous les boutons
     void __fastcall UpdateAllButtonLabels();
