@@ -3,18 +3,13 @@
 #define KeyboardFormH
 //---------------------------------------------------------------------------
 #include <System.Classes.hpp>
+#define WIN32_LEAN_AND_MEAN
+#include <Winapi.Windows.hpp>
 #include <Vcl.Controls.hpp>
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.Forms.hpp>
-#include <Vcl.Graphics.hpp>
-#include <Vcl.ExtCtrls.hpp>
-#include <Vcl.Imaging.pngimage.hpp>
 #include <vector>
-#include <windows.h>
 
-#ifndef RT_RCDATA
-#define RT_RCDATA MAKEINTRESOURCEW(10)
-#endif
 //---------------------------------------------------------------------------
 // Structure to hold key data with both normal and shifted states
 struct KeyData {
@@ -41,18 +36,14 @@ private:
 	std::vector<KeyData> qwertyData;
 	std::vector<KeyData> qwertzData;
 	int etatlangue;
+	bool FDeadPending;
+    wchar_t FDeadChar;
 
-    TImage* imgMaj;
-    TPngImage* MajOffImage;
-    TPngImage* MajOnImage;
-    TPanel* pnlMaj;
     TButton* btnShift;
+    TButton* btnMaj;
 
     TButton* __fastcall CreateButton(const String& Caption, int Left, int Top,
                                      int Width, int Height);
-    TPanel* __fastcall CreateImageButton(int Left, int Top, int Width, int Height);
-    void __fastcall LoadPNGFromResource();
-    void __fastcall UpdateMajButtonImage();
 
 
     void __fastcall FormShow(TObject *Sender);
@@ -77,22 +68,19 @@ private:
     void __fastcall FormMouseDown(TObject *Sender, TMouseButton Button,
 									TShiftState Shift, int X, int Y);
     void __fastcall UpdateShiftButtonState();
-    
-    // Initialize keyboard layout data
+    void __fastcall UpdateMajButtonState();
     void __fastcall InitializeKeyboardData();
-    
-    // Mise à jour des labels de tous les boutons
     void __fastcall UpdateAllButtonLabels();
-
+    wchar_t __fastcall ComposeDeadKey(wchar_t dead, wchar_t base) const;
     void CaptureTargetWindow();
     void __fastcall SendCharToTarget(wchar_t ch);
     void __fastcall SendKeyToTarget(WORD vKey);
+    bool __fastcall IsDeadKey(wchar_t ch) const;
     void __fastcall SendArrowKeyToTarget(BYTE vkArrowCode);
 
 
 public:
     __fastcall TFormKeyboard(TComponent* Owner);
-    __fastcall ~TFormKeyboard();
     void __fastcall SetTargetHandle(HWND handle);
 };
 //---------------------------------------------------------------------------

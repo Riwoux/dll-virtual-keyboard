@@ -1,6 +1,8 @@
 ﻿//---------------------------------------------------------------------------
 // KeyboardForm.cpp - Simple Virtual Keyboard Implementation
 //---------------------------------------------------------------------------
+#define WIN32_LEAN_AND_MEAN
+#include <Winapi.Windows.hpp>
 #include <vcl.h>
 #include <vector>
 #pragma hdrstop
@@ -8,7 +10,6 @@
 
 #pragma package(smart_init)
 #pragma resource "*.dfm"
-#pragma resource "keyboard_resources.res"
 TFormKeyboard *FormKeyboard;
 
 #define AZERTY 0
@@ -204,11 +205,8 @@ void __fastcall TFormKeyboard::InitializeKeyboardData()
 //---------------------------------------------------------------------------
 __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     : TForm(Owner), FTargetHandle(NULL), FShiftActive(false), FMajActive(false),
-    NumPadActive(false), etatlangue(QWERTY), MajOffImage(NULL), MajOnImage(NULL),
-    imgMaj(NULL), pnlMaj(NULL), btnShift(NULL)
+    NumPadActive(false), etatlangue(QWERTY), btnShift(NULL), btnMaj(NULL)
 {
-    LoadPNGFromResource();
-    
     // Initialize keyboard layout data FIRST
     InitializeKeyboardData();
 
@@ -235,6 +233,8 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     OnMouseDown = FormMouseDown;
     OnShow = FormShow;
 
+    FDeadPending = false;
+    FDeadChar = 0;
     int row = (int)(10 * SizeRatio);
 
     // Azerty Row 1 - Store index in Tag, use normalCaption from data
@@ -403,9 +403,10 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     UpdateShiftButtonState();
 
     // Maj button
-    pnlMaj = CreateImageButton((int)(10 * SizeRatio), row,
-                                  (int)(70 * SizeRatio), btnHeight);
-    pnlMaj->OnMouseDown = OnMajMouseDown;
+    btnMaj = CreateButton("CapsLock", (int)(10 * SizeRatio), row,
+                            (int)(70 * SizeRatio), btnHeight);
+    btnMaj->OnMouseDown = OnMajMouseDown;
+    UpdateMajButtonState();
 
     // Space button
     TButton* btnSpace = CreateButton("Space", (int)(160 * SizeRatio), row,
@@ -512,13 +513,6 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     // Initialiser les labels des boutons selon l'état initial (maintenant en AZERTY)
     UpdateAllButtonLabels();
 }
-
-__fastcall TFormKeyboard::~TFormKeyboard()
-{
-    if (MajOffImage) delete MajOffImage;
-    if (MajOnImage) delete MajOnImage;
-}
-
 //---------------------------------------------------------------------------
 // Create a normal button
 //---------------------------------------------------------------------------
@@ -536,41 +530,6 @@ TButton* __fastcall TFormKeyboard::CreateButton(const String& Caption,
     btn->Font->Size = (int)(10 * SizeRatio);
     return btn;
 }
-
-//---------------------------------------------------------------------------
-// Create an image button (Panel + TImage pour PNG)
-//---------------------------------------------------------------------------
-TPanel* __fastcall TFormKeyboard::CreateImageButton(int Left, int Top,
-                                                     int Width, int Height)
-{
-    // Créer un panel comme conteneur
-    TPanel* panel = new TPanel(this);
-    panel->Parent = this;
-    panel->Left = Left;
-    panel->Top = Top;
-    panel->Width = Width;
-    panel->Height = Height;
-    panel->BevelOuter = bvNone;
-    panel->Caption = "";
-    panel->Color = clBtnFace;
-    panel->Cursor = crHandPoint;
-
-    // Créer le composant TImage pour afficher le PNG
-    imgMaj = new TImage(panel);
-    imgMaj->Parent = panel;
-    imgMaj->Align = alClient;
-    imgMaj->Stretch = true;
-    imgMaj->Proportional = true;
-    imgMaj->Center = true;
-    imgMaj->Transparent = true;
-
-    imgMaj->OnMouseDown = OnMajMouseDown;
-
-    UpdateMajButtonImage();
-
-    return panel;
-}
-
 //---------------------------------------------------------------------------
 // Set target handle
 //---------------------------------------------------------------------------
@@ -646,6 +605,47 @@ void __fastcall TFormKeyboard::OnKeyButtonMouseDown(TObject *Sender,
         UpdateAllButtonLabels();
     }
 
+	// --- Gestion des touches mortes ---
+    // Si l'utilisateur clique une touche morte, on la met en attente
+    if (IsDeadKey(ch)) {
+        // Double appui sur la même touche morte => on sort le caractère espacé (^^ => ^)
+        if (FDeadPending && FDeadChar == ch) {
+            SendCharToTarget(ch);
+            FDeadPending = false;
+            FDeadChar = 0;
+            return;
+        }
+
+        FDeadPending = true;
+        FDeadChar = ch;
+        return;
+    }
+
+    // Si une touche morte est en attente, on essaie de composer
+    if (FDeadPending) {
+        // Si l'utilisateur tape espace après l'accent => sortir l'accent seul
+        if (ch == L' ') {
+            SendCharToTarget(FDeadChar);
+            FDeadPending = false;
+            FDeadChar = 0;
+            return;
+        }
+
+        wchar_t composed = ComposeDeadKey(FDeadChar, ch);
+        if (composed != 0) {
+            SendCharToTarget(composed);
+        } else {
+            // Envoie l'accent puis la lettre
+            SendCharToTarget(FDeadChar);
+            SendCharToTarget(ch);
+        }
+
+        FDeadPending = false;
+        FDeadChar = 0;
+        return;
+    }
+
+
     SendCharToTarget(ch);
 }
 
@@ -695,7 +695,7 @@ void __fastcall TFormKeyboard::OnMajMouseDown(TObject *Sender,
 {
     if (Button != mbLeft) return;
     FMajActive = !FMajActive;
-    UpdateMajButtonImage();
+    UpdateMajButtonState();
     UpdateAllButtonLabels();
 }
 
@@ -917,55 +917,6 @@ void __fastcall TFormKeyboard::FormMouseDown(TObject *Sender, TMouseButton Butto
         SendMessage(Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0);
     }
 }
-
-void __fastcall TFormKeyboard::LoadPNGFromResource()
-{
-    try {
-        MajOffImage = new TPngImage();
-        MajOnImage = new TPngImage();
-
-        // Définir le type de ressource RCDATA
-        WideChar* ResTypeRCDATA = MAKEINTRESOURCEW(10);
-
-        TResourceStream* rsOff = new TResourceStream(
-            (NativeUInt)HInstance,
-            "MAJ_OFF",
-            ResTypeRCDATA
-        );
-
-        TResourceStream* rsOn = new TResourceStream(
-            (NativeUInt)HInstance,
-            "MAJ_ON",
-            ResTypeRCDATA
-        );
-
-        MajOffImage->LoadFromStream(rsOff);
-        MajOnImage->LoadFromStream(rsOn);
-
-        delete rsOff;
-        delete rsOn;
-    }
-    catch (Exception &e) {
-        ShowMessage("Erreur lors du chargement des PNG: " + e.Message);
-
-        if (!MajOffImage) MajOffImage = new TPngImage();
-        if (!MajOnImage) MajOnImage = new TPngImage();
-    }
-}
-
-void __fastcall TFormKeyboard::UpdateMajButtonImage()
-{
-    if (!imgMaj) return;
-
-    if (FMajActive) {
-        imgMaj->Picture->Assign(MajOnImage);
-    } else {
-        imgMaj->Picture->Assign(MajOffImage);
-    }
-
-    imgMaj->Refresh();
-}
-
 //---------------------------------------------------------------------------
 // Met à jour les labels de tous les boutons selon l'état Shift/Maj
 //---------------------------------------------------------------------------
@@ -1016,3 +967,62 @@ void __fastcall TFormKeyboard::UpdateShiftButtonState()
         btnShift->Font->Style = TFontStyles();  // Normal quand inactif
     }
 }
+//---------------------------------------------------------------------------
+// Met à jour l'apparence du bouton Maj selon son état
+//---------------------------------------------------------------------------
+void __fastcall TFormKeyboard::UpdateMajButtonState()
+{
+    if (!btnMaj) return;
+
+    if (FMajActive) {
+        btnMaj->Font->Style = TFontStyles() << fsBold;  // Gras quand actif
+    } else {
+        btnMaj->Font->Style = TFontStyles();  // Normal quand inactif
+    }
+}
+
+
+bool __fastcall TFormKeyboard::IsDeadKey(wchar_t ch) const
+{
+    return (ch == L'^' || ch == L'¨');
+}
+
+wchar_t __fastcall TFormKeyboard::ComposeDeadKey(wchar_t dead, wchar_t base) const
+{
+    // Circonflexe ^
+    if (dead == L'^') {
+        switch (base) {
+            case L'a': return L'â';
+            case L'e': return L'ê';
+            case L'i': return L'î';
+            case L'o': return L'ô';
+            case L'u': return L'û';
+            case L'A': return L'Â';
+            case L'E': return L'Ê';
+            case L'I': return L'Î';
+            case L'O': return L'Ô';
+            case L'U': return L'Û';
+        }
+    }
+
+    // Tréma ¨
+    if (dead == L'¨') {
+        switch (base) {
+            case L'a': return L'ä';
+            case L'e': return L'ë';
+            case L'i': return L'ï';
+            case L'o': return L'ö';
+            case L'u': return L'ü';
+            case L'y': return L'ÿ';
+            case L'A': return L'Ä';
+            case L'E': return L'Ë';
+            case L'I': return L'Ï';
+            case L'O': return L'Ö';
+            case L'U': return L'Ü';
+            case L'Y': return L'Ÿ';
+        }
+    }
+
+    return 0;
+}
+
