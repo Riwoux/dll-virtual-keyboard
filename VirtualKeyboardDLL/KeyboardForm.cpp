@@ -674,6 +674,9 @@ void __fastcall TFormKeyboard::OnLanguageClick(TObject *Sender)
             qwerty[i]->Visible = false;
         }
     }
+    
+    // Mettre à jour les labels après changement de langue
+    UpdateAllButtonLabels();
 }
 
 void __fastcall TFormKeyboard::FormMouseDown(TObject *Sender, TMouseButton Button,
