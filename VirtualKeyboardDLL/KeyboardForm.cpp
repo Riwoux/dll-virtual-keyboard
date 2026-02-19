@@ -893,6 +893,7 @@ void __fastcall TFormKeyboard::UpdateAllButtonLabels()
         wchar_t originalChar = (wchar_t)btn->Tag;
         wchar_t displayChar = TransformCharWithShift(originalChar, isShifted);
         String caption = String(displayChar);
+        // VCL uses '&' as an accelerator prefix, so it must be escaped as '&&' to display literally
         if (displayChar == L'&') {
             caption = "&&";
         }
