@@ -13,7 +13,8 @@ TFormKeyboard *FormKeyboard;
 
 #define AZERTY 0
 #define QWERTY 1
-int langues[2]={AZERTY, QWERTY};
+#define QWERTZ 2
+int langues[3]={AZERTY, QWERTY, QWERTZ};
 
 __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     : TForm(Owner), FTargetHandle(NULL), FShiftActive(false), FMajActive(false),
@@ -67,6 +68,16 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwerty.push_back(btn);
     }
+    // Qwerty Row 1
+    String qwertz1Keys[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "ß", "´"};
+    for (int i = 0; i < 12; i++) {
+        TButton* btn = CreateButton(qwertz1Keys[i],
+                                   (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
+                                   btnWidth, btnHeight);
+        btn->Tag = (NativeInt)(wchar_t)qwertz1Keys[i][1];
+        btn->OnMouseDown = OnKeyButtonMouseDown;
+        qwertz.push_back(btn);
+    }
 
     // Changer la langue
     TButton* btnLanguage = CreateButton("Language", (int)(670 * SizeRatio), row,
@@ -93,6 +104,16 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         btn->Tag = (NativeInt)(wchar_t)qwerty2Keys[i][1];
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwerty.push_back(btn);
+    }
+    // Qwertz Row 2
+    String qwertz2Keys[] = {"Q", "W", "E", "R", "T", "Z", "U", "I", "O", "P", "ü", "+"};
+    for (int i = 0; i < 12; i++) {
+        TButton* btn = CreateButton(qwertz2Keys[i],
+                                   (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
+                                   btnWidth, btnHeight);
+        btn->Tag = (NativeInt)(wchar_t)qwertz2Keys[i][1];
+        btn->OnMouseDown = OnKeyButtonMouseDown;
+        qwertz.push_back(btn);
     }
 
     // Backspace button
@@ -121,6 +142,16 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwerty.push_back(btn);
     }
+    // Qwertz Row 3
+    String qwertz3Keys[] = {"A", "S", "D", "F", "G", "H", "J", "K", "L", "ö", "ä", "#"};
+    for (int i = 0; i < 12; i++) {
+        TButton* btn = CreateButton(qwertz3Keys[i],
+                                   (int)(35 * SizeRatio) + i * (btnWidth + spacing), row,
+                                   btnWidth, btnHeight);
+        btn->Tag = (NativeInt)(wchar_t)qwertz3Keys[i][1];
+        btn->OnMouseDown = OnKeyButtonMouseDown;
+        qwertz.push_back(btn);
+    }
 
     // Enter button
     TButton* btnEnter = CreateButton("Enter", (int)(695 * SizeRatio), row,
@@ -147,6 +178,16 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         btn->Tag = (NativeInt)(wchar_t)qwerty4Keys[i][1];
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwerty.push_back(btn);
+    }
+    // Qwertz Row 4
+    String qwertz4Keys[] = {"<", "Y", "X", "C", "V", "B", "N", "M", ",", "."};
+    for (int i = 0; i < 10; i++) {
+        TButton* btn = CreateButton(qwertz4Keys[i],
+                                   (int)(5 * SizeRatio) + i * (btnWidth + spacing), row,
+                                   btnWidth, btnHeight);
+        btn->Tag = (NativeInt)(wchar_t)qwertz4Keys[i][1];
+        btn->OnMouseDown = OnKeyButtonMouseDown;
+        qwertz.push_back(btn);
     }
 
     // Special keys
@@ -179,9 +220,18 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     btnRight->OnMouseDown = OnArrowMouseDown;
 
     // Shift button
-    TButton* btnShift = CreateButton("Shift", (int)(85 * SizeRatio), row,
-                                    (int)(70 * SizeRatio), btnHeight);
-    btnShift->OnMouseDown = OnShiftMouseDown;
+    pnlShift = new TPanel(this);
+    pnlShift->Parent = this;
+    pnlShift->Left   = (int)(85 * SizeRatio);
+    pnlShift->Top    = row;
+    pnlShift->Width  = (int)(70 * SizeRatio);
+    pnlShift->Height = btnHeight;
+    pnlShift->Caption    = "Shift";
+    pnlShift->BevelOuter = bvRaised;
+    pnlShift->Color      = TColor(0x00ffffff);
+    pnlShift->Cursor     = crHandPoint;
+    pnlShift->Font->Size = (int)(10 * SizeRatio);
+	pnlShift->OnMouseDown = OnShiftMouseDown;
 
     // Maj button
     pnlMaj = CreateImageButton((int)(10 * SizeRatio), row,
@@ -431,8 +481,29 @@ void __fastcall TFormKeyboard::OnKeyButtonMouseDown(TObject *Sender,
             else if (ch == '.') ch = '>';
             else if (ch == '/') ch = '?';
             else if (ch == '\\') ch = '\x7c';
+        } else if (etatlangue == QWERTZ) {
+            if (ch == '1') ch = '!';
+            else if (ch == '2') ch = '"';
+            else if (ch == '3') ch = L'\x00A7';
+            else if (ch == '4') ch = '$';
+            else if (ch == '5') ch = '%';
+            else if (ch == '6') ch = '&';
+            else if (ch == '7') ch = '/';
+            else if (ch == '8') ch = '(';
+            else if (ch == '9') ch = ')';
+            else if (ch == '0') ch = '=';
+            else if (ch == L'\x00DF') ch = '?';
+            else if (ch == L'\x00B4') ch = '`';
+            else if (ch == L'\x00FC') ch = L'\x00DC';
+            else if (ch == '+') ch = '*';
+            else if (ch == L'\x00F6') ch = L'\x00D6';
+            else if (ch == L'\x00E4') ch = L'\x00C4';
+            else if (ch == '#') ch = '\'';
+            else if (ch == ',') ch = ';';
+            else if (ch == '.') ch = ':';
         }
         FShiftActive = false; // Reset shift after one key
+        UpdateShiftButtonColor();
     } else {
         // Lowercase
         if (ch >= 'A' && ch <= 'Z') {
@@ -453,6 +524,7 @@ void __fastcall TFormKeyboard::OnShiftMouseDown(TObject *Sender,
 {
     if (Button != mbLeft) return;
     FShiftActive = !FShiftActive;
+    UpdateShiftButtonColor();
 }
 
 //---------------------------------------------------------------------------
@@ -646,7 +718,7 @@ void __fastcall TFormKeyboard::SendArrowKeyToTarget(BYTE vkArrowCode)
 void __fastcall TFormKeyboard::OnLanguageClick(TObject *Sender)
 {
     etatlangue += 1;
-    if (etatlangue >= 2)
+    if (etatlangue >= 3)
     {
         etatlangue=AZERTY;
     }
@@ -656,13 +728,21 @@ void __fastcall TFormKeyboard::OnLanguageClick(TObject *Sender)
         {
             azerty[i]->Visible = true;
             qwerty[i]->Visible = false;
+            qwertz[i]->Visible = false;
         }
-    }
-    else if (etatlangue == QWERTY) {
+    } else if (etatlangue == QWERTY) {
         for (int i = 0; i < qwerty.size(); i++)
         {
             qwerty[i]->Visible = true;
             azerty[i]->Visible = false;
+            qwertz[i]->Visible = false;
+        }
+    } else if (etatlangue == QWERTZ) {
+        for (int i = 0; i < qwerty.size(); i++)
+        {
+            qwertz[i]->Visible = true;
+            azerty[i]->Visible = false;
+            qwerty[i]->Visible = false;
         }
     }
 }
@@ -722,4 +802,16 @@ void __fastcall TFormKeyboard::UpdateMajButtonImage()
     }
 
     imgMaj->Refresh();
+}
+//---------------------------------------------------------------------------
+// Met à jour la couleur du bouton Shift selon son état
+//---------------------------------------------------------------------------
+void __fastcall TFormKeyboard::UpdateShiftButtonColor()
+{
+    if (!pnlShift) return;
+    if (FShiftActive) {
+        pnlShift->Color = TColor(0x00FFD080);
+    } else {
+        pnlShift->Color = TColor(0x00ffffff);
+    }
 }
