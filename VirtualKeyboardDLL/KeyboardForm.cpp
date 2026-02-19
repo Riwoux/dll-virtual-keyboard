@@ -49,38 +49,32 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     int row = (int)(10 * SizeRatio);
 
     // Azerty Row 1
-    String azerty1Keys[] = {"&&", "é", '"', "'", "(", "-", "è", "_", "ç", "à", ")","="};
+    wchar_t azerty1Chars[] = {L'&', L'é', L'"', L'\'', L'(', L'-', L'è', L'_', L'ç', L'à', L')', L'='};
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(azerty1Keys[i],
+        TButton* btn = CreateButton(String((wchar_t)azerty1Chars[i]),
                                     (int)(10 * SizeRatio) + i * (btnWidth + spacing),
                                     row, btnWidth, btnHeight);
-        if (azerty1Keys[i].Length() > 0) {
-            btn->Tag = (NativeInt)(wchar_t)azerty1Keys[i][1];
-        }
+        btn->Tag = (NativeInt)azerty1Chars[i];
         btn->OnMouseDown = OnKeyButtonMouseDown;
         azerty.push_back(btn);
     }
     // Qwerty Row 1
-    String qwerty1Keys[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="};
+    wchar_t qwerty1Chars[] = {L'1', L'2', L'3', L'4', L'5', L'6', L'7', L'8', L'9', L'0', L'-', L'='};
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(qwerty1Keys[i],
+        TButton* btn = CreateButton(String((wchar_t)qwerty1Chars[i]),
                                    (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        if (qwerty1Keys[i].Length() > 0) {
-            btn->Tag = (NativeInt)(wchar_t)qwerty1Keys[i][1];
-        }
+        btn->Tag = (NativeInt)qwerty1Chars[i];
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwerty.push_back(btn);
     }
-    // Qwerty Row 1
-    String qwertz1Keys[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "ß", "´"};
+    // Qwertz Row 1
+    wchar_t qwertz1Chars[] = {L'1', L'2', L'3', L'4', L'5', L'6', L'7', L'8', L'9', L'0', L'ß', L'´'};
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(qwertz1Keys[i],
+        TButton* btn = CreateButton(String((wchar_t)qwertz1Chars[i]),
                                    (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        if (qwertz1Keys[i].Length() > 0) {
-            btn->Tag = (NativeInt)(wchar_t)qwertz1Keys[i][1];
-        }
+        btn->Tag = (NativeInt)qwertz1Chars[i];
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwertz.push_back(btn);
     }
@@ -92,38 +86,32 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
 
     row += btnHeight + spacing;
     // Azerty Row 2
-    String azerty2Keys[] = {"A", "Z", "E", "R", "T", "Y", "U", "I", "O", "P", "^", "$"};
+    wchar_t azerty2Chars[] = {L'a', L'z', L'e', L'r', L't', L'y', L'u', L'i', L'o', L'p', L'^', L'$'};
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(azerty2Keys[i],
+        TButton* btn = CreateButton(String((wchar_t)azerty2Chars[i]),
                                    (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        if (azerty2Keys[i].Length() > 0) {
-            btn->Tag = (NativeInt)(wchar_t)azerty2Keys[i][1];
-        }
+        btn->Tag = (NativeInt)azerty2Chars[i];
         btn->OnMouseDown = OnKeyButtonMouseDown;
         azerty.push_back(btn);
     }
     // Qwerty Row 2
-    String qwerty2Keys[] = {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]"};
+    wchar_t qwerty2Chars[] = {L'q', L'w', L'e', L'r', L't', L'y', L'u', L'i', L'o', L'p', L'[', L']'};
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(qwerty2Keys[i],
+        TButton* btn = CreateButton(String((wchar_t)qwerty2Chars[i]),
                                    (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        if (qwerty2Keys[i].Length() > 0) {
-            btn->Tag = (NativeInt)(wchar_t)qwerty2Keys[i][1];
-        }
+        btn->Tag = (NativeInt)qwerty2Chars[i];
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwerty.push_back(btn);
     }
     // Qwertz Row 2
-    String qwertz2Keys[] = {"Q", "W", "E", "R", "T", "Z", "U", "I", "O", "P", "ü", "+"};
+    wchar_t qwertz2Chars[] = {L'q', L'w', L'e', L'r', L't', L'z', L'u', L'i', L'o', L'p', L'ü', L'+'};
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(qwertz2Keys[i],
+        TButton* btn = CreateButton(String((wchar_t)qwertz2Chars[i]),
                                    (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        if (qwertz2Keys[i].Length() > 0) {
-            btn->Tag = (NativeInt)(wchar_t)qwertz2Keys[i][1];
-        }
+        btn->Tag = (NativeInt)qwertz2Chars[i];
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwertz.push_back(btn);
     }
@@ -135,38 +123,32 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
 
     row += btnHeight + spacing;
     // Azerty Row 3
-    String azerty3Keys[] = {"Q", "S", "D", "F", "G", "H", "J", "K", "L", "M", "ù", "*"};
+    wchar_t azerty3Chars[] = {L'q', L's', L'd', L'f', L'g', L'h', L'j', L'k', L'l', L'm', L'ù', L'*'};
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(azerty3Keys[i],
+        TButton* btn = CreateButton(String((wchar_t)azerty3Chars[i]),
                                    (int)(35 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        if (azerty3Keys[i].Length() > 0) {
-            btn->Tag = (NativeInt)(wchar_t)azerty3Keys[i][1];
-        }
+        btn->Tag = (NativeInt)azerty3Chars[i];
         btn->OnMouseDown = OnKeyButtonMouseDown;
         azerty.push_back(btn);
     }
     // Qwerty Row 3
-    String qwerty3Keys[] = {"A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", "\\"};
+    wchar_t qwerty3Chars[] = {L'a', L's', L'd', L'f', L'g', L'h', L'j', L'k', L'l', L';', L'\'', L'\\'};
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(qwerty3Keys[i],
+        TButton* btn = CreateButton(String((wchar_t)qwerty3Chars[i]),
                                    (int)(35 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        if (qwerty3Keys[i].Length() > 0) {
-            btn->Tag = (NativeInt)(wchar_t)qwerty3Keys[i][1];
-        }
+        btn->Tag = (NativeInt)qwerty3Chars[i];
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwerty.push_back(btn);
     }
     // Qwertz Row 3
-    String qwertz3Keys[] = {"A", "S", "D", "F", "G", "H", "J", "K", "L", "ö", "ä", "#"};
+    wchar_t qwertz3Chars[] = {L'a', L's', L'd', L'f', L'g', L'h', L'j', L'k', L'l', L'ö', L'ä', L'#'};
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(qwertz3Keys[i],
+        TButton* btn = CreateButton(String((wchar_t)qwertz3Chars[i]),
                                    (int)(35 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        if (qwertz3Keys[i].Length() > 0) {
-            btn->Tag = (NativeInt)(wchar_t)qwertz3Keys[i][1];
-        }
+        btn->Tag = (NativeInt)qwertz3Chars[i];
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwertz.push_back(btn);
     }
@@ -178,38 +160,32 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
 
     row += btnHeight + spacing;
     // Azerty Row 4
-    String azerty4Keys[] = {"<", "W", "X", "C", "V", "B", "N", ",", ";",":"};
+    wchar_t azerty4Chars[] = {L'<', L'w', L'x', L'c', L'v', L'b', L'n', L',', L';', L':'};
     for (int i = 0; i < 10; i++) {
-        TButton* btn = CreateButton(azerty4Keys[i],
+        TButton* btn = CreateButton(String((wchar_t)azerty4Chars[i]),
                                    (int)(5 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        if (azerty4Keys[i].Length() > 0) {
-            btn->Tag = (NativeInt)(wchar_t)azerty4Keys[i][1];
-        }
+        btn->Tag = (NativeInt)azerty4Chars[i];
         btn->OnMouseDown = OnKeyButtonMouseDown;
         azerty.push_back(btn);
     }
     // Qwerty Row 4
-    String qwerty4Keys[] = {"<", "Z", "X", "C", "V", "B", "N", "M", ",", "."};
+    wchar_t qwerty4Chars[] = {L'<', L'z', L'x', L'c', L'v', L'b', L'n', L'm', L',', L'.'};
     for (int i = 0; i < 10; i++) {
-        TButton* btn = CreateButton(qwerty4Keys[i],
+        TButton* btn = CreateButton(String((wchar_t)qwerty4Chars[i]),
                                    (int)(5 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        if (qwerty4Keys[i].Length() > 0) {
-            btn->Tag = (NativeInt)(wchar_t)qwerty4Keys[i][1];
-        }
+        btn->Tag = (NativeInt)qwerty4Chars[i];
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwerty.push_back(btn);
     }
     // Qwertz Row 4
-    String qwertz4Keys[] = {"<", "Y", "X", "C", "V", "B", "N", "M", ",", "."};
+    wchar_t qwertz4Chars[] = {L'<', L'y', L'x', L'c', L'v', L'b', L'n', L'm', L',', L'.'};
     for (int i = 0; i < 10; i++) {
-        TButton* btn = CreateButton(qwertz4Keys[i],
+        TButton* btn = CreateButton(String((wchar_t)qwertz4Chars[i]),
                                    (int)(5 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        if (qwertz4Keys[i].Length() > 0) {
-            btn->Tag = (NativeInt)(wchar_t)qwertz4Keys[i][1];
-        }
+        btn->Tag = (NativeInt)qwertz4Chars[i];
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwertz.push_back(btn);
     }
