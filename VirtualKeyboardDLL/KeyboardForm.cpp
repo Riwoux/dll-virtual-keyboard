@@ -315,6 +315,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     {
         azerty[i]->Visible = false;
     }
+    
+    // Initialiser les labels des boutons selon l'état initial
+    UpdateAllButtonLabels();
 }
 
 __fastcall TFormKeyboard::~TFormKeyboard()
@@ -422,85 +425,17 @@ void __fastcall TFormKeyboard::OnKeyButtonMouseDown(TObject *Sender,
     CaptureTargetWindow();
     if (!FTargetHandle) return;
 
-    wchar_t ch = (wchar_t)btn->Tag;
-
-    // Apply shift if active
-    if (FShiftActive || FMajActive) {
-        if (ch >= 'A' && ch <= 'Z') {
-            // Already uppercase
-        } else if (ch >= 'a' && ch <= 'z') {
-            ch = ch - 'a' + 'A';
-        } else if (ch== '<') {
-            ch = '>';
-        } else if (etatlangue == AZERTY) {
-        	if (ch == '&') ch = '1';
-            else if (ch == 'é') ch = '2';
-            else if (ch == '"') ch = '3';
-            else if (ch == '\x27') ch = '4';
-            else if (ch == '(') ch = '5';
-            else if (ch == '-') ch = '6';
-            else if (ch == 'è') ch = '7';
-            else if (ch == '_') ch = '8';
-            else if (ch == 'ç') ch = '9';
-            else if (ch == 'à') ch = '0';
-            else if (ch == ')') ch = '°';
-            else if (ch == '=') ch = '+';
-            else if (ch == '^') ch = '¨';
-            else if (ch == '$') ch = '£';
-            else if (ch == 'ù') ch = '%';
-            else if (ch == '*') ch = 'µ';
-            else if (ch == ',') ch = '?';
-            else if (ch == ';') ch = '.';
-            else if (ch == ':') ch = '/';
-        } else if (etatlangue == QWERTY) {
-        	if (ch == '1') ch = '!';
-            else if (ch == '2') ch = '@';
-            else if (ch == '3') ch = '#';
-            else if (ch == '4') ch = '$';
-            else if (ch == '5') ch = '%';
-            else if (ch == '6') ch = '^';
-            else if (ch == '7') ch = '&';
-            else if (ch == '8') ch = '*';
-            else if (ch == '9') ch = '(';
-            else if (ch == '0') ch = ')';
-            else if (ch == '-') ch = '_';
-            else if (ch == '=') ch = '+';
-            else if (ch == '[') ch = '{';
-            else if (ch == ']') ch = '}';
-            else if (ch == ';') ch = ':';
-            else if (ch == '\x27') ch = '"';
-            else if (ch == ',') ch = '<';
-            else if (ch == '.') ch = '>';
-            else if (ch == '/') ch = '?';
-            else if (ch == '\\') ch = '\x7c';
-        } else if (etatlangue == QWERTZ) {
-            if (ch == '1') ch = '!';
-            else if (ch == '2') ch = '"';
-            else if (ch == '3') ch = L'\x00A7';
-            else if (ch == '4') ch = '$';
-            else if (ch == '5') ch = '%';
-            else if (ch == '6') ch = '&';
-            else if (ch == '7') ch = '/';
-            else if (ch == '8') ch = '(';
-            else if (ch == '9') ch = ')';
-            else if (ch == '0') ch = '=';
-            else if (ch == L'\x00DF') ch = '?';
-            else if (ch == L'\x00B4') ch = '`';
-            else if (ch == L'\x00FC') ch = L'\x00DC';
-            else if (ch == '+') ch = '*';
-            else if (ch == L'\x00F6') ch = L'\x00D6';
-            else if (ch == L'\x00E4') ch = L'\x00C4';
-            else if (ch == '#') ch = '\'';
-            else if (ch == ',') ch = ';';
-            else if (ch == '.') ch = ':';
-        }
-        FShiftActive = false; // Reset shift after one key
+    wchar_t originalChar = (wchar_t)btn->Tag;
+    bool applyShift = (FShiftActive || FMajActive);
+    
+    // Obtenir le caractère transformé
+    wchar_t ch = TransformCharWithShift(originalChar, applyShift);
+    
+    // Désactiver Shift après utilisation (mais pas Maj qui reste verrouillé)
+    if (FShiftActive) {
+        FShiftActive = false;
         UpdateShiftButtonState();
-    } else {
-        // Lowercase
-        if (ch >= 'A' && ch <= 'Z') {
-            ch = ch - 'A' + 'a';
-        }
+        UpdateAllButtonLabels();
     }
 
     SendCharToTarget(ch);
@@ -517,6 +452,7 @@ void __fastcall TFormKeyboard::OnShiftMouseDown(TObject *Sender,
     if (Button != mbLeft) return;
     FShiftActive = !FShiftActive;
     UpdateShiftButtonState();
+    UpdateAllButtonLabels();
 }
 
 //---------------------------------------------------------------------------
@@ -530,6 +466,7 @@ void __fastcall TFormKeyboard::OnMajMouseDown(TObject *Sender,
     if (Button != mbLeft) return;
     FMajActive = !FMajActive;
     UpdateMajButtonImage();
+    UpdateAllButtonLabels();
 }
 
 //---------------------------------------------------------------------------
@@ -737,6 +674,9 @@ void __fastcall TFormKeyboard::OnLanguageClick(TObject *Sender)
             qwerty[i]->Visible = false;
         }
     }
+    
+    // Mettre à jour les labels après changement de langue
+    UpdateAllButtonLabels();
 }
 
 void __fastcall TFormKeyboard::FormMouseDown(TObject *Sender, TMouseButton Button,
@@ -795,6 +735,127 @@ void __fastcall TFormKeyboard::UpdateMajButtonImage()
 
     imgMaj->Refresh();
 }
+
+//---------------------------------------------------------------------------
+// Transforme un caractère selon l'état Shift/Maj
+//---------------------------------------------------------------------------
+wchar_t __fastcall TFormKeyboard::TransformCharWithShift(wchar_t ch, bool applyShift)
+{
+    if (!applyShift) {
+        // Mode normal - convertir en minuscules si nécessaire
+        if (ch >= 'A' && ch <= 'Z') {
+            ch = ch - 'A' + 'a';
+        }
+        return ch;
+    }
+    
+    // Mode Shift/Maj activé
+    if (ch >= 'a' && ch <= 'z') {
+        return ch - 'a' + 'A';
+    } else if (ch >= 'A' && ch <= 'Z') {
+        return ch;  // Déjà en majuscule
+    } else if (ch == '<') {
+        return '>';
+    }
+    
+    // Transformations spécifiques selon la langue
+    if (etatlangue == AZERTY) {
+        if (ch == '&') return '1';
+        else if (ch == 'é') return '2';
+        else if (ch == '"') return '3';
+        else if (ch == '\x27') return '4';
+        else if (ch == '(') return '5';
+        else if (ch == '-') return '6';
+        else if (ch == 'è') return '7';
+        else if (ch == '_') return '8';
+        else if (ch == 'ç') return '9';
+        else if (ch == 'à') return '0';
+        else if (ch == ')') return '°';
+        else if (ch == '=') return '+';
+        else if (ch == '^') return '¨';
+        else if (ch == '$') return '£';
+        else if (ch == 'ù') return '%';
+        else if (ch == '*') return 'µ';
+        else if (ch == ',') return '?';
+        else if (ch == ';') return '.';
+        else if (ch == ':') return '/';
+    } else if (etatlangue == QWERTY) {
+        if (ch == '1') return '!';
+        else if (ch == '2') return '@';
+        else if (ch == '3') return '#';
+        else if (ch == '4') return '$';
+        else if (ch == '5') return '%';
+        else if (ch == '6') return '^';
+        else if (ch == '7') return '&';
+        else if (ch == '8') return '*';
+        else if (ch == '9') return '(';
+        else if (ch == '0') return ')';
+        else if (ch == '-') return '_';
+        else if (ch == '=') return '+';
+        else if (ch == '[') return '{';
+        else if (ch == ']') return '}';
+        else if (ch == ';') return ':';
+        else if (ch == '\x27') return '"';
+        else if (ch == ',') return '<';
+        else if (ch == '.') return '>';
+        else if (ch == '/') return '?';
+        else if (ch == '\\') return '|';
+    } else if (etatlangue == QWERTZ) {
+        if (ch == '1') return '!';
+        else if (ch == '2') return '"';
+        else if (ch == '3') return L'\x00A7';
+        else if (ch == '4') return '$';
+        else if (ch == '5') return '%';
+        else if (ch == '6') return '&';
+        else if (ch == '7') return '/';
+        else if (ch == '8') return '(';
+        else if (ch == '9') return ')';
+        else if (ch == '0') return '=';
+        else if (ch == L'\x00DF') return '?';
+        else if (ch == L'\x00B4') return '`';
+        else if (ch == L'\x00FC') return L'\x00DC';
+        else if (ch == '+') return '*';
+        else if (ch == L'\x00F6') return L'\x00D6';
+        else if (ch == L'\x00E4') return L'\x00C4';
+        else if (ch == '#') return '\'';
+        else if (ch == ',') return ';';
+        else if (ch == '.') return ':';
+    }
+    
+    return ch;  // Pas de transformation
+}
+
+//---------------------------------------------------------------------------
+// Met à jour les labels de tous les boutons selon l'état Shift/Maj
+//---------------------------------------------------------------------------
+void __fastcall TFormKeyboard::UpdateAllButtonLabels()
+{
+    bool isShifted = (FShiftActive || FMajActive);
+    
+    // Déterminer quel vecteur de boutons est actuellement visible
+    std::vector<TButton*>* activeButtons = nullptr;
+    
+    if (etatlangue == AZERTY) {
+        activeButtons = &azerty;
+    } else if (etatlangue == QWERTY) {
+        activeButtons = &qwerty;
+    } else if (etatlangue == QWERTZ) {
+        activeButtons = &qwertz;
+    }
+    
+    if (!activeButtons) return;
+    
+    // Mettre à jour chaque bouton
+    for (int i = 0; i < activeButtons->size(); i++) {
+        TButton* btn = (*activeButtons)[i];
+        if (!btn) continue;
+        
+        wchar_t originalChar = (wchar_t)btn->Tag;
+        wchar_t displayChar = TransformCharWithShift(originalChar, isShifted);
+        btn->Caption = String(displayChar);
+    }
+}
+
 //---------------------------------------------------------------------------
 // Met à jour l'apparence du bouton Shift selon son état
 //---------------------------------------------------------------------------
