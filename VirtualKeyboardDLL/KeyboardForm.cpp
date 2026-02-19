@@ -220,10 +220,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     btnRight->OnMouseDown = OnArrowMouseDown;
 
     // Shift button
-    TButton* btnShift = CreateButton("Shift", (int)(85 * SizeRatio), row,
-                                     (int)(70 * SizeRatio), btnHeight);
+    btnShift = CreateButton("Shift", (int)(85 * SizeRatio), row,
+                            (int)(70 * SizeRatio), btnHeight);
     btnShift->OnMouseDown = OnShiftMouseDown;
-    this->btnShift = btnShift;  // Assigner au membre de la classe
     UpdateShiftButtonState();
 
     // Maj button
@@ -804,8 +803,8 @@ void __fastcall TFormKeyboard::UpdateShiftButtonState()
     if (!btnShift) return;
     
     if (FShiftActive) {
-        btnShift->Font->Style = btnShift->Font->Style << fsBold;  // Gras quand actif
+        btnShift->Font->Style = TFontStyles() << fsBold;  // Gras quand actif
     } else {
-        btnShift->Font->Style = btnShift->Font->Style >> fsBold;  // Normal quand inactif
+        btnShift->Font->Style = TFontStyles();  // Normal quand inactif
     }
 }
