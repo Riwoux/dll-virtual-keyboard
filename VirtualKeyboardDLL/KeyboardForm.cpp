@@ -813,8 +813,11 @@ void __fastcall TFormKeyboard::UpdateShiftButtonColor()
 	pnlShift->ParentColor = false;
     if (FShiftActive) {
         pnlShift->Color = TColor(0x00FFD080);
+        pnlShift->BevelOuter = bvLowered;
     } else {
         pnlShift->Color = TColor(0x00ffffff);
+        pnlShift->BevelOuter = bvRaised;
     }
-    pnlShift->Invalidate();
+    pnlShift->Refresh();
+	pnlShift->Update();
 }
