@@ -17,174 +17,188 @@ TFormKeyboard *FormKeyboard;
 int langues[3]={AZERTY, QWERTY, QWERTZ};
 
 //---------------------------------------------------------------------------
+// Helper function to create KeyData structs for bcc32 compatibility
+//---------------------------------------------------------------------------
+static KeyData MakeKey(const String& normalCaption, const String& shiftedCaption,
+                       wchar_t normalChar, wchar_t shiftedChar)
+{
+    KeyData kd;
+    kd.normalCaption = normalCaption;
+    kd.shiftedCaption = shiftedCaption;
+    kd.normalChar = normalChar;
+    kd.shiftedChar = shiftedChar;
+    return kd;
+}
+
+//---------------------------------------------------------------------------
 // Initialize keyboard layout data with explicit normal/shifted mappings
 //---------------------------------------------------------------------------
 void __fastcall TFormKeyboard::InitializeKeyboardData()
 {
     // AZERTY Layout Data
     // Row 1
-    azertyData.push_back({"&&", "1", L'&', L'1'});
-    azertyData.push_back({"é", "2", L'é', L'2'});
-    azertyData.push_back({"\"", "3", L'"', L'3'});
-    azertyData.push_back({"'", "4", L'\'', L'4'});
-    azertyData.push_back({"(", "5", L'(', L'5'});
-    azertyData.push_back({"-", "6", L'-', L'6'});
-    azertyData.push_back({"è", "7", L'è', L'7'});
-    azertyData.push_back({"_", "8", L'_', L'8'});
-    azertyData.push_back({"ç", "9", L'ç', L'9'});
-    azertyData.push_back({"à", "0", L'à', L'0'});
-    azertyData.push_back({")", "°", L')', L'°'});
-    azertyData.push_back({"=", "+", L'=', L'+'});
+    azertyData.push_back(MakeKey("&&", "1", L'&', L'1'));
+    azertyData.push_back(MakeKey("é", "2", L'é', L'2'));
+    azertyData.push_back(MakeKey("\"", "3", L'"', L'3'));
+    azertyData.push_back(MakeKey("'", "4", L'\'', L'4'));
+    azertyData.push_back(MakeKey("(", "5", L'(', L'5'));
+    azertyData.push_back(MakeKey("-", "6", L'-', L'6'));
+    azertyData.push_back(MakeKey("è", "7", L'è', L'7'));
+    azertyData.push_back(MakeKey("_", "8", L'_', L'8'));
+    azertyData.push_back(MakeKey("ç", "9", L'ç', L'9'));
+    azertyData.push_back(MakeKey("à", "0", L'à', L'0'));
+    azertyData.push_back(MakeKey(")", "°", L')', L'°'));
+    azertyData.push_back(MakeKey("=", "+", L'=', L'+'));
     
     // Row 2
-    azertyData.push_back({"a", "A", L'a', L'A'});
-    azertyData.push_back({"z", "Z", L'z', L'Z'});
-    azertyData.push_back({"e", "E", L'e', L'E'});
-    azertyData.push_back({"r", "R", L'r', L'R'});
-    azertyData.push_back({"t", "T", L't', L'T'});
-    azertyData.push_back({"y", "Y", L'y', L'Y'});
-    azertyData.push_back({"u", "U", L'u', L'U'});
-    azertyData.push_back({"i", "I", L'i', L'I'});
-    azertyData.push_back({"o", "O", L'o', L'O'});
-    azertyData.push_back({"p", "P", L'p', L'P'});
-    azertyData.push_back({"^", "¨", L'^', L'¨'});
-    azertyData.push_back({"$", "£", L'$', L'£'});
+    azertyData.push_back(MakeKey("a", "A", L'a', L'A'));
+    azertyData.push_back(MakeKey("z", "Z", L'z', L'Z'));
+    azertyData.push_back(MakeKey("e", "E", L'e', L'E'));
+    azertyData.push_back(MakeKey("r", "R", L'r', L'R'));
+    azertyData.push_back(MakeKey("t", "T", L't', L'T'));
+    azertyData.push_back(MakeKey("y", "Y", L'y', L'Y'));
+    azertyData.push_back(MakeKey("u", "U", L'u', L'U'));
+    azertyData.push_back(MakeKey("i", "I", L'i', L'I'));
+    azertyData.push_back(MakeKey("o", "O", L'o', L'O'));
+    azertyData.push_back(MakeKey("p", "P", L'p', L'P'));
+    azertyData.push_back(MakeKey("^", "¨", L'^', L'¨'));
+    azertyData.push_back(MakeKey("$", "£", L'$', L'£'));
     
     // Row 3
-    azertyData.push_back({"q", "Q", L'q', L'Q'});
-    azertyData.push_back({"s", "S", L's', L'S'});
-    azertyData.push_back({"d", "D", L'd', L'D'});
-    azertyData.push_back({"f", "F", L'f', L'F'});
-    azertyData.push_back({"g", "G", L'g', L'G'});
-    azertyData.push_back({"h", "H", L'h', L'H'});
-    azertyData.push_back({"j", "J", L'j', L'J'});
-    azertyData.push_back({"k", "K", L'k', L'K'});
-    azertyData.push_back({"l", "L", L'l', L'L'});
-    azertyData.push_back({"m", "M", L'm', L'M'});
-    azertyData.push_back({"ù", "%", L'ù', L'%'});
-    azertyData.push_back({"*", "µ", L'*', L'µ'});
+    azertyData.push_back(MakeKey("q", "Q", L'q', L'Q'));
+    azertyData.push_back(MakeKey("s", "S", L's', L'S'));
+    azertyData.push_back(MakeKey("d", "D", L'd', L'D'));
+    azertyData.push_back(MakeKey("f", "F", L'f', L'F'));
+    azertyData.push_back(MakeKey("g", "G", L'g', L'G'));
+    azertyData.push_back(MakeKey("h", "H", L'h', L'H'));
+    azertyData.push_back(MakeKey("j", "J", L'j', L'J'));
+    azertyData.push_back(MakeKey("k", "K", L'k', L'K'));
+    azertyData.push_back(MakeKey("l", "L", L'l', L'L'));
+    azertyData.push_back(MakeKey("m", "M", L'm', L'M'));
+    azertyData.push_back(MakeKey("ù", "%", L'ù', L'%'));
+    azertyData.push_back(MakeKey("*", "µ", L'*', L'µ'));
     
     // Row 4
-    azertyData.push_back({"<", ">", L'<', L'>'});
-    azertyData.push_back({"w", "W", L'w', L'W'});
-    azertyData.push_back({"x", "X", L'x', L'X'});
-    azertyData.push_back({"c", "C", L'c', L'C'});
-    azertyData.push_back({"v", "V", L'v', L'V'});
-    azertyData.push_back({"b", "B", L'b', L'B'});
-    azertyData.push_back({"n", "N", L'n', L'N'});
-    azertyData.push_back({",", "?", L',', L'?'});
-    azertyData.push_back({";", ".", L';', L'.'});
-    azertyData.push_back({":", "/", L':', L'/'});
+    azertyData.push_back(MakeKey("<", ">", L'<', L'>'));
+    azertyData.push_back(MakeKey("w", "W", L'w', L'W'));
+    azertyData.push_back(MakeKey("x", "X", L'x', L'X'));
+    azertyData.push_back(MakeKey("c", "C", L'c', L'C'));
+    azertyData.push_back(MakeKey("v", "V", L'v', L'V'));
+    azertyData.push_back(MakeKey("b", "B", L'b', L'B'));
+    azertyData.push_back(MakeKey("n", "N", L'n', L'N'));
+    azertyData.push_back(MakeKey(",", "?", L',', L'?'));
+    azertyData.push_back(MakeKey(";", ".", L';', L'.'));
+    azertyData.push_back(MakeKey(":", "/", L':', L'/'));
     
     // QWERTY Layout Data
     // Row 1
-    qwertyData.push_back({"1", "!", L'1', L'!'});
-    qwertyData.push_back({"2", "@", L'2', L'@'});
-    qwertyData.push_back({"3", "#", L'3', L'#'});
-    qwertyData.push_back({"4", "$", L'4', L'$'});
-    qwertyData.push_back({"5", "%", L'5', L'%'});
-    qwertyData.push_back({"6", "^", L'6', L'^'});
-    qwertyData.push_back({"7", "&&", L'7', L'&'});
-    qwertyData.push_back({"8", "*", L'8', L'*'});
-    qwertyData.push_back({"9", "(", L'9', L'('});
-    qwertyData.push_back({"0", ")", L'0', L')'});
-    qwertyData.push_back({"-", "_", L'-', L'_'});
-    qwertyData.push_back({"=", "+", L'=', L'+'});
+    qwertyData.push_back(MakeKey("1", "!", L'1', L'!'));
+    qwertyData.push_back(MakeKey("2", "@", L'2', L'@'));
+    qwertyData.push_back(MakeKey("3", "#", L'3', L'#'));
+    qwertyData.push_back(MakeKey("4", "$", L'4', L'$'));
+    qwertyData.push_back(MakeKey("5", "%", L'5', L'%'));
+    qwertyData.push_back(MakeKey("6", "^", L'6', L'^'));
+    qwertyData.push_back(MakeKey("7", "&&", L'7', L'&'));
+    qwertyData.push_back(MakeKey("8", "*", L'8', L'*'));
+    qwertyData.push_back(MakeKey("9", "(", L'9', L'('));
+    qwertyData.push_back(MakeKey("0", ")", L'0', L')'));
+    qwertyData.push_back(MakeKey("-", "_", L'-', L'_'));
+    qwertyData.push_back(MakeKey("=", "+", L'=', L'+'));
     
     // Row 2
-    qwertyData.push_back({"q", "Q", L'q', L'Q'});
-    qwertyData.push_back({"w", "W", L'w', L'W'});
-    qwertyData.push_back({"e", "E", L'e', L'E'});
-    qwertyData.push_back({"r", "R", L'r', L'R'});
-    qwertyData.push_back({"t", "T", L't', L'T'});
-    qwertyData.push_back({"y", "Y", L'y', L'Y'});
-    qwertyData.push_back({"u", "U", L'u', L'U'});
-    qwertyData.push_back({"i", "I", L'i', L'I'});
-    qwertyData.push_back({"o", "O", L'o', L'O'});
-    qwertyData.push_back({"p", "P", L'p', L'P'});
-    qwertyData.push_back({"[", "{", L'[', L'{'});
-    qwertyData.push_back({"]", "}", L']', L'}'});
+    qwertyData.push_back(MakeKey("q", "Q", L'q', L'Q'));
+    qwertyData.push_back(MakeKey("w", "W", L'w', L'W'));
+    qwertyData.push_back(MakeKey("e", "E", L'e', L'E'));
+    qwertyData.push_back(MakeKey("r", "R", L'r', L'R'));
+    qwertyData.push_back(MakeKey("t", "T", L't', L'T'));
+    qwertyData.push_back(MakeKey("y", "Y", L'y', L'Y'));
+    qwertyData.push_back(MakeKey("u", "U", L'u', L'U'));
+    qwertyData.push_back(MakeKey("i", "I", L'i', L'I'));
+    qwertyData.push_back(MakeKey("o", "O", L'o', L'O'));
+    qwertyData.push_back(MakeKey("p", "P", L'p', L'P'));
+    qwertyData.push_back(MakeKey("[", "{", L'[', L'{'));
+    qwertyData.push_back(MakeKey("]", "}", L']', L'}'));
     
     // Row 3
-    qwertyData.push_back({"a", "A", L'a', L'A'});
-    qwertyData.push_back({"s", "S", L's', L'S'});
-    qwertyData.push_back({"d", "D", L'd', L'D'});
-    qwertyData.push_back({"f", "F", L'f', L'F'});
-    qwertyData.push_back({"g", "G", L'g', L'G'});
-    qwertyData.push_back({"h", "H", L'h', L'H'});
-    qwertyData.push_back({"j", "J", L'j', L'J'});
-    qwertyData.push_back({"k", "K", L'k', L'K'});
-    qwertyData.push_back({"l", "L", L'l', L'L'});
-    qwertyData.push_back({";", ":", L';', L':'});
-    qwertyData.push_back({"'", "\"", L'\'', L'"'});
-    qwertyData.push_back({"\\", "|", L'\\', L'|'});
+    qwertyData.push_back(MakeKey("a", "A", L'a', L'A'));
+    qwertyData.push_back(MakeKey("s", "S", L's', L'S'));
+    qwertyData.push_back(MakeKey("d", "D", L'd', L'D'));
+    qwertyData.push_back(MakeKey("f", "F", L'f', L'F'));
+    qwertyData.push_back(MakeKey("g", "G", L'g', L'G'));
+    qwertyData.push_back(MakeKey("h", "H", L'h', L'H'));
+    qwertyData.push_back(MakeKey("j", "J", L'j', L'J'));
+    qwertyData.push_back(MakeKey("k", "K", L'k', L'K'));
+    qwertyData.push_back(MakeKey("l", "L", L'l', L'L'));
+    qwertyData.push_back(MakeKey(";", ":", L';', L':'));
+    qwertyData.push_back(MakeKey("'", "\"", L'\'', L'"'));
+    qwertyData.push_back(MakeKey("\\", "|", L'\\', L'|'));
     
     // Row 4
-    qwertyData.push_back({"<", ">", L'<', L'>'});
-    qwertyData.push_back({"z", "Z", L'z', L'Z'});
-    qwertyData.push_back({"x", "X", L'x', L'X'});
-    qwertyData.push_back({"c", "C", L'c', L'C'});
-    qwertyData.push_back({"v", "V", L'v', L'V'});
-    qwertyData.push_back({"b", "B", L'b', L'B'});
-    qwertyData.push_back({"n", "N", L'n', L'N'});
-    qwertyData.push_back({"m", "M", L'm', L'M'});
-    qwertyData.push_back({",", "<", L',', L'<'});
-    qwertyData.push_back({".", ">", L'.', L'>'});
+    qwertyData.push_back(MakeKey("<", ">", L'<', L'>'));
+    qwertyData.push_back(MakeKey("z", "Z", L'z', L'Z'));
+    qwertyData.push_back(MakeKey("x", "X", L'x', L'X'));
+    qwertyData.push_back(MakeKey("c", "C", L'c', L'C'));
+    qwertyData.push_back(MakeKey("v", "V", L'v', L'V'));
+    qwertyData.push_back(MakeKey("b", "B", L'b', L'B'));
+    qwertyData.push_back(MakeKey("n", "N", L'n', L'N'));
+    qwertyData.push_back(MakeKey("m", "M", L'm', L'M'));
+    qwertyData.push_back(MakeKey(",", "<", L',', L'<'));
+    qwertyData.push_back(MakeKey(".", ">", L'.', L'>'));
     
     // QWERTZ Layout Data
     // Row 1
-    qwertzData.push_back({"1", "!", L'1', L'!'});
-    qwertzData.push_back({"2", "\"", L'2', L'"'});
-    qwertzData.push_back({"3", "§", L'3', L'\x00A7'});
-    qwertzData.push_back({"4", "$", L'4', L'$'});
-    qwertzData.push_back({"5", "%", L'5', L'%'});
-    qwertzData.push_back({"6", "&&", L'6', L'&'});
-    qwertzData.push_back({"7", "/", L'7', L'/'});
-    qwertzData.push_back({"8", "(", L'8', L'('});
-    qwertzData.push_back({"9", ")", L'9', L')'});
-    qwertzData.push_back({"0", "=", L'0', L'='});
-    qwertzData.push_back({"ß", "?", L'\x00DF', L'?'});
-    qwertzData.push_back({"´", "`", L'\x00B4', L'`'});
+    qwertzData.push_back(MakeKey("1", "!", L'1', L'!'));
+    qwertzData.push_back(MakeKey("2", "\"", L'2', L'"'));
+    qwertzData.push_back(MakeKey("3", "§", L'3', L'\x00A7'));
+    qwertzData.push_back(MakeKey("4", "$", L'4', L'$'));
+    qwertzData.push_back(MakeKey("5", "%", L'5', L'%'));
+    qwertzData.push_back(MakeKey("6", "&&", L'6', L'&'));
+    qwertzData.push_back(MakeKey("7", "/", L'7', L'/'));
+    qwertzData.push_back(MakeKey("8", "(", L'8', L'('));
+    qwertzData.push_back(MakeKey("9", ")", L'9', L')'));
+    qwertzData.push_back(MakeKey("0", "=", L'0', L'='));
+    qwertzData.push_back(MakeKey("ß", "?", L'\x00DF', L'?'));
+    qwertzData.push_back(MakeKey("´", "`", L'\x00B4', L'`'));
     
     // Row 2
-    qwertzData.push_back({"q", "Q", L'q', L'Q'});
-    qwertzData.push_back({"w", "W", L'w', L'W'});
-    qwertzData.push_back({"e", "E", L'e', L'E'});
-    qwertzData.push_back({"r", "R", L'r', L'R'});
-    qwertzData.push_back({"t", "T", L't', L'T'});
-    qwertzData.push_back({"z", "Z", L'z', L'Z'});
-    qwertzData.push_back({"u", "U", L'u', L'U'});
-    qwertzData.push_back({"i", "I", L'i', L'I'});
-    qwertzData.push_back({"o", "O", L'o', L'O'});
-    qwertzData.push_back({"p", "P", L'p', L'P'});
-    qwertzData.push_back({"ü", "Ü", L'\x00FC', L'\x00DC'});
-    qwertzData.push_back({"+", "*", L'+', L'*'});
+    qwertzData.push_back(MakeKey("q", "Q", L'q', L'Q'));
+    qwertzData.push_back(MakeKey("w", "W", L'w', L'W'));
+    qwertzData.push_back(MakeKey("e", "E", L'e', L'E'));
+    qwertzData.push_back(MakeKey("r", "R", L'r', L'R'));
+    qwertzData.push_back(MakeKey("t", "T", L't', L'T'));
+    qwertzData.push_back(MakeKey("z", "Z", L'z', L'Z'));
+    qwertzData.push_back(MakeKey("u", "U", L'u', L'U'));
+    qwertzData.push_back(MakeKey("i", "I", L'i', L'I'));
+    qwertzData.push_back(MakeKey("o", "O", L'o', L'O'));
+    qwertzData.push_back(MakeKey("p", "P", L'p', L'P'));
+    qwertzData.push_back(MakeKey("ü", "Ü", L'\x00FC', L'\x00DC'));
+    qwertzData.push_back(MakeKey("+", "*", L'+', L'*'));
     
     // Row 3
-    qwertzData.push_back({"a", "A", L'a', L'A'});
-    qwertzData.push_back({"s", "S", L's', L'S'});
-    qwertzData.push_back({"d", "D", L'd', L'D'});
-    qwertzData.push_back({"f", "F", L'f', L'F'});
-    qwertzData.push_back({"g", "G", L'g', L'G'});
-    qwertzData.push_back({"h", "H", L'h', L'H'});
-    qwertzData.push_back({"j", "J", L'j', L'J'});
-    qwertzData.push_back({"k", "K", L'k', L'K'});
-    qwertzData.push_back({"l", "L", L'l', L'L'});
-    qwertzData.push_back({"ö", "Ö", L'\x00F6', L'\x00D6'});
-    qwertzData.push_back({"ä", "Ä", L'\x00E4', L'\x00C4'});
-    qwertzData.push_back({"#", "'", L'#', L'\''});
+    qwertzData.push_back(MakeKey("a", "A", L'a', L'A'));
+    qwertzData.push_back(MakeKey("s", "S", L's', L'S'));
+    qwertzData.push_back(MakeKey("d", "D", L'd', L'D'));
+    qwertzData.push_back(MakeKey("f", "F", L'f', L'F'));
+    qwertzData.push_back(MakeKey("g", "G", L'g', L'G'));
+    qwertzData.push_back(MakeKey("h", "H", L'h', L'H'));
+    qwertzData.push_back(MakeKey("j", "J", L'j', L'J'));
+    qwertzData.push_back(MakeKey("k", "K", L'k', L'K'));
+    qwertzData.push_back(MakeKey("l", "L", L'l', L'L'));
+    qwertzData.push_back(MakeKey("ö", "Ö", L'\x00F6', L'\x00D6'));
+    qwertzData.push_back(MakeKey("ä", "Ä", L'\x00E4', L'\x00C4'));
+    qwertzData.push_back(MakeKey("#", "'", L'#', L'\''));
     
     // Row 4
-    qwertzData.push_back({"<", ">", L'<', L'>'});
-    qwertzData.push_back({"y", "Y", L'y', L'Y'});
-    qwertzData.push_back({"x", "X", L'x', L'X'});
-    qwertzData.push_back({"c", "C", L'c', L'C'});
-    qwertzData.push_back({"v", "V", L'v', L'V'});
-    qwertzData.push_back({"b", "B", L'b', L'B'});
-    qwertzData.push_back({"n", "N", L'n', L'N'});
-    qwertzData.push_back({"m", "M", L'm', L'M'});
-    qwertzData.push_back({",", ";", L',', L';'});
-    qwertzData.push_back({".", ":", L'.', L':'});
+    qwertzData.push_back(MakeKey("<", ">", L'<', L'>'));
+    qwertzData.push_back(MakeKey("y", "Y", L'y', L'Y'));
+    qwertzData.push_back(MakeKey("x", "X", L'x', L'X'));
+    qwertzData.push_back(MakeKey("c", "C", L'c', L'C'));
+    qwertzData.push_back(MakeKey("v", "V", L'v', L'V'));
+    qwertzData.push_back(MakeKey("b", "B", L'b', L'B'));
+    qwertzData.push_back(MakeKey("n", "N", L'n', L'N'));
+    qwertzData.push_back(MakeKey("m", "M", L'm', L'M'));
+    qwertzData.push_back(MakeKey(",", ";", L',', L';'));
+    qwertzData.push_back(MakeKey(".", ":", L'.', L':'));
 }
 
 //---------------------------------------------------------------------------
