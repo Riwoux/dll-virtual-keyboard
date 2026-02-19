@@ -54,7 +54,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         TButton* btn = CreateButton(azerty1Keys[i],
                                     (int)(10 * SizeRatio) + i * (btnWidth + spacing),
                                     row, btnWidth, btnHeight);
-        btn->Tag = (NativeInt)(wchar_t)azerty1Keys[i][1];
+        if (azerty1Keys[i].Length() > 0) {
+            btn->Tag = (NativeInt)(wchar_t)azerty1Keys[i][1];
+        }
         btn->OnMouseDown = OnKeyButtonMouseDown;
         azerty.push_back(btn);
     }
@@ -64,7 +66,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         TButton* btn = CreateButton(qwerty1Keys[i],
                                    (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)(wchar_t)qwerty1Keys[i][1];
+        if (qwerty1Keys[i].Length() > 0) {
+            btn->Tag = (NativeInt)(wchar_t)qwerty1Keys[i][1];
+        }
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwerty.push_back(btn);
     }
@@ -74,7 +78,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         TButton* btn = CreateButton(qwertz1Keys[i],
                                    (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)(wchar_t)qwertz1Keys[i][1];
+        if (qwertz1Keys[i].Length() > 0) {
+            btn->Tag = (NativeInt)(wchar_t)qwertz1Keys[i][1];
+        }
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwertz.push_back(btn);
     }
@@ -91,7 +97,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         TButton* btn = CreateButton(azerty2Keys[i],
                                    (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)(wchar_t)azerty2Keys[i][1];
+        if (azerty2Keys[i].Length() > 0) {
+            btn->Tag = (NativeInt)(wchar_t)azerty2Keys[i][1];
+        }
         btn->OnMouseDown = OnKeyButtonMouseDown;
         azerty.push_back(btn);
     }
@@ -101,7 +109,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         TButton* btn = CreateButton(qwerty2Keys[i],
                                    (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)(wchar_t)qwerty2Keys[i][1];
+        if (qwerty2Keys[i].Length() > 0) {
+            btn->Tag = (NativeInt)(wchar_t)qwerty2Keys[i][1];
+        }
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwerty.push_back(btn);
     }
@@ -111,7 +121,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         TButton* btn = CreateButton(qwertz2Keys[i],
                                    (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)(wchar_t)qwertz2Keys[i][1];
+        if (qwertz2Keys[i].Length() > 0) {
+            btn->Tag = (NativeInt)(wchar_t)qwertz2Keys[i][1];
+        }
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwertz.push_back(btn);
     }
@@ -128,7 +140,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         TButton* btn = CreateButton(azerty3Keys[i],
                                    (int)(35 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)(wchar_t)azerty3Keys[i][1];
+        if (azerty3Keys[i].Length() > 0) {
+            btn->Tag = (NativeInt)(wchar_t)azerty3Keys[i][1];
+        }
         btn->OnMouseDown = OnKeyButtonMouseDown;
         azerty.push_back(btn);
     }
@@ -138,7 +152,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         TButton* btn = CreateButton(qwerty3Keys[i],
                                    (int)(35 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)(wchar_t)qwerty3Keys[i][1];
+        if (qwerty3Keys[i].Length() > 0) {
+            btn->Tag = (NativeInt)(wchar_t)qwerty3Keys[i][1];
+        }
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwerty.push_back(btn);
     }
@@ -148,7 +164,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         TButton* btn = CreateButton(qwertz3Keys[i],
                                    (int)(35 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)(wchar_t)qwertz3Keys[i][1];
+        if (qwertz3Keys[i].Length() > 0) {
+            btn->Tag = (NativeInt)(wchar_t)qwertz3Keys[i][1];
+        }
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwertz.push_back(btn);
     }
@@ -165,7 +183,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         TButton* btn = CreateButton(azerty4Keys[i],
                                    (int)(5 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)(wchar_t)azerty4Keys[i][1];
+        if (azerty4Keys[i].Length() > 0) {
+            btn->Tag = (NativeInt)(wchar_t)azerty4Keys[i][1];
+        }
         btn->OnMouseDown = OnKeyButtonMouseDown;
         azerty.push_back(btn);
     }
@@ -175,7 +195,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         TButton* btn = CreateButton(qwerty4Keys[i],
                                    (int)(5 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)(wchar_t)qwerty4Keys[i][1];
+        if (qwerty4Keys[i].Length() > 0) {
+            btn->Tag = (NativeInt)(wchar_t)qwerty4Keys[i][1];
+        }
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwerty.push_back(btn);
     }
@@ -185,7 +207,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         TButton* btn = CreateButton(qwertz4Keys[i],
                                    (int)(5 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)(wchar_t)qwertz4Keys[i][1];
+        if (qwertz4Keys[i].Length() > 0) {
+            btn->Tag = (NativeInt)(wchar_t)qwertz4Keys[i][1];
+        }
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwertz.push_back(btn);
     }
@@ -241,7 +265,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         TButton* btn = CreateButton(row1PadNum[i],
                                    (int)((10 + (i+15)*55) * SizeRatio),
                                    (int)(10 * SizeRatio), btnWidth, btnHeight);
-        btn->Tag = (NativeInt)(wchar_t)row1PadNum[i][1];
+        if (row1PadNum[i].Length() > 0) {
+            btn->Tag = (NativeInt)(wchar_t)row1PadNum[i][1];
+        }
         btn->OnMouseDown = OnKeyButtonMouseDown;
         padbuttons.push_back(btn);
     }
@@ -252,7 +278,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         TButton* btn = CreateButton(row2PadNum[i],
                                    (int)((10 + (i+15)*55) * SizeRatio),
                                    (int)(60 * SizeRatio), btnWidth, btnHeight);
-        btn->Tag = (NativeInt)(wchar_t)row2PadNum[i][1];
+        if (row2PadNum[i].Length() > 0) {
+            btn->Tag = (NativeInt)(wchar_t)row2PadNum[i][1];
+        }
         btn->OnMouseDown = OnKeyButtonMouseDown;
         padbuttons.push_back(btn);
     }
@@ -271,7 +299,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         TButton* btn = CreateButton(row3PadNum[i],
                                    (int)((10 + (i+15)*55) * SizeRatio),
                                    (int)(110 * SizeRatio), btnWidth, btnHeight);
-        btn->Tag = (NativeInt)(wchar_t)row3PadNum[i][1];
+        if (row3PadNum[i].Length() > 0) {
+            btn->Tag = (NativeInt)(wchar_t)row3PadNum[i][1];
+        }
         btn->OnMouseDown = OnKeyButtonMouseDown;
         padbuttons.push_back(btn);
     }
@@ -282,7 +312,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         TButton* btn = CreateButton(row4PadNum[i],
                                    (int)((10 + (i+15)*55) * SizeRatio),
                                    (int)(160 * SizeRatio), btnWidth, btnHeight);
-        btn->Tag = (NativeInt)(wchar_t)row4PadNum[i][1];
+        if (row4PadNum[i].Length() > 0) {
+            btn->Tag = (NativeInt)(wchar_t)row4PadNum[i][1];
+        }
         btn->OnMouseDown = OnKeyButtonMouseDown;
         padbuttons.push_back(btn);
     }
@@ -300,7 +332,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         TButton* btn = CreateButton(row5PadNum[i],
                                    (int)((10 + (i+15)*55) * SizeRatio),
                                    (int)(210 * SizeRatio), btnWidth, btnHeight);
-        btn->Tag = (NativeInt)(wchar_t)row5PadNum[i][1];
+        if (row5PadNum[i].Length() > 0) {
+            btn->Tag = (NativeInt)(wchar_t)row5PadNum[i][1];
+        }
         btn->OnMouseDown = OnKeyButtonMouseDown;
         padbuttons.push_back(btn);
     }
@@ -318,6 +352,13 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     
     // Initialiser les labels des boutons selon l'état initial
     UpdateAllButtonLabels();
+    etatlangue=AZERTY;
+    for (int i = 0; i < azerty.size(); i++)
+    {
+        azerty[i]->Visible = true;
+        qwerty[i]->Visible = false;
+        qwertz[i]->Visible = false;
+    }
 }
 
 __fastcall TFormKeyboard::~TFormKeyboard()
@@ -760,7 +801,7 @@ wchar_t __fastcall TFormKeyboard::TransformCharWithShift(wchar_t ch, bool applyS
     
     // Transformations spécifiques selon la langue
     if (etatlangue == AZERTY) {
-        if (ch == '&') return '1';
+        if (ch == '\x26') return '1';
         else if (ch == 'é') return '2';
         else if (ch == '"') return '3';
         else if (ch == '\x27') return '4';
@@ -786,7 +827,7 @@ wchar_t __fastcall TFormKeyboard::TransformCharWithShift(wchar_t ch, bool applyS
         else if (ch == '4') return '$';
         else if (ch == '5') return '%';
         else if (ch == '6') return '^';
-        else if (ch == '7') return '&';
+        else if (ch == '7') return '\x26';
         else if (ch == '8') return '*';
         else if (ch == '9') return '(';
         else if (ch == '0') return ')';
@@ -806,7 +847,7 @@ wchar_t __fastcall TFormKeyboard::TransformCharWithShift(wchar_t ch, bool applyS
         else if (ch == '3') return L'\x00A7';
         else if (ch == '4') return '$';
         else if (ch == '5') return '%';
-        else if (ch == '6') return '&';
+        else if (ch == '6') return '\x26';
         else if (ch == '7') return '/';
         else if (ch == '8') return '(';
         else if (ch == '9') return ')';
@@ -833,7 +874,7 @@ void __fastcall TFormKeyboard::UpdateAllButtonLabels()
     bool isShifted = (FShiftActive || FMajActive);
     
     // Déterminer quel vecteur de boutons est actuellement visible
-    std::vector<TButton*>* activeButtons = nullptr;
+    std::vector<TButton*>* activeButtons = NULL;
     
     if (etatlangue == AZERTY) {
         activeButtons = &azerty;
