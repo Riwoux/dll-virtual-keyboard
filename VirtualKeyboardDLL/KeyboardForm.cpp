@@ -19,7 +19,7 @@ int langues[3]={AZERTY, QWERTY, QWERTZ};
 __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     : TForm(Owner), FTargetHandle(NULL), FShiftActive(false), FMajActive(false),
     NumPadActive(false), etatlangue(QWERTY), MajOffImage(NULL), MajOnImage(NULL),
-    imgMaj(NULL), pnlMaj(NULL)
+    imgMaj(NULL), pnlMaj(NULL), pnlShift(NULL)
 {
     LoadPNGFromResource();
 
@@ -228,6 +228,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     pnlShift->Height = btnHeight;
     pnlShift->Caption    = "Shift";
     pnlShift->BevelOuter = bvRaised;
+    pnlShift->ParentColor = false;
     pnlShift->Color      = TColor(0x00ffffff);
     pnlShift->Cursor     = crHandPoint;
     pnlShift->Font->Size = (int)(10 * SizeRatio);
@@ -809,9 +810,11 @@ void __fastcall TFormKeyboard::UpdateMajButtonImage()
 void __fastcall TFormKeyboard::UpdateShiftButtonColor()
 {
     if (!pnlShift) return;
+	pnlShift->ParentColor = false;
     if (FShiftActive) {
         pnlShift->Color = TColor(0x00FFD080);
     } else {
         pnlShift->Color = TColor(0x00ffffff);
     }
+    pnlShift->Invalidate();
 }
