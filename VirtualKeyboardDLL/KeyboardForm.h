@@ -64,6 +64,12 @@ private:
     void __fastcall FormMouseDown(TObject *Sender, TMouseButton Button,
 									TShiftState Shift, int X, int Y);
     void __fastcall UpdateShiftButtonState();
+    
+    // Fonction utilitaire pour transformer les caractères
+    wchar_t __fastcall TransformCharWithShift(wchar_t ch, bool applyShift);
+    
+    // Mise à jour des labels de tous les boutons
+    void __fastcall UpdateAllButtonLabels();
 
     void CaptureTargetWindow();
     void __fastcall SendCharToTarget(wchar_t ch);
