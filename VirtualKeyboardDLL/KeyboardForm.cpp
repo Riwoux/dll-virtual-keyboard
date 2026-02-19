@@ -800,7 +800,7 @@ wchar_t __fastcall TFormKeyboard::TransformCharWithShift(wchar_t ch, bool applyS
     
     // Transformations spécifiques selon la langue
     if (etatlangue == AZERTY) {
-        if (ch == '&') return '1';
+        if (ch == L'&') return '1';
         else if (ch == 'é') return '2';
         else if (ch == '"') return '3';
         else if (ch == '\x27') return '4';
@@ -826,7 +826,7 @@ wchar_t __fastcall TFormKeyboard::TransformCharWithShift(wchar_t ch, bool applyS
         else if (ch == '4') return '$';
         else if (ch == '5') return '%';
         else if (ch == '6') return '^';
-        else if (ch == '7') return '&';
+        else if (ch == '7') return L'&';
         else if (ch == '8') return '*';
         else if (ch == '9') return '(';
         else if (ch == '0') return ')';
@@ -846,7 +846,7 @@ wchar_t __fastcall TFormKeyboard::TransformCharWithShift(wchar_t ch, bool applyS
         else if (ch == '3') return L'\x00A7';
         else if (ch == '4') return '$';
         else if (ch == '5') return '%';
-        else if (ch == '6') return '&';
+        else if (ch == '6') return L'&';
         else if (ch == '7') return '/';
         else if (ch == '8') return '(';
         else if (ch == '9') return ')';
