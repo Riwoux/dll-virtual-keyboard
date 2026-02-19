@@ -16,12 +16,187 @@ TFormKeyboard *FormKeyboard;
 #define QWERTZ 2
 int langues[3]={AZERTY, QWERTY, QWERTZ};
 
+//---------------------------------------------------------------------------
+// Initialize keyboard layout data with explicit normal/shifted mappings
+//---------------------------------------------------------------------------
+void __fastcall TFormKeyboard::InitializeKeyboardData()
+{
+    // AZERTY Layout Data
+    // Row 1
+    azertyData.push_back({"&&", "1", L'&', L'1'});
+    azertyData.push_back({"é", "2", L'é', L'2'});
+    azertyData.push_back({"\"", "3", L'"', L'3'});
+    azertyData.push_back({"'", "4", L'\'', L'4'});
+    azertyData.push_back({"(", "5", L'(', L'5'});
+    azertyData.push_back({"-", "6", L'-', L'6'});
+    azertyData.push_back({"è", "7", L'è', L'7'});
+    azertyData.push_back({"_", "8", L'_', L'8'});
+    azertyData.push_back({"ç", "9", L'ç', L'9'});
+    azertyData.push_back({"à", "0", L'à', L'0'});
+    azertyData.push_back({")", "°", L')', L'°'});
+    azertyData.push_back({"=", "+", L'=', L'+'});
+    
+    // Row 2
+    azertyData.push_back({"a", "A", L'a', L'A'});
+    azertyData.push_back({"z", "Z", L'z', L'Z'});
+    azertyData.push_back({"e", "E", L'e', L'E'});
+    azertyData.push_back({"r", "R", L'r', L'R'});
+    azertyData.push_back({"t", "T", L't', L'T'});
+    azertyData.push_back({"y", "Y", L'y', L'Y'});
+    azertyData.push_back({"u", "U", L'u', L'U'});
+    azertyData.push_back({"i", "I", L'i', L'I'});
+    azertyData.push_back({"o", "O", L'o', L'O'});
+    azertyData.push_back({"p", "P", L'p', L'P'});
+    azertyData.push_back({"^", "¨", L'^', L'¨'});
+    azertyData.push_back({"$", "£", L'$', L'£'});
+    
+    // Row 3
+    azertyData.push_back({"q", "Q", L'q', L'Q'});
+    azertyData.push_back({"s", "S", L's', L'S'});
+    azertyData.push_back({"d", "D", L'd', L'D'});
+    azertyData.push_back({"f", "F", L'f', L'F'});
+    azertyData.push_back({"g", "G", L'g', L'G'});
+    azertyData.push_back({"h", "H", L'h', L'H'});
+    azertyData.push_back({"j", "J", L'j', L'J'});
+    azertyData.push_back({"k", "K", L'k', L'K'});
+    azertyData.push_back({"l", "L", L'l', L'L'});
+    azertyData.push_back({"m", "M", L'm', L'M'});
+    azertyData.push_back({"ù", "%", L'ù', L'%'});
+    azertyData.push_back({"*", "µ", L'*', L'µ'});
+    
+    // Row 4
+    azertyData.push_back({"<", ">", L'<', L'>'});
+    azertyData.push_back({"w", "W", L'w', L'W'});
+    azertyData.push_back({"x", "X", L'x', L'X'});
+    azertyData.push_back({"c", "C", L'c', L'C'});
+    azertyData.push_back({"v", "V", L'v', L'V'});
+    azertyData.push_back({"b", "B", L'b', L'B'});
+    azertyData.push_back({"n", "N", L'n', L'N'});
+    azertyData.push_back({",", "?", L',', L'?'});
+    azertyData.push_back({";", ".", L';', L'.'});
+    azertyData.push_back({":", "/", L':', L'/'});
+    
+    // QWERTY Layout Data
+    // Row 1
+    qwertyData.push_back({"1", "!", L'1', L'!'});
+    qwertyData.push_back({"2", "@", L'2', L'@'});
+    qwertyData.push_back({"3", "#", L'3', L'#'});
+    qwertyData.push_back({"4", "$", L'4', L'$'});
+    qwertyData.push_back({"5", "%", L'5', L'%'});
+    qwertyData.push_back({"6", "^", L'6', L'^'});
+    qwertyData.push_back({"7", "&&", L'7', L'&'});
+    qwertyData.push_back({"8", "*", L'8', L'*'});
+    qwertyData.push_back({"9", "(", L'9', L'('});
+    qwertyData.push_back({"0", ")", L'0', L')'});
+    qwertyData.push_back({"-", "_", L'-', L'_'});
+    qwertyData.push_back({"=", "+", L'=', L'+'});
+    
+    // Row 2
+    qwertyData.push_back({"q", "Q", L'q', L'Q'});
+    qwertyData.push_back({"w", "W", L'w', L'W'});
+    qwertyData.push_back({"e", "E", L'e', L'E'});
+    qwertyData.push_back({"r", "R", L'r', L'R'});
+    qwertyData.push_back({"t", "T", L't', L'T'});
+    qwertyData.push_back({"y", "Y", L'y', L'Y'});
+    qwertyData.push_back({"u", "U", L'u', L'U'});
+    qwertyData.push_back({"i", "I", L'i', L'I'});
+    qwertyData.push_back({"o", "O", L'o', L'O'});
+    qwertyData.push_back({"p", "P", L'p', L'P'});
+    qwertyData.push_back({"[", "{", L'[', L'{'});
+    qwertyData.push_back({"]", "}", L']', L'}'});
+    
+    // Row 3
+    qwertyData.push_back({"a", "A", L'a', L'A'});
+    qwertyData.push_back({"s", "S", L's', L'S'});
+    qwertyData.push_back({"d", "D", L'd', L'D'});
+    qwertyData.push_back({"f", "F", L'f', L'F'});
+    qwertyData.push_back({"g", "G", L'g', L'G'});
+    qwertyData.push_back({"h", "H", L'h', L'H'});
+    qwertyData.push_back({"j", "J", L'j', L'J'});
+    qwertyData.push_back({"k", "K", L'k', L'K'});
+    qwertyData.push_back({"l", "L", L'l', L'L'});
+    qwertyData.push_back({";", ":", L';', L':'});
+    qwertyData.push_back({"'", "\"", L'\'', L'"'});
+    qwertyData.push_back({"\\", "|", L'\\', L'|'});
+    
+    // Row 4
+    qwertyData.push_back({"<", ">", L'<', L'>'});
+    qwertyData.push_back({"z", "Z", L'z', L'Z'});
+    qwertyData.push_back({"x", "X", L'x', L'X'});
+    qwertyData.push_back({"c", "C", L'c', L'C'});
+    qwertyData.push_back({"v", "V", L'v', L'V'});
+    qwertyData.push_back({"b", "B", L'b', L'B'});
+    qwertyData.push_back({"n", "N", L'n', L'N'});
+    qwertyData.push_back({"m", "M", L'm', L'M'});
+    qwertyData.push_back({",", "<", L',', L'<'});
+    qwertyData.push_back({".", ">", L'.', L'>'});
+    
+    // QWERTZ Layout Data
+    // Row 1
+    qwertzData.push_back({"1", "!", L'1', L'!'});
+    qwertzData.push_back({"2", "\"", L'2', L'"'});
+    qwertzData.push_back({"3", "§", L'3', L'\x00A7'});
+    qwertzData.push_back({"4", "$", L'4', L'$'});
+    qwertzData.push_back({"5", "%", L'5', L'%'});
+    qwertzData.push_back({"6", "&&", L'6', L'&'});
+    qwertzData.push_back({"7", "/", L'7', L'/'});
+    qwertzData.push_back({"8", "(", L'8', L'('});
+    qwertzData.push_back({"9", ")", L'9', L')'});
+    qwertzData.push_back({"0", "=", L'0', L'='});
+    qwertzData.push_back({"ß", "?", L'\x00DF', L'?'});
+    qwertzData.push_back({"´", "`", L'\x00B4', L'`'});
+    
+    // Row 2
+    qwertzData.push_back({"q", "Q", L'q', L'Q'});
+    qwertzData.push_back({"w", "W", L'w', L'W'});
+    qwertzData.push_back({"e", "E", L'e', L'E'});
+    qwertzData.push_back({"r", "R", L'r', L'R'});
+    qwertzData.push_back({"t", "T", L't', L'T'});
+    qwertzData.push_back({"z", "Z", L'z', L'Z'});
+    qwertzData.push_back({"u", "U", L'u', L'U'});
+    qwertzData.push_back({"i", "I", L'i', L'I'});
+    qwertzData.push_back({"o", "O", L'o', L'O'});
+    qwertzData.push_back({"p", "P", L'p', L'P'});
+    qwertzData.push_back({"ü", "Ü", L'\x00FC', L'\x00DC'});
+    qwertzData.push_back({"+", "*", L'+', L'*'});
+    
+    // Row 3
+    qwertzData.push_back({"a", "A", L'a', L'A'});
+    qwertzData.push_back({"s", "S", L's', L'S'});
+    qwertzData.push_back({"d", "D", L'd', L'D'});
+    qwertzData.push_back({"f", "F", L'f', L'F'});
+    qwertzData.push_back({"g", "G", L'g', L'G'});
+    qwertzData.push_back({"h", "H", L'h', L'H'});
+    qwertzData.push_back({"j", "J", L'j', L'J'});
+    qwertzData.push_back({"k", "K", L'k', L'K'});
+    qwertzData.push_back({"l", "L", L'l', L'L'});
+    qwertzData.push_back({"ö", "Ö", L'\x00F6', L'\x00D6'});
+    qwertzData.push_back({"ä", "Ä", L'\x00E4', L'\x00C4'});
+    qwertzData.push_back({"#", "'", L'#', L'\''});
+    
+    // Row 4
+    qwertzData.push_back({"<", ">", L'<', L'>'});
+    qwertzData.push_back({"y", "Y", L'y', L'Y'});
+    qwertzData.push_back({"x", "X", L'x', L'X'});
+    qwertzData.push_back({"c", "C", L'c', L'C'});
+    qwertzData.push_back({"v", "V", L'v', L'V'});
+    qwertzData.push_back({"b", "B", L'b', L'B'});
+    qwertzData.push_back({"n", "N", L'n', L'N'});
+    qwertzData.push_back({"m", "M", L'm', L'M'});
+    qwertzData.push_back({",", ";", L',', L';'});
+    qwertzData.push_back({".", ":", L'.', L':'});
+}
+
+//---------------------------------------------------------------------------
 __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     : TForm(Owner), FTargetHandle(NULL), FShiftActive(false), FMajActive(false),
     NumPadActive(false), etatlangue(QWERTY), MajOffImage(NULL), MajOnImage(NULL),
     imgMaj(NULL), pnlMaj(NULL), btnShift(NULL)
 {
     LoadPNGFromResource();
+    
+    // Initialize keyboard layout data FIRST
+    InitializeKeyboardData();
 
     SizeRatio = 1.3; // Modifier cette valeur pour changer la taille du clavier
 
@@ -48,39 +223,30 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
 
     int row = (int)(10 * SizeRatio);
 
-    // Azerty Row 1
-    wchar_t azerty1Chars[] = {L'\x26', L'é', L'"', L'\'', L'(', L'-', L'è', L'_', L'ç', L'à', L')', L'='};
-    String azerty1Captions[] = {"&&", "é", "\"", "'", "(", "-", "è", "_", "ç", "à", ")", "="};
-
+    // Azerty Row 1 - Store index in Tag, use normalCaption from data
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(azerty1Captions[i],
+        TButton* btn = CreateButton(azertyData[i].normalCaption,
                                     (int)(10 * SizeRatio) + i * (btnWidth + spacing),
                                     row, btnWidth, btnHeight);
-        btn->Tag = (NativeInt)azerty1Chars[i];
+        btn->Tag = i;  // Store index, not character
         btn->OnMouseDown = OnKeyButtonMouseDown;
         azerty.push_back(btn);
     }
     // Qwerty Row 1
-    wchar_t qwerty1Chars[] = {L'1', L'2', L'3', L'4', L'5', L'6', L'7', L'8', L'9', L'0', L'-', L'='};
-    String qwerty1Captions[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="};
-
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(qwerty1Captions[i],
+        TButton* btn = CreateButton(qwertyData[i].normalCaption,
                                    (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)qwerty1Chars[i];
+        btn->Tag = i;  // Store index, not character
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwerty.push_back(btn);
     }
     // Qwertz Row 1
-    wchar_t qwertz1Chars[] = {L'1', L'2', L'3', L'4', L'5', L'6', L'7', L'8', L'9', L'0', L'ß', L'´'};
-    String qwertz1Captions[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "ß", "´"};
-
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(qwertz1Captions[i],
+        TButton* btn = CreateButton(qwertzData[i].normalCaption,
                                    (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)qwertz1Chars[i];
+        btn->Tag = i;  // Store index, not character
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwertz.push_back(btn);
     }
@@ -92,38 +258,29 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
 
     row += btnHeight + spacing;
     // Azerty Row 2
-    wchar_t azerty2Chars[] = {L'a', L'z', L'e', L'r', L't', L'y', L'u', L'i', L'o', L'p', L'^', L'$'};
-    String azerty2Captions[] = {"a", "z", "e", "r", "t", "y", "u", "i", "o", "p", "^", "$"};
-
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(azerty2Captions[i],
+        TButton* btn = CreateButton(azertyData[12 + i].normalCaption,
                                    (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)azerty2Chars[i];
+        btn->Tag = 12 + i;  // Store index, not character
         btn->OnMouseDown = OnKeyButtonMouseDown;
         azerty.push_back(btn);
     }
     // Qwerty Row 2
-    wchar_t qwerty2Chars[] = {L'q', L'w', L'e', L'r', L't', L'y', L'u', L'i', L'o', L'p', L'[', L']'};
-    String qwerty2Captions[] = {"q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]"};
-
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(qwerty2Captions[i],
+        TButton* btn = CreateButton(qwertyData[12 + i].normalCaption,
                                    (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)qwerty2Chars[i];
+        btn->Tag = 12 + i;  // Store index, not character
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwerty.push_back(btn);
     }
     // Qwertz Row 2
-    wchar_t qwertz2Chars[] = {L'q', L'w', L'e', L'r', L't', L'z', L'u', L'i', L'o', L'p', L'ü', L'+'};
-    String qwertz2Captions[] = {"q", "w", "e", "r", "t", "z", "u", "i", "o", "p", "ü", "+"};
-
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(qwertz2Captions[i],
+        TButton* btn = CreateButton(qwertzData[12 + i].normalCaption,
                                    (int)(10 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)qwertz2Chars[i];
+        btn->Tag = 12 + i;  // Store index, not character
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwertz.push_back(btn);
     }
@@ -135,38 +292,29 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
 
     row += btnHeight + spacing;
     // Azerty Row 3
-    wchar_t azerty3Chars[] = {L'q', L's', L'd', L'f', L'g', L'h', L'j', L'k', L'l', L'm', L'ù', L'*'};
-    String azerty3Captions[] = {"q", "s", "d", "f", "g", "h", "j", "k", "l", "m", "ù", "*"};
-
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(azerty3Captions[i],
+        TButton* btn = CreateButton(azertyData[24 + i].normalCaption,
                                    (int)(35 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)azerty3Chars[i];
+        btn->Tag = 24 + i;  // Store index, not character
         btn->OnMouseDown = OnKeyButtonMouseDown;
         azerty.push_back(btn);
     }
     // Qwerty Row 3
-    wchar_t qwerty3Chars[] = {L'a', L's', L'd', L'f', L'g', L'h', L'j', L'k', L'l', L';', L'\'', L'\\'};
-    String qwerty3Captions[] = {"a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "\\"};
-
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(qwerty3Captions[i],
+        TButton* btn = CreateButton(qwertyData[24 + i].normalCaption,
                                    (int)(35 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)qwerty3Chars[i];
+        btn->Tag = 24 + i;  // Store index, not character
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwerty.push_back(btn);
     }
     // Qwertz Row 3
-    wchar_t qwertz3Chars[] = {L'a', L's', L'd', L'f', L'g', L'h', L'j', L'k', L'l', L'ö', L'ä', L'#'};
-    String qwertz3Captions[] = {"a", "s", "d", "f", "g", "h", "j", "k", "l", "ö", "ä", "#"};
-
     for (int i = 0; i < 12; i++) {
-        TButton* btn = CreateButton(qwertz3Captions[i],
+        TButton* btn = CreateButton(qwertzData[24 + i].normalCaption,
                                    (int)(35 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)qwertz3Chars[i];
+        btn->Tag = 24 + i;  // Store index, not character
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwertz.push_back(btn);
     }
@@ -178,38 +326,29 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
 
     row += btnHeight + spacing;
     // Azerty Row 4
-    wchar_t azerty4Chars[] = {L'<', L'w', L'x', L'c', L'v', L'b', L'n', L',', L';', L':'};
-    String azerty4Captions[] = {"<", "w", "x", "c", "v", "b", "n", ",", ";", ":"};
-
     for (int i = 0; i < 10; i++) {
-        TButton* btn = CreateButton(azerty4Captions[i],
+        TButton* btn = CreateButton(azertyData[36 + i].normalCaption,
                                    (int)(5 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)azerty4Chars[i];
+        btn->Tag = 36 + i;  // Store index, not character
         btn->OnMouseDown = OnKeyButtonMouseDown;
         azerty.push_back(btn);
     }
     // Qwerty Row 4
-    wchar_t qwerty4Chars[] = {L'<', L'z', L'x', L'c', L'v', L'b', L'n', L'm', L',', L'.'};
-    String qwerty4Captions[] = {"<", "z", "x", "c", "v", "b", "n", "m", ",", "."};
-
     for (int i = 0; i < 10; i++) {
-        TButton* btn = CreateButton(qwerty4Captions[i],
+        TButton* btn = CreateButton(qwertyData[36 + i].normalCaption,
                                    (int)(5 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)qwerty4Chars[i];
+        btn->Tag = 36 + i;  // Store index, not character
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwerty.push_back(btn);
     }
     // Qwertz Row 4
-    wchar_t qwertz4Chars[] = {L'<', L'y', L'x', L'c', L'v', L'b', L'n', L'm', L',', L'.'};
-    String qwertz4Captions[] = {"<", "y", "x", "c", "v", "b", "n", "m", ",", "."};
-
     for (int i = 0; i < 10; i++) {
-        TButton* btn = CreateButton(qwertz4Captions[i],
+        TButton* btn = CreateButton(qwertzData[36 + i].normalCaption,
                                    (int)(5 * SizeRatio) + i * (btnWidth + spacing), row,
                                    btnWidth, btnHeight);
-        btn->Tag = (NativeInt)qwertz4Chars[i];
+        btn->Tag = 36 + i;  // Store index, not character
         btn->OnMouseDown = OnKeyButtonMouseDown;
         qwertz.push_back(btn);
     }
@@ -268,7 +407,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         if (row1PadNum[i].Length() > 0) {
             btn->Tag = (NativeInt)(wchar_t)row1PadNum[i][1];
         }
-        btn->OnMouseDown = OnKeyButtonMouseDown;
+        btn->OnMouseDown = OnNumPadKeyMouseDown;  // Use separate handler
         padbuttons.push_back(btn);
     }
 
@@ -281,7 +420,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         if (row2PadNum[i].Length() > 0) {
             btn->Tag = (NativeInt)(wchar_t)row2PadNum[i][1];
         }
-        btn->OnMouseDown = OnKeyButtonMouseDown;
+        btn->OnMouseDown = OnNumPadKeyMouseDown;  // Use separate handler
         padbuttons.push_back(btn);
     }
 
@@ -290,7 +429,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
                                          (int)(60 * SizeRatio), btnWidth,
                                          (int)(2 * btnHeight));
     btnPlusNumPad->Tag = (NativeInt)(wchar_t)'+';
-    btnPlusNumPad->OnMouseDown = OnKeyButtonMouseDown;
+    btnPlusNumPad->OnMouseDown = OnNumPadKeyMouseDown;  // Use separate handler
     padbuttons.push_back(btnPlusNumPad);
 
     // Row PadNum3
@@ -302,7 +441,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         if (row3PadNum[i].Length() > 0) {
             btn->Tag = (NativeInt)(wchar_t)row3PadNum[i][1];
         }
-        btn->OnMouseDown = OnKeyButtonMouseDown;
+        btn->OnMouseDown = OnNumPadKeyMouseDown;  // Use separate handler
         padbuttons.push_back(btn);
     }
 
@@ -315,7 +454,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         if (row4PadNum[i].Length() > 0) {
             btn->Tag = (NativeInt)(wchar_t)row4PadNum[i][1];
         }
-        btn->OnMouseDown = OnKeyButtonMouseDown;
+        btn->OnMouseDown = OnNumPadKeyMouseDown;  // Use separate handler
         padbuttons.push_back(btn);
     }
 
@@ -335,7 +474,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
         if (row5PadNum[i].Length() > 0) {
             btn->Tag = (NativeInt)(wchar_t)row5PadNum[i][1];
         }
-        btn->OnMouseDown = OnKeyButtonMouseDown;
+        btn->OnMouseDown = OnNumPadKeyMouseDown;  // Use separate handler
         padbuttons.push_back(btn);
     }
 
@@ -465,11 +604,26 @@ void __fastcall TFormKeyboard::OnKeyButtonMouseDown(TObject *Sender,
     CaptureTargetWindow();
     if (!FTargetHandle) return;
 
-    wchar_t originalChar = (wchar_t)btn->Tag;
+    // Determine which data vector to use based on current language
+    std::vector<KeyData>* activeData = NULL;
+    if (etatlangue == AZERTY) {
+        activeData = &azertyData;
+    } else if (etatlangue == QWERTY) {
+        activeData = &qwertyData;
+    } else if (etatlangue == QWERTZ) {
+        activeData = &qwertzData;
+    }
+    
+    if (!activeData) return;
+    
+    int index = btn->Tag;  // Tag stores index into data vector
+    if (index < 0 || index >= activeData->size()) return;
+    
+    const KeyData& keyData = (*activeData)[index];
     bool applyShift = (FShiftActive || FMajActive);
     
-    // Obtenir le caractère transformé
-    wchar_t ch = TransformCharWithShift(originalChar, applyShift);
+    // Get the character to send based on shift state
+    wchar_t ch = applyShift ? keyData.shiftedChar : keyData.normalChar;
     
     // Désactiver Shift après utilisation (mais pas Maj qui reste verrouillé)
     if (FShiftActive) {
@@ -478,6 +632,28 @@ void __fastcall TFormKeyboard::OnKeyButtonMouseDown(TObject *Sender,
         UpdateAllButtonLabels();
     }
 
+    SendCharToTarget(ch);
+}
+
+//---------------------------------------------------------------------------
+// NumPad key button MouseDown handler
+//---------------------------------------------------------------------------
+void __fastcall TFormKeyboard::OnNumPadKeyMouseDown(TObject *Sender,
+                                                     TMouseButton Button,
+                                                     TShiftState Shift,
+                                                     int X, int Y)
+{
+    if (Button != mbLeft) return;
+
+    TButton* btn = dynamic_cast<TButton*>(Sender);
+    if (!btn) return;
+
+    // Capturer la fenêtre cible
+    CaptureTargetWindow();
+    if (!FTargetHandle) return;
+
+    // For NumPad buttons, Tag still stores the character directly
+    wchar_t ch = (wchar_t)btn->Tag;
     SendCharToTarget(ch);
 }
 
@@ -777,127 +953,39 @@ void __fastcall TFormKeyboard::UpdateMajButtonImage()
 }
 
 //---------------------------------------------------------------------------
-// Transforme un caractère selon l'état Shift/Maj
-//---------------------------------------------------------------------------
-wchar_t __fastcall TFormKeyboard::TransformCharWithShift(wchar_t ch, bool applyShift)
-{
-    if (!applyShift) {
-        // Mode normal - convertir en minuscules si nécessaire
-        if (ch >= 'A' && ch <= 'Z') {
-            ch = ch - 'A' + 'a';
-        }
-        return ch;
-    }
-    
-    // Mode Shift/Maj activé
-    if (ch >= 'a' && ch <= 'z') {
-        return ch - 'a' + 'A';
-    } else if (ch >= 'A' && ch <= 'Z') {
-        return ch;  // Déjà en majuscule
-    } else if (ch == '<') {
-        return '>';
-    }
-    
-    // Transformations spécifiques selon la langue
-    if (etatlangue == AZERTY) {
-        if (ch == L'&') return '1';
-        else if (ch == 'é') return '2';
-        else if (ch == '"') return '3';
-        else if (ch == '\x27') return '4';
-        else if (ch == '(') return '5';
-        else if (ch == '-') return '6';
-        else if (ch == 'è') return '7';
-        else if (ch == '_') return '8';
-        else if (ch == 'ç') return '9';
-        else if (ch == 'à') return '0';
-        else if (ch == ')') return '°';
-        else if (ch == '=') return '+';
-        else if (ch == '^') return '¨';
-        else if (ch == '$') return '£';
-        else if (ch == 'ù') return '%';
-        else if (ch == '*') return 'µ';
-        else if (ch == ',') return '?';
-        else if (ch == ';') return '.';
-        else if (ch == ':') return '/';
-    } else if (etatlangue == QWERTY) {
-        if (ch == '1') return '!';
-        else if (ch == '2') return '@';
-        else if (ch == '3') return '#';
-        else if (ch == '4') return '$';
-        else if (ch == '5') return '%';
-        else if (ch == '6') return '^';
-        else if (ch == '7') return L'&';
-        else if (ch == '8') return '*';
-        else if (ch == '9') return '(';
-        else if (ch == '0') return ')';
-        else if (ch == '-') return '_';
-        else if (ch == '=') return '+';
-        else if (ch == '[') return '{';
-        else if (ch == ']') return '}';
-        else if (ch == ';') return ':';
-        else if (ch == '\x27') return '"';
-        else if (ch == ',') return '<';
-        else if (ch == '.') return '>';
-        else if (ch == '/') return '?';
-        else if (ch == '\\') return '|';
-    } else if (etatlangue == QWERTZ) {
-        if (ch == '1') return '!';
-        else if (ch == '2') return '"';
-        else if (ch == '3') return L'\x00A7';
-        else if (ch == '4') return '$';
-        else if (ch == '5') return '%';
-        else if (ch == '6') return L'&';
-        else if (ch == '7') return '/';
-        else if (ch == '8') return '(';
-        else if (ch == '9') return ')';
-        else if (ch == '0') return '=';
-        else if (ch == L'\x00DF') return '?';
-        else if (ch == L'\x00B4') return '`';
-        else if (ch == L'\x00FC') return L'\x00DC';
-        else if (ch == '+') return '*';
-        else if (ch == L'\x00F6') return L'\x00D6';
-        else if (ch == L'\x00E4') return L'\x00C4';
-        else if (ch == '#') return '\'';
-        else if (ch == ',') return ';';
-        else if (ch == '.') return ':';
-    }
-    
-    return ch;  // Pas de transformation
-}
-
-//---------------------------------------------------------------------------
 // Met à jour les labels de tous les boutons selon l'état Shift/Maj
 //---------------------------------------------------------------------------
 void __fastcall TFormKeyboard::UpdateAllButtonLabels()
 {
     bool isShifted = (FShiftActive || FMajActive);
     
-    // Déterminer quel vecteur de boutons est actuellement visible
+    // Determine which vector of buttons and data is currently visible
     std::vector<TButton*>* activeButtons = NULL;
+    std::vector<KeyData>* activeData = NULL;
     
     if (etatlangue == AZERTY) {
         activeButtons = &azerty;
+        activeData = &azertyData;
     } else if (etatlangue == QWERTY) {
         activeButtons = &qwerty;
+        activeData = &qwertyData;
     } else if (etatlangue == QWERTZ) {
         activeButtons = &qwertz;
+        activeData = &qwertzData;
     }
     
-    if (!activeButtons) return;
+    if (!activeButtons || !activeData) return;
     
-    // Mettre à jour chaque bouton
+    // Update each button using the KeyData
     for (int i = 0; i < activeButtons->size(); i++) {
         TButton* btn = (*activeButtons)[i];
         if (!btn) continue;
         
-        wchar_t originalChar = (wchar_t)btn->Tag;
-        wchar_t displayChar = TransformCharWithShift(originalChar, isShifted);
-        String caption = String(displayChar);
-        // VCL uses '&' as an accelerator prefix, so it must be escaped as '&&' to display literally
-        if (displayChar == L'&') {
-            caption = "&&";
-        }
-        btn->Caption = caption;
+        int index = btn->Tag;  // Tag now stores index into data vector
+        if (index < 0 || index >= activeData->size()) continue;
+        
+        const KeyData& keyData = (*activeData)[index];
+        btn->Caption = isShifted ? keyData.shiftedCaption : keyData.normalCaption;
     }
 }
 
