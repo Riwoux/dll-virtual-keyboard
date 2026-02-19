@@ -35,7 +35,7 @@ private:
     TPngImage* MajOffImage;
     TPngImage* MajOnImage;
     TPanel* pnlMaj;
-    TPanel* pnlShift;
+    TButton* btnShift;
 
     TButton* __fastcall CreateButton(const String& Caption, int Left, int Top,
                                      int Width, int Height);
@@ -63,7 +63,7 @@ private:
 	void __fastcall OnLanguageClick(TObject *Sender);
     void __fastcall FormMouseDown(TObject *Sender, TMouseButton Button,
 									TShiftState Shift, int X, int Y);
-    void __fastcall UpdateShiftButtonColor();
+    void __fastcall UpdateShiftButtonState();
 
     void CaptureTargetWindow();
     void __fastcall SendCharToTarget(wchar_t ch);
