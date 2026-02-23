@@ -220,7 +220,6 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     const int BASE_SPACING = 5;
     const int BASE_FORM_WIDTH = 800;
     const int BASE_FORM_HEIGHT = 270;
-    const int BASE_NUMPAD_WIDTH = 220;
     const int btnWidth = (int)(BASE_BTN_WIDTH * SizeRatio);
     const int btnHeight = (int)(BASE_BTN_HEIGHT * SizeRatio);
     const int spacing = (int)(BASE_SPACING * SizeRatio);
@@ -228,13 +227,14 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     // Form configuration
     BorderStyle = bsNone;
     FormStyle = fsStayOnTop;
-    Position = poScreenCenter;
+    Position = poDesigned;
     Caption = "Virtual Keyboard";
     ClientWidth = (int)(BASE_FORM_WIDTH * SizeRatio);
     ClientHeight = (int)(BASE_FORM_HEIGHT * SizeRatio);
     Color = (TColor)0x00cccccc;
     OnMouseDown = FormMouseDown;
     OnShow = FormShow;
+
 
     FDeadPending = false;
     FDeadChar = 0;
@@ -445,7 +445,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     // Plus button NumPad
     TButton* btnPlusNumPad = CreateButton("+", (int)(1000 * SizeRatio),
                                          (int)(60 * SizeRatio), btnWidth,
-                                         (int)(2 * btnHeight));
+                                         (int)(2.1 * btnHeight));
     btnPlusNumPad->Tag = (NativeInt)(wchar_t)'+';
     btnPlusNumPad->OnMouseDown = OnNumPadKeyMouseDown;  // Use separate handler
     padbuttons.push_back(btnPlusNumPad);
@@ -479,7 +479,7 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     // Enter button NumPad
     TButton* btnEnterNumPad = CreateButton("Enter", (int)(1000 * SizeRatio),
                                           (int)(160 * SizeRatio), btnWidth,
-                                          (int)(2 * btnHeight));
+                                          (int)(2.1 * btnHeight));
     btnEnterNumPad->OnMouseDown = OnEnterMouseDown;
     padbuttons.push_back(btnEnterNumPad);
 
@@ -497,24 +497,9 @@ __fastcall TFormKeyboard::TFormKeyboard(TComponent* Owner)
     btnpoint->OnMouseDown = OnNumPadKeyMouseDown;  // Use separate handler
     padbuttons.push_back(btnpoint);
 
-    // Mettre le NumPad invisible
-    for (int i = 0; i < padbuttons.size(); i++)
-    {
-        padbuttons[i]->Visible = false;
-    }
-
-    // D'abord définir la langue AVANT de mettre à jour les labels
-    etatlangue = AZERTY;
-
-    // Configurer la visibilité des boutons
-    for (int i = 0; i < azerty.size(); i++)
-    {
-        azerty[i]->Visible = true;
-        qwerty[i]->Visible = false;
-        qwertz[i]->Visible = false;
-    }
-
-    // Initialiser les labels des boutons selon l'état initial (maintenant en AZERTY)
+    //mise a jour de la langue du clavier en fonction de celle systeme
+    AutoDetectLanguage();
+    ApplyLanguageVisibility();
     UpdateAllButtonLabels();
 }
 //---------------------------------------------------------------------------
@@ -772,17 +757,9 @@ void __fastcall TFormKeyboard::OnNumPadClick(TObject *Sender)
     NumPadActive = !NumPadActive;
     if (NumPadActive) {
         ClientWidth = (int)(1100 * SizeRatio);
-        for (int i = 0; i < padbuttons.size(); i++)
-        {
-            padbuttons[i]->Visible = true;
-        }
     }
     else {
         ClientWidth = (int)(800 * SizeRatio);
-        for (int i = 0; i < padbuttons.size(); i++)
-        {
-            padbuttons[i]->Visible = false;
-        }
     }
 }
 
@@ -1028,5 +1005,52 @@ wchar_t __fastcall TFormKeyboard::ComposeDeadKey(wchar_t dead, wchar_t base) con
     }
 
     return 0;
+}
+//---------------------------------------------------------------------------
+// Changement de langue en fonction de celle de windows
+//---------------------------------------------------------------------------
+void TFormKeyboard::AutoDetectLanguage()
+{
+    HKL hkl = GetKeyboardLayout(0);
+    UINT code = LOWORD(hkl);
+    UINT lang = PRIMARYLANGID(code);
+
+    switch(lang)
+    {
+        case LANG_FRENCH:
+            etatlangue = AZERTY;
+            break;
+
+        case LANG_GERMAN:
+            etatlangue = QWERTZ;
+            break;
+
+        default:
+            etatlangue = QWERTY;
+            break;
+    }
+}
+
+void TFormKeyboard::ApplyLanguageVisibility()
+{
+    for (int i = 0; i < azerty.size(); i++)
+    {
+        azerty[i]->Visible = (etatlangue == AZERTY);
+        qwerty[i]->Visible = (etatlangue == QWERTY);
+        qwertz[i]->Visible = (etatlangue == QWERTZ);
+    }
+}
+
+//Revoir ces deux fonctions car ne fonctionne pas avec le bouton show Numpad
+
+void __fastcall TFormKeyboard::ShowNumPad()
+{
+    const int oldLeft = Left + this->Width;
+    ClientWidth = 300 * SizeRatio;
+    Left += oldLeft - (300 * SizeRatio);
+}
+void __fastcall TFormKeyboard::ShowKeyboard()
+{
+    ClientWidth = 1100 * SizeRatio;
 }
 

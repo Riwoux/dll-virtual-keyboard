@@ -5,6 +5,8 @@
 #pragma hdrstop
 #include <tchar.h>
 //---------------------------------------------------------------------------
+#include <Vcl.Styles.hpp>
+#include <Vcl.Themes.hpp>
 USEFORM("MainForm.cpp", FormMain);
 //---------------------------------------------------------------------------
 int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
@@ -13,8 +15,9 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
     {
         Application->Initialize();
         Application->MainFormOnTaskBar = true;
-        Application->CreateForm(__classid(TFormMain), &FormMain);
-        Application->Run();
+        TStyleManager::TrySetStyle("Sky", false);
+		Application->CreateForm(__classid(TFormMain), &FormMain);
+		Application->Run();
     }
     catch (Exception &exception)
     {

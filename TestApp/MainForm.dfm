@@ -2,8 +2,8 @@ object FormMain: TFormMain
   Left = 0
   Top = 0
   Caption = 'Virtual Keyboard Test Application'
-  ClientHeight = 350
-  ClientWidth = 500
+  ClientHeight = 355
+  ClientWidth = 513
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -22,8 +22,8 @@ object FormMain: TFormMain
     Caption = 'Click in the text area to test the keyboard:'
   end
   object MemoTest: TMemo
-    Left = 24
-    Top = 48
+    Left = 40
+    Top = 43
     Width = 450
     Height = 200
     Font.Charset = DEFAULT_CHARSET
@@ -49,12 +49,21 @@ object FormMain: TFormMain
     OnClick = BtnShowClick
   end
   object BtnHide: TButton
-    Left = 190
+    Left = 355
     Top = 270
     Width = 150
     Height = 40
     Caption = 'Hide Keyboard'
     TabOrder = 2
     OnClick = BtnHideClick
+  end
+  object Button1: TButton
+    Left = 191
+    Top = 270
+    Width = 145
+    Height = 40
+    Caption = 'Show NumPad'
+    TabOrder = 3
+    OnClick = Button1Click
   end
 end

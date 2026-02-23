@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+﻿//---------------------------------------------------------------------------
 // VirtualKeyboard.cpp - Point d'entrée de la DLL et implémentation des exports
 //---------------------------------------------------------------------------
 #include <vcl.h>
@@ -41,20 +41,26 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID lpReserved)
 // Show the virtual keyboard
 // targetHandle: HWND of target control to receive characters
 //---------------------------------------------------------------------------
-extern "C" __declspec(dllexport) void __stdcall ShowKeyboard(HWND targetHandle)
+extern "C" __declspec(dllexport) void __stdcall ShowKeyboard(HWND targetHandle, int etat)
 {
     try {
         if (!g_KeyboardForm) {
             Application->Initialize();
             Application->CreateForm(__classid(TFormKeyboard), &g_KeyboardForm);
         }
-        
+
         if (g_KeyboardForm) {
             g_KeyboardForm->SetTargetHandle(targetHandle);
             g_KeyboardForm->Show();
+            if (etat == 0) {
+                g_KeyboardForm->ShowKeyboard();
+            }
+            else if (etat == 1) {
+                g_KeyboardForm->ShowNumPad();
+            }
+
         }
     } catch (...) {
-        // Silent error handling
     }
 }
 
@@ -65,10 +71,9 @@ extern "C" __declspec(dllexport) void __stdcall HideKeyboard()
 {
     try {
         if (g_KeyboardForm) {
-            g_KeyboardForm->Hide();
+            g_KeyboardForm->Close();
         }
     } catch (...) {
-        // Gestion des erreurs silencieuse
     }
 }
 

@@ -47,11 +47,11 @@ bool TFormMain::LoadKeyboardDLL()
 {
     // First try to load from application directory
     String dllPath = ExtractFilePath(Application->ExeName) + "VirtualKeyboardDLL.dll";
-    FDllHandle = LoadLibraryW(dllPath.c_str());
+    FDllHandle = LoadLibrary(dllPath.c_str());
     
     if (!FDllHandle) {
         // Try to load from system PATH
-        FDllHandle = LoadLibraryW(L"VirtualKeyboardDLL.dll");
+        FDllHandle = LoadLibrary(L"VirtualKeyboardDLL.dll");
     }
     
     if (!FDllHandle) {
@@ -77,11 +77,11 @@ bool TFormMain::LoadKeyboardDLL()
 void TFormMain::UnloadKeyboardDLL()
 {
     if (FDllHandle) {
-        FreeLibrary(FDllHandle);
         FDllHandle = NULL;
         FShowKeyboard = NULL;
         FHideKeyboard = NULL;
         FIsKeyboardVisible = NULL;
+        FreeLibrary(FDllHandle);
     }
 }
 
@@ -91,7 +91,7 @@ void TFormMain::UnloadKeyboardDLL()
 void __fastcall TFormMain::BtnShowClick(TObject *Sender)
 {
     if (FShowKeyboard) {
-        FShowKeyboard(MemoTest->Handle);
+        FShowKeyboard(MemoTest->Handle,0);
     }
 }
 
@@ -106,3 +106,11 @@ void __fastcall TFormMain::BtnHideClick(TObject *Sender)
 }
 
 //---------------------------------------------------------------------------
+void __fastcall TFormMain::Button1Click(TObject *Sender)
+{
+    if (FShowKeyboard) {
+        FShowKeyboard(MemoTest->Handle,1);
+    }
+}
+//---------------------------------------------------------------------------
+

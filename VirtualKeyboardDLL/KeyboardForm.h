@@ -1,8 +1,11 @@
-﻿//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 #ifndef KeyboardFormH
 #define KeyboardFormH
 //---------------------------------------------------------------------------
 #include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Touch.Keyboard.hpp>
 #define WIN32_LEAN_AND_MEAN
 #include <Winapi.Windows.hpp>
 #include <Vcl.Controls.hpp>
@@ -72,18 +75,27 @@ private:
     void __fastcall InitializeKeyboardData();
     void __fastcall UpdateAllButtonLabels();
     wchar_t __fastcall ComposeDeadKey(wchar_t dead, wchar_t base) const;
-    void CaptureTargetWindow();
     void __fastcall SendCharToTarget(wchar_t ch);
     void __fastcall SendKeyToTarget(WORD vKey);
     bool __fastcall IsDeadKey(wchar_t ch) const;
     void __fastcall SendArrowKeyToTarget(BYTE vkArrowCode);
 
 
+
+    void AutoDetectLanguage();
+    void ApplyLanguageVisibility();
+    void CaptureTargetWindow();
+
+
+
 public:
     __fastcall TFormKeyboard(TComponent* Owner);
     void __fastcall SetTargetHandle(HWND handle);
+    void __fastcall ShowNumPad();
+    void __fastcall ShowKeyboard();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TFormKeyboard *FormKeyboard;
+extern "C" void __stdcall KeyboardForm_NotifyDestroyed(void);
 //---------------------------------------------------------------------------
 #endif

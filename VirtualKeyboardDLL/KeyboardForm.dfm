@@ -1,11 +1,11 @@
 object FormKeyboard: TFormKeyboard
   Left = 0
   Top = 0
-  BorderStyle = bsToolWindow
+  BorderStyle = bsNone
   Caption = 'Virtual Keyboard'
-  ClientHeight = 250
-  ClientWidth = 660
-  Color = clBtnFace
+  ClientHeight = 380
+  ClientWidth = 978
+  Color = clCream
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11

@@ -9,10 +9,11 @@
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.Forms.hpp>
 #include <windows.h>
+#include <Vcl.Touch.Keyboard.hpp>
 //---------------------------------------------------------------------------
 
 // DLL exported function types
-typedef void (__stdcall *TShowKeyboardProc)(HWND targetHandle);
+typedef void (__stdcall *TShowKeyboardProc)(HWND targetHandle, int etat);
 typedef void (__stdcall *THideKeyboardProc)();
 typedef bool (__stdcall *TIsKeyboardVisibleProc)();
 
@@ -23,10 +24,12 @@ __published:
     TButton *BtnShow;
     TButton *BtnHide;
     TLabel *Label1;
+	TButton *Button1;
     void __fastcall BtnShowClick(TObject *Sender);
     void __fastcall BtnHideClick(TObject *Sender);
     void __fastcall FormCreate(TObject *Sender);
     void __fastcall FormDestroy(TObject *Sender);
+	void __fastcall Button1Click(TObject *Sender);
     
 private:
     HINSTANCE FDllHandle;

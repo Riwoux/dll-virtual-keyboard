@@ -62,7 +62,7 @@
         <BCC_ExtendedErrorInfo>true</BCC_ExtendedErrorInfo>
         <ILINK_TranslatedLibraryPath>$(BDSLIB)\$(PLATFORM)\release\$(LANGDIR);$(ILINK_TranslatedLibraryPath)</ILINK_TranslatedLibraryPath>
         <SanitizedProjectName>VirtualKeyboardDLL</SanitizedProjectName>
-        <AllPackageLibs>vcl.lib;rtl.lib;vclimg.lib</AllPackageLibs>
+        <AllPackageLibs>vcl.lib;rtl.lib;vclimg.lib;vcltouch.lib;xmlrtl.lib</AllPackageLibs>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <PackageImports>bdertl;rtl;dbrtl;IndyCore;IndySystem;IndyProtocols;inet;inetdbbde;inetdbxpress;inetdb;vcl;vclx;dbexpress;vcldb;vcldbx;bdertl;vclactnband;vclsmp;xmlrtl;vclimg;svnui;svn;bdertl;$(PackageImports)</PackageImports>
@@ -111,15 +111,22 @@
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <LinkPackageStatics>vcl.lib;rtl.lib</LinkPackageStatics>
+        <LinkPackageStatics>vcl.lib;rtl.lib;vclimg.lib</LinkPackageStatics>
+        <Debugger_HostApplication>C:\Users\corentin.langlade\Documents\Stage\Clavier virtuel\testclaviervirtuel\VirtualKeyboardDLL\Win32\Release\TestApp.exe</Debugger_HostApplication>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <Defines>NDEBUG;$(Defines)</Defines>
         <TASM_Debugging>None</TASM_Debugging>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <LinkPackageStatics>vcl.lib;rtl.lib;vclimg.lib</LinkPackageStatics>
+        <LinkPackageStatics>vcltouch.lib</LinkPackageStatics>
         <Debugger_HostApplication>C:\Users\corentin.langlade\Documents\Stage\Clavier virtuel\TestApp\Win32\Release\TestApp.exe</Debugger_HostApplication>
+        <UsePackages>true</UsePackages>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
+        <DynamicRTL>true</DynamicRTL>
+        <LinkPackageImports>vcl.bpi;rtl.bpi;vclimg.bpi;xmlrtl.bpi</LinkPackageImports>
     </PropertyGroup>
     <ItemGroup>
         <CppCompile Include="KeyboardForm.cpp">
@@ -131,9 +138,6 @@
         <CppCompile Include="VirtualKeyboard.cpp">
             <BuildOrder>0</BuildOrder>
         </CppCompile>
-        <ResFiles Include="VirtualKeyboardDLL.res">
-            <BuildOrder>2</BuildOrder>
-        </ResFiles>
         <FormResources Include="KeyboardForm.dfm"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
@@ -213,6 +217,10 @@
                     <ProjectProperties Name="VerifyPackages">True</ProjectProperties>
                     <ProjectProperties Name="IndexFiles">False</ProjectProperties>
                 </ProjectProperties>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcboffice2k370.bpl">Package Serveurs Office 2000 Embarcadero C++Builder</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcbofficexp370.bpl">Package Serveurs Office XP Embarcadero C++Builder</Excluded_Packages>
+                </Excluded_Packages>
             </CPlusPlusBuilder.Personality>
             <Deployment Version="5">
                 <DeployFile Condition="'$(DynamicRTL)'=='true'" LocalName="$(BDS)\Redist\osx32\libcgcrtl.dylib" Class="DependencyModule">
@@ -262,6 +270,12 @@
                 </DeployFile>
                 <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'=='true'" LocalName="$(BDS)\bin\cc32c370mt.dll" Class="DependencyModule">
                     <Platform Name="Win32">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName=".\Win32\Debug\VirtualKeyboardDLL.dll" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>VirtualKeyboardDLL.dll</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
