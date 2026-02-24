@@ -1,24 +1,4 @@
-﻿//   Remarque importante sur la gestion mémoire de la DLL quand votre DLL utilise la
-//   version statique de la bibliothèque d'exécution (RTL) :
-//
-//   Si votre DLL exporte des fonctions qui passent des objets chaîne (ou des classes structs/
-//   contenant des chaînes imbriquées) par le biais de paramètres ou de résultats de fonctions,
-//   vous devrez ajouter la bibliothèque MEMMGR.LIB au projet DLL et aux autres
-//   projets qui utilisent la DLL.  Il sera aussi nécessaire d'utiliser MEMMGR.LIB
-//   si d'autres projets utilisant la DLL effectuent des opérations new ou delete
-//   sur des classes ne dérivant pas de TObject qui sont exportées depuis la
-//   DLL. Ajouter MEMMGR.LIB à votre projet changera la DLL et son EXE appelant
-//   afin d'utiliser BORLNDMM.DLL en tant que gestionnaire de mémoire.  Dans ces cas,
-//   le fichier BORLNDMM.DLL doit être déployé avec votre DLL.
-//
-//   Pour éviter l'emploi de BORLNDMM.DLL, passez des informations chaîne par
-//   le biais de paramètres "char *" ou ShortString.
-//
-//   Si votre DLL utilise la version dynamique de la RTL, il n'est pas nécessaire
-//   d'ajouter explicitement MEMMGR.LIB car cela sera fait implicitement.
-//   Si votre DLL utilise la version statique de la RTL, ajoutez #include<usebormm.h>
-//   à l'un des fichiers source pour votre DLL
-
+﻿//---------------------------------------------------------------------------
 #include <vcl.h>
 #include <windows.h>
 #include <commctrl.h>
@@ -26,10 +6,10 @@
 #include "clavier.h"
 #include "touchkeyboardPCH2.h"
 
-
 #pragma hdrstop
 #pragma argsused
 
+// Pour le sous-classement
 #pragma comment(lib, "comctl32.lib")
 
 //---------------------------------------------------------------------------
@@ -52,14 +32,15 @@ bool IsTextControl(HWND hwnd)
     wchar_t className[256];
     GetClassNameW(hwnd, className, 256);
 
-    // Classes de contrôles de texte Windows
+    // Classes de contrôles de texte Windows/VCL
     return (wcscmp(className, L"Edit") == 0 ||
             wcscmp(className, L"RichEdit") == 0 ||
             wcscmp(className, L"RichEdit20A") == 0 ||
             wcscmp(className, L"RichEdit20W") == 0 ||
             wcscmp(className, L"TMemo") == 0 ||
             wcscmp(className, L"TEdit") == 0 ||
-            wcscmp(className, L"TRichEdit") == 0);
+            wcscmp(className, L"TRichEdit") == 0 ||
+            wcsstr(className, L"Edit") != NULL);  // Attrape aussi d'autres variantes
 }
 
 //---------------------------------------------------------------------------
@@ -83,7 +64,7 @@ LRESULT CALLBACK SubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         {
             auto it = g_AttachedControls.find(hwnd);
             if (it != g_AttachedControls.end()) {
-                int layout = it->second.isNumeric ? 1 : 0;
+                int layout = it->second.isNumeric ? 0 : -1;  // 0 = NumPad, -1 = Standard
                 ShowKeyboard(hwnd, layout);
             }
             break;
@@ -133,7 +114,9 @@ BOOL CALLBACK EnumChildProc(HWND hwnd, LPARAM lParam)
     return TRUE;  // Continuer l'énumération
 }
 
-
+//---------------------------------------------------------------------------
+// Point d'entrée de la DLL
+//---------------------------------------------------------------------------
 int WINAPI DllEntryPoint(HINSTANCE hinst, unsigned long reason, void* lpReserved)
 {
     if (reason == DLL_PROCESS_DETACH) {
@@ -146,20 +129,24 @@ int WINAPI DllEntryPoint(HINSTANCE hinst, unsigned long reason, void* lpReserved
     return 1;
 }
 
+//---------------------------------------------------------------------------
 void InitKeyboard(void)
 {
-    if(!keyboard)
-	{
-		Application->CreateForm(__classid(Tkeyboard), &keyboard);
-	}
+    if (!keyboard)
+    {
+        Application->CreateForm(__classid(Tkeyboard), &keyboard);
+    }
 }
 
+//---------------------------------------------------------------------------
+// Fonctions exportées
+//---------------------------------------------------------------------------
 extern "C"
 {
-	__declspec(dllexport) void __stdcall ShowKeyboard(HWND targetHandle, int etat)
+    __declspec(dllexport) void __stdcall ShowKeyboard(HWND targetHandle, int etat)
     {
         try {
-        	if (!keyboard) {
+            if (!keyboard) {
                 Application->Initialize();
                 Application->CreateForm(__classid(Tkeyboard), &keyboard);
             }
@@ -177,7 +164,7 @@ extern "C"
     {
         try {
             if (keyboard) {
-            	keyboard->Hide();
+                keyboard->Hide();
             }
         } catch (...) {
         }
@@ -211,4 +198,4 @@ extern "C"
         }
     }
 }
-
+//---------------------------------------------------------------------------
