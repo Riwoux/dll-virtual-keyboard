@@ -21,49 +21,21 @@ object FormMain: TFormMain
     Height = 13
     Caption = 'Click in the text area to test the keyboard:'
   end
-  object MemoTest: TMemo
-    Left = 40
-    Top = 43
-    Width = 450
-    Height = 200
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -13
-    Font.Name = 'Courier New'
-    Font.Style = []
-    Lines.Strings = (
-      'Test area for the virtual keyboard.'
-      ''
-      'Click the Show button to display the keyboard.')
-    ParentFont = False
-    ScrollBars = ssBoth
-    TabOrder = 0
-  end
-  object BtnShow: TButton
+  object Edit1: TEdit
     Left = 24
-    Top = 270
-    Width = 150
-    Height = 40
-    Caption = 'Show Keyboard'
+    Top = 43
+    Width = 449
+    Height = 22
+    NumbersOnly = True
+    TabOrder = 0
+    Text = 'Edit1'
+  end
+  object Edit2: TEdit
+    Left = 24
+    Top = 80
+    Width = 449
+    Height = 21
     TabOrder = 1
-    OnClick = BtnShowClick
-  end
-  object BtnHide: TButton
-    Left = 355
-    Top = 270
-    Width = 150
-    Height = 40
-    Caption = 'Hide Keyboard'
-    TabOrder = 2
-    OnClick = BtnHideClick
-  end
-  object Button1: TButton
-    Left = 191
-    Top = 270
-    Width = 145
-    Height = 40
-    Caption = 'Show NumPad'
-    TabOrder = 3
-    OnClick = Button1Click
+    Text = 'Edit2'
   end
 end

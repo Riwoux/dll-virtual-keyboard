@@ -21,17 +21,13 @@ typedef void (__stdcall *TDetachKeyboardFromFormProc)(HWND);
 class TFormMain : public TForm
 {
 __published:
-    TMemo *MemoTest;
-    TButton *BtnShow;
-    TButton *BtnHide;
     TLabel *Label1;
-	TButton *Button1;
-    void __fastcall BtnShowClick(TObject *Sender);
-    void __fastcall BtnHideClick(TObject *Sender);
+	TEdit *Edit1;
+	TEdit *Edit2;
     void __fastcall FormCreate(TObject *Sender);
     void __fastcall FormDestroy(TObject *Sender);
-	void __fastcall Button1Click(TObject *Sender);
-    
+    void __fastcall TextControlEnter(TObject *Sender);
+
 private:
     HINSTANCE FDllHandle;
     TShowKeyboardProc FShowKeyboard;

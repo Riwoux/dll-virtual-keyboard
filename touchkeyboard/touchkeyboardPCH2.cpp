@@ -8,31 +8,24 @@
 
 #pragma hdrstop
 #pragma argsused
-
-// Pour le sous-classement
 #pragma comment(lib, "comctl32.lib")
 
-//---------------------------------------------------------------------------
-// Structures pour gérer les contrôles sous-classés
 //---------------------------------------------------------------------------
 struct ControlInfo {
     HWND hwnd;
     bool isNumeric;
 };
 
-// Map pour stocker les infos des contrôles sous-classés
 static std::map<HWND, ControlInfo> g_AttachedControls;
 static bool g_AutoHide = true;
+static int g_ControlsFound = 0;  // ← Compteur de diagnostic
 
-//---------------------------------------------------------------------------
-// Identifie si un contrôle est une zone de texte
 //---------------------------------------------------------------------------
 bool IsTextControl(HWND hwnd)
 {
     wchar_t className[256];
     GetClassNameW(hwnd, className, 256);
 
-    // Classes de contrôles de texte Windows/VCL
     return (wcscmp(className, L"Edit") == 0 ||
             wcscmp(className, L"RichEdit") == 0 ||
             wcscmp(className, L"RichEdit20A") == 0 ||
@@ -40,37 +33,36 @@ bool IsTextControl(HWND hwnd)
             wcscmp(className, L"TMemo") == 0 ||
             wcscmp(className, L"TEdit") == 0 ||
             wcscmp(className, L"TRichEdit") == 0 ||
-            wcsstr(className, L"Edit") != NULL);  // Attrape aussi d'autres variantes
+            wcsstr(className, L"Edit") != NULL);
 }
 
-//---------------------------------------------------------------------------
-// Vérifie si un Edit est en mode numérique
 //---------------------------------------------------------------------------
 bool IsNumericControl(HWND hwnd)
 {
     LONG style = GetWindowLong(hwnd, GWL_STYLE);
-    return (style & ES_NUMBER) != 0;  // Style ES_NUMBER
+    return (style & ES_NUMBER) != 0;
 }
 
-//---------------------------------------------------------------------------
-// Procédure de sous-classement pour intercepter les messages
 //---------------------------------------------------------------------------
 LRESULT CALLBACK SubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
                               UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 {
     switch (uMsg)
     {
-        case WM_SETFOCUS:  // Le contrôle reçoit le focus
+        case WM_SETFOCUS:
         {
+            // ← DIAGNOSTIC
+            MessageBoxW(NULL, L"WM_SETFOCUS reçu!", L"Debug", MB_OK);
+
             auto it = g_AttachedControls.find(hwnd);
             if (it != g_AttachedControls.end()) {
-                int layout = it->second.isNumeric ? 0 : -1;  // 0 = NumPad, -1 = Standard
+                int layout = it->second.isNumeric ? 0 : -1;
                 ShowKeyboard(hwnd, layout);
             }
             break;
         }
 
-        case WM_KILLFOCUS:  // Le contrôle perd le focus
+        case WM_KILLFOCUS:
         {
             if (g_AutoHide) {
                 HideKeyboard();
@@ -78,31 +70,29 @@ LRESULT CALLBACK SubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
             break;
         }
 
-        case WM_DESTROY:  // Le contrôle est détruit
+        case WM_DESTROY:
         {
-            // Nettoyer le sous-classement
             RemoveWindowSubclass(hwnd, SubclassProc, uIdSubclass);
             g_AttachedControls.erase(hwnd);
             break;
         }
     }
 
-    // Appeler la procédure par défaut
     return DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
 
 //---------------------------------------------------------------------------
-// Callback pour énumérer les contrôles enfants
-//---------------------------------------------------------------------------
 BOOL CALLBACK EnumChildProc(HWND hwnd, LPARAM lParam)
 {
+    wchar_t className[256];
+    GetClassNameW(hwnd, className, 256);
+
+    g_ControlsFound++;  // ← Compteur
+
     if (IsTextControl(hwnd)) {
-        // Vérifier si déjà attaché
         if (g_AttachedControls.find(hwnd) == g_AttachedControls.end()) {
-            // Sous-classer le contrôle
             SetWindowSubclass(hwnd, SubclassProc, 0, 0);
 
-            // Enregistrer les infos
             ControlInfo info;
             info.hwnd = hwnd;
             info.isNumeric = IsNumericControl(hwnd);
@@ -111,16 +101,13 @@ BOOL CALLBACK EnumChildProc(HWND hwnd, LPARAM lParam)
         }
     }
 
-    return TRUE;  // Continuer l'énumération
+    return TRUE;
 }
 
-//---------------------------------------------------------------------------
-// Point d'entrée de la DLL
 //---------------------------------------------------------------------------
 int WINAPI DllEntryPoint(HINSTANCE hinst, unsigned long reason, void* lpReserved)
 {
     if (reason == DLL_PROCESS_DETACH) {
-        // Nettoyer tous les sous-classements
         for (auto& pair : g_AttachedControls) {
             RemoveWindowSubclass(pair.first, SubclassProc, 0);
         }
@@ -138,8 +125,6 @@ void InitKeyboard(void)
     }
 }
 
-//---------------------------------------------------------------------------
-// Fonctions exportées
 //---------------------------------------------------------------------------
 extern "C"
 {
@@ -172,24 +157,32 @@ extern "C"
 
     __declspec(dllexport) void __stdcall AttachKeyboardToForm(HWND formHandle, bool autoHide)
     {
-        if (!formHandle || !::IsWindow(formHandle)) return;
+        if (!formHandle || !::IsWindow(formHandle)) {
+            MessageBoxW(NULL, L"formHandle invalide!", L"Erreur", MB_OK | MB_ICONERROR);
+            return;
+        }
 
         g_AutoHide = autoHide;
+        g_ControlsFound = 0;  // Reset compteur
 
-        // Énumérer tous les contrôles enfants du formulaire
+        // Énumérer tous les contrôles enfants
         ::EnumChildWindows(formHandle, EnumChildProc, 0);
+
+        // ← DIAGNOSTIC : Afficher le résultat
+        wchar_t msg[256];
+        swprintf(msg, 256, L"Contrôles trouvés : %d\nContrôles attachés : %d",
+                 g_ControlsFound, (int)g_AttachedControls.size());
+        MessageBoxW(NULL, msg, L"AttachKeyboardToForm", MB_OK | MB_ICONINFORMATION);
     }
 
     __declspec(dllexport) void __stdcall DetachKeyboardFromForm(HWND formHandle)
     {
         if (!formHandle || !::IsWindow(formHandle)) return;
 
-        // Parcourir tous les contrôles attachés
         auto it = g_AttachedControls.begin();
         while (it != g_AttachedControls.end()) {
             HWND parent = ::GetParent(it->first);
             if (parent == formHandle) {
-                // Enlever le sous-classement
                 RemoveWindowSubclass(it->first, SubclassProc, 0);
                 it = g_AttachedControls.erase(it);
             } else {

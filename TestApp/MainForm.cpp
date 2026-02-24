@@ -18,7 +18,7 @@ __fastcall TFormMain::TFormMain(TComponent* Owner):
 	TForm(Owner), FDllHandle(NULL), FShowKeyboard(NULL), FHideKeyboard(NULL),
     FAttachKeyboardToForm(NULL), FDetachKeyboardFromForm(NULL)
 {
-}                                                                             
+}
 
 //---------------------------------------------------------------------------
 // Form creation event
@@ -28,9 +28,8 @@ void __fastcall TFormMain::FormCreate(TObject *Sender)
     if (!LoadKeyboardDLL()) {
         ShowMessage("Error: Cannot load touchkeyboard.dll\n");
     }
-    if (FAttachKeyboardToForm) {
-        FAttachKeyboardToForm(Handle, false);
-    }
+    Edit1->OnEnter = TextControlEnter;
+    Edit2->OnEnter = TextControlEnter;
 }
 
 //---------------------------------------------------------------------------
@@ -91,33 +90,19 @@ void TFormMain::UnloadKeyboardDLL()
         FDetachKeyboardFromForm = NULL;
     }
 }
-
 //---------------------------------------------------------------------------
-// Show keyboard button click
-//---------------------------------------------------------------------------
-void __fastcall TFormMain::BtnShowClick(TObject *Sender)
+void __fastcall TFormMain::TextControlEnter(TObject *Sender)
 {
-    if (FShowKeyboard) {
-        FShowKeyboard(MemoTest->Handle);
-    }
-}
+    TWinControl *ctrl = dynamic_cast<TWinControl*>(Sender);
+    if (!ctrl || !FShowKeyboard) return;
 
-//---------------------------------------------------------------------------
-// Hide keyboard button click
-//---------------------------------------------------------------------------
-void __fastcall TFormMain::BtnHideClick(TObject *Sender)
-{
-    if (FHideKeyboard) {
-        FHideKeyboard();
-    }
-}
+    int layout = -1;  // Standard par défaut
 
-//---------------------------------------------------------------------------
-void __fastcall TFormMain::Button1Click(TObject *Sender)
-{
-    if (FShowKeyboard) {
-        FShowKeyboard(MemoTest->Handle,0);
+    // Vérifier si c'est un Edit numérique
+    TEdit *edit = dynamic_cast<TEdit*>(Sender);
+    if (edit && edit->NumbersOnly) {
+        layout = 0;  // NumPad
     }
-}
-//---------------------------------------------------------------------------
 
+    FShowKeyboard(ctrl->Handle, layout);
+}
