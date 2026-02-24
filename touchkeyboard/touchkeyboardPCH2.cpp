@@ -18,7 +18,19 @@ struct ControlInfo {
 
 static std::map<HWND, ControlInfo> g_AttachedControls;
 static bool g_AutoHide = true;
-static int g_ControlsFound = 0;  // ← Compteur de diagnostic
+
+//fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
+static HWND  g_CurrentTarget = NULL;
+static HHOOK g_MouseHook     = NULL;
+//fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
+static bool IsPointInsideWindow(HWND hwnd, const POINT& ptScreen)
+{
+    if (!hwnd) return false;
+    RECT rc{};
+    if (!GetWindowRect(hwnd, &rc)) return false;
+    return PtInRect(&rc, ptScreen) != 0;
+}
+
 
 //---------------------------------------------------------------------------
 bool IsTextControl(HWND hwnd)
@@ -51,9 +63,6 @@ LRESULT CALLBACK SubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
     {
         case WM_SETFOCUS:
         {
-            // ← DIAGNOSTIC
-            MessageBoxW(NULL, L"WM_SETFOCUS reçu!", L"Debug", MB_OK);
-
             auto it = g_AttachedControls.find(hwnd);
             if (it != g_AttachedControls.end()) {
                 int layout = it->second.isNumeric ? 0 : -1;
@@ -65,7 +74,11 @@ LRESULT CALLBACK SubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         case WM_KILLFOCUS:
         {
             if (g_AutoHide) {
-                HideKeyboard();
+                HWND newFocus = (HWND)wParam;
+
+                if (g_AttachedControls.find(newFocus) == g_AttachedControls.end()) {
+                    HideKeyboard();
+                }
             }
             break;
         }
@@ -81,13 +94,34 @@ LRESULT CALLBACK SubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
     return DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
 
+ //fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
+LRESULT CALLBACK MouseHookProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    if (nCode >= 0)
+    {
+        // On s'intéresse aux clics (client et non-client)
+        if (wParam == WM_LBUTTONDOWN || wParam == WM_RBUTTONDOWN || wParam == WM_MBUTTONDOWN ||
+            wParam == WM_NCLBUTTONDOWN || wParam == WM_NCRBUTTONDOWN || wParam == WM_NCMBUTTONDOWN)
+        {
+            MOUSEHOOKSTRUCT* mhs = reinterpret_cast<MOUSEHOOKSTRUCT*>(lParam);
+            POINT pt = mhs->pt; // coordonnées écran
+
+            // Si le clic est en dehors de l'edit actuellement ciblé -> on cache le clavier
+            if (g_CurrentTarget && !IsPointInsideWindow(g_CurrentTarget, pt))
+            {
+                HideKeyboard();
+            }
+        }
+    }
+    return CallNextHookEx(g_MouseHook, nCode, wParam, lParam);
+}
+
 //---------------------------------------------------------------------------
 BOOL CALLBACK EnumChildProc(HWND hwnd, LPARAM lParam)
 {
     wchar_t className[256];
     GetClassNameW(hwnd, className, 256);
 
-    g_ControlsFound++;  // ← Compteur
 
     if (IsTextControl(hwnd)) {
         if (g_AttachedControls.find(hwnd) == g_AttachedControls.end()) {
@@ -112,6 +146,13 @@ int WINAPI DllEntryPoint(HINSTANCE hinst, unsigned long reason, void* lpReserved
             RemoveWindowSubclass(pair.first, SubclassProc, 0);
         }
         g_AttachedControls.clear();
+
+        //fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
+        if (g_MouseHook) {
+                UnhookWindowsHookEx(g_MouseHook);
+                g_MouseHook = NULL;
+        }
+
     }
     return 1;
 }
@@ -137,6 +178,7 @@ extern "C"
             }
 
             if (keyboard) {
+                g_CurrentTarget = targetHandle; //fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
                 keyboard->Etat(etat);
                 keyboard->SetTargetControl(targetHandle);
                 keyboard->Show();
@@ -163,16 +205,16 @@ extern "C"
         }
 
         g_AutoHide = autoHide;
-        g_ControlsFound = 0;  // Reset compteur
 
         // Énumérer tous les contrôles enfants
         ::EnumChildWindows(formHandle, EnumChildProc, 0);
 
-        // ← DIAGNOSTIC : Afficher le résultat
-        wchar_t msg[256];
-        swprintf(msg, 256, L"Contrôles trouvés : %d\nContrôles attachés : %d",
-                 g_ControlsFound, (int)g_AttachedControls.size());
-        MessageBoxW(NULL, msg, L"AttachKeyboardToForm", MB_OK | MB_ICONINFORMATION);
+        //fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
+        if (!g_MouseHook) {
+                g_MouseHook = SetWindowsHookEx(WH_MOUSE, MouseHookProc, NULL, GetCurrentThreadId());
+        }
+
+
     }
 
     __declspec(dllexport) void __stdcall DetachKeyboardFromForm(HWND formHandle)
@@ -189,6 +231,13 @@ extern "C"
                 ++it;
             }
         }
+
+        //fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
+        if (g_AttachedControls.empty() && g_MouseHook) {
+                UnhookWindowsHookEx(g_MouseHook);
+                g_MouseHook = NULL;
+        }
+
     }
 }
 //---------------------------------------------------------------------------

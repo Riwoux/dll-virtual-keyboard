@@ -30,6 +30,9 @@ void __fastcall TFormMain::FormCreate(TObject *Sender)
     }
     Edit1->OnEnter = TextControlEnter;
     Edit2->OnEnter = TextControlEnter;
+    if (FAttachKeyboardToForm) {
+        FAttachKeyboardToForm(Handle, true);
+    }
 }
 
 //---------------------------------------------------------------------------

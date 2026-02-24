@@ -25,7 +25,7 @@ object FormMain: TFormMain
     Left = 24
     Top = 43
     Width = 449
-    Height = 22
+    Height = 21
     NumbersOnly = True
     TabOrder = 0
     Text = 'Edit1'
@@ -37,5 +37,13 @@ object FormMain: TFormMain
     Height = 21
     TabOrder = 1
     Text = 'Edit2'
+  end
+  object Button1: TButton
+    Left = 72
+    Top = 144
+    Width = 337
+    Height = 179
+    Caption = 'Button1'
+    TabOrder = 2
   end
 end

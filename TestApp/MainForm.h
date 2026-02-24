@@ -24,6 +24,7 @@ __published:
     TLabel *Label1;
 	TEdit *Edit1;
 	TEdit *Edit2;
+	TButton *Button1;
     void __fastcall FormCreate(TObject *Sender);
     void __fastcall FormDestroy(TObject *Sender);
     void __fastcall TextControlEnter(TObject *Sender);
