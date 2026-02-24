@@ -15,7 +15,6 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
     {
         Application->Initialize();
         Application->MainFormOnTaskBar = true;
-        TStyleManager::TrySetStyle("Sky", false);
 		Application->CreateForm(__classid(TFormMain), &FormMain);
 		Application->Run();
     }

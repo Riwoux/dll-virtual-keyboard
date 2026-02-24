@@ -1,7 +1,8 @@
-//---------------------------------------------------------------------------
+﻿//---------------------------------------------------------------------------
 // MainForm.cpp - Simple Test Application Implementation
 //---------------------------------------------------------------------------
 #include <vcl.h>
+#include <windows.h>
 #pragma hdrstop
 
 #include "MainForm.h"
@@ -13,11 +14,11 @@ TFormMain *FormMain;
 //---------------------------------------------------------------------------
 // Constructor
 //---------------------------------------------------------------------------
-__fastcall TFormMain::TFormMain(TComponent* Owner)
-    : TForm(Owner), FDllHandle(NULL), FShowKeyboard(NULL),
-      FHideKeyboard(NULL), FIsKeyboardVisible(NULL)
+__fastcall TFormMain::TFormMain(TComponent* Owner):
+	TForm(Owner), FDllHandle(NULL), FShowKeyboard(NULL), FHideKeyboard(NULL),
+    FAttachKeyboardToForm(NULL), FDetachKeyboardFromForm(NULL)
 {
-}
+}                                                                             
 
 //---------------------------------------------------------------------------
 // Form creation event
@@ -25,10 +26,10 @@ __fastcall TFormMain::TFormMain(TComponent* Owner)
 void __fastcall TFormMain::FormCreate(TObject *Sender)
 {
     if (!LoadKeyboardDLL()) {
-        ShowMessage("Error: Cannot load VirtualKeyboardDLL.dll\n\n"
-                   "Make sure the DLL file is in the same directory as the application or in the system PATH.");
-        BtnShow->Enabled = false;
-        BtnHide->Enabled = false;
+        ShowMessage("Error: Cannot load touchkeyboard.dll\n");
+    }
+    if (FAttachKeyboardToForm) {
+        FAttachKeyboardToForm(Handle, false);
     }
 }
 
@@ -37,51 +38,57 @@ void __fastcall TFormMain::FormCreate(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TFormMain::FormDestroy(TObject *Sender)
 {
+    if (FDetachKeyboardFromForm) {
+        FDetachKeyboardFromForm(Handle);
+    }
     UnloadKeyboardDLL();
 }
 
-//---------------------------------------------------------------------------
+///---------------------------------------------------------------------------
 // Load the virtual keyboard DLL
 //---------------------------------------------------------------------------
 bool TFormMain::LoadKeyboardDLL()
 {
     // First try to load from application directory
-    String dllPath = ExtractFilePath(Application->ExeName) + "VirtualKeyboardDLL.dll";
-    FDllHandle = LoadLibrary(dllPath.c_str());
-    
+    String dllPath = ExtractFilePath(Application->ExeName) + "touchkeyboard.dll";
+    FDllHandle = LoadLibraryW(dllPath.w_str());
+
     if (!FDllHandle) {
-        // Try to load from system PATH
-        FDllHandle = LoadLibrary(L"VirtualKeyboardDLL.dll");
+        FDllHandle = LoadLibrary(TEXT("touchkeyboard.dll"));
     }
-    
+
     if (!FDllHandle) {
+        DWORD errCode = GetLastError();
+        ShowMessage("Failed to load touchkeyboard.dll\nError code: " + IntToStr((int)errCode));
         return false;
     }
-    
-    // Load exported functions
+
+    // DLL loaded successfully, now get the exported functions
     FShowKeyboard = (TShowKeyboardProc)GetProcAddress(FDllHandle, "ShowKeyboard");
     FHideKeyboard = (THideKeyboardProc)GetProcAddress(FDllHandle, "HideKeyboard");
-    FIsKeyboardVisible = (TIsKeyboardVisibleProc)GetProcAddress(FDllHandle, "IsKeyboardVisible");
-    
-    if (!FShowKeyboard || !FHideKeyboard || !FIsKeyboardVisible) {
+    FAttachKeyboardToForm = (TAttachKeyboardToFormProc)GetProcAddress(FDllHandle, "AttachKeyboardToForm");
+    FDetachKeyboardFromForm = (TDetachKeyboardFromFormProc)GetProcAddress(FDllHandle, "DetachKeyboardFromForm");
+
+    if (!FShowKeyboard || !FHideKeyboard || !FAttachKeyboardToForm) {
+        ShowMessage("DLL loaded but functions not found!");
         UnloadKeyboardDLL();
         return false;
     }
-    
+
     return true;
 }
-
 //---------------------------------------------------------------------------
 // Unload the DLL
 //---------------------------------------------------------------------------
 void TFormMain::UnloadKeyboardDLL()
 {
     if (FDllHandle) {
+    	FreeLibrary(FDllHandle);
         FDllHandle = NULL;
         FShowKeyboard = NULL;
         FHideKeyboard = NULL;
-        FIsKeyboardVisible = NULL;
-        FreeLibrary(FDllHandle);
+        FAttachKeyboardToForm = NULL;
+        FDetachKeyboardFromForm = NULL;
     }
 }
 
@@ -91,7 +98,7 @@ void TFormMain::UnloadKeyboardDLL()
 void __fastcall TFormMain::BtnShowClick(TObject *Sender)
 {
     if (FShowKeyboard) {
-        FShowKeyboard(MemoTest->Handle,0);
+        FShowKeyboard(MemoTest->Handle);
     }
 }
 
@@ -109,7 +116,7 @@ void __fastcall TFormMain::BtnHideClick(TObject *Sender)
 void __fastcall TFormMain::Button1Click(TObject *Sender)
 {
     if (FShowKeyboard) {
-        FShowKeyboard(MemoTest->Handle,1);
+        FShowKeyboard(MemoTest->Handle,0);
     }
 }
 //---------------------------------------------------------------------------

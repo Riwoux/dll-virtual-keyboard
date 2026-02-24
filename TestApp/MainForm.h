@@ -13,9 +13,10 @@
 //---------------------------------------------------------------------------
 
 // DLL exported function types
-typedef void (__stdcall *TShowKeyboardProc)(HWND targetHandle, int etat);
+typedef void (__stdcall *TShowKeyboardProc)(HWND targetHandle, int etat=-1);
 typedef void (__stdcall *THideKeyboardProc)();
-typedef bool (__stdcall *TIsKeyboardVisibleProc)();
+typedef void (__stdcall *TAttachKeyboardToFormProc)(HWND, bool);
+typedef void (__stdcall *TDetachKeyboardFromFormProc)(HWND);
 
 class TFormMain : public TForm
 {
@@ -35,8 +36,9 @@ private:
     HINSTANCE FDllHandle;
     TShowKeyboardProc FShowKeyboard;
     THideKeyboardProc FHideKeyboard;
-    TIsKeyboardVisibleProc FIsKeyboardVisible;
-    
+    TAttachKeyboardToFormProc FAttachKeyboardToForm;
+    TDetachKeyboardFromFormProc FDetachKeyboardFromForm;
+
     bool LoadKeyboardDLL();
     void UnloadKeyboardDLL();
     
