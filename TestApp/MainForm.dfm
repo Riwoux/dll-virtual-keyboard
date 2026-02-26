@@ -12,38 +12,24 @@ object FormMain: TFormMain
   Font.Style = []
   Position = poScreenCenter
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   TextHeight = 13
-  object Label1: TLabel
-    Left = 24
-    Top = 24
-    Width = 264
-    Height = 13
-    Caption = 'Click in the text area to test the keyboard:'
-  end
   object Edit1: TEdit
-    Left = 24
-    Top = 43
-    Width = 449
+    Left = 112
+    Top = 152
+    Width = 121
     Height = 21
     NumbersOnly = True
     TabOrder = 0
     Text = 'Edit1'
+    OnEnter = TextControlEnter
   end
   object Edit2: TEdit
-    Left = 24
-    Top = 80
-    Width = 449
+    Left = 248
+    Top = 104
+    Width = 121
     Height = 21
     TabOrder = 1
     Text = 'Edit2'
-  end
-  object Button1: TButton
-    Left = 72
-    Top = 144
-    Width = 337
-    Height = 179
-    Caption = 'Button1'
-    TabOrder = 2
+    OnEnter = TextControlEnter
   end
 end

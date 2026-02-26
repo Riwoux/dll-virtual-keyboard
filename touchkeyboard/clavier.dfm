@@ -1,7 +1,7 @@
 object keyboard: Tkeyboard
   Left = 0
   Top = 0
-  BorderStyle = bsSizeToolWin
+  BorderIcons = [biMinimize, biMaximize]
   Caption = 'keyboard'
   ClientHeight = 300
   ClientWidth = 300
@@ -23,9 +23,5 @@ object keyboard: Tkeyboard
     GradientEnd = clSilver
     GradientStart = clGray
     Layout = 'NumPad'
-    ExplicitLeft = 0
-    ExplicitTop = 0
-    ExplicitWidth = 297
-    ExplicitHeight = 297
   end
 end

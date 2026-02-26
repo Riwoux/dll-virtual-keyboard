@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+ï»¿//---------------------------------------------------------------------------
 
 #ifndef clavierH
 #define clavierH
@@ -12,13 +12,13 @@
 //---------------------------------------------------------------------------
 class Tkeyboard : public TForm
 {
-__published:	// Composants gérés par l'EDI
+__published:	// Composants gÃ©rÃ©s par l'EDI
 	TTouchKeyboard *TouchKeyboard1;
     void __fastcall TouchKeyboard1KeyPress(TObject *Sender, System::WideChar &Key);
 
 private:
     HWND FTargetHandle;
-public:		// Déclarations utilisateur
+public:		// DÃ©clarations utilisateur
 	__fastcall Tkeyboard(TComponent* Owner);
     void Etat(int etat);
     void SetTargetControl(HWND targetHandle);

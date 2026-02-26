@@ -4,44 +4,42 @@
 #ifndef MainFormH
 #define MainFormH
 //---------------------------------------------------------------------------
+
+#include "C:\user\lib\c10\wide\wide.h"
 #include <System.Classes.hpp>
 #include <Vcl.Controls.hpp>
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.Forms.hpp>
 #include <windows.h>
 #include <Vcl.Touch.Keyboard.hpp>
+#include <Winapi.Windows.hpp>
+
+//Début modif 023 CL
+int KeyboardShow(HWND targetHandle, int etat);
+int KeyboardHide(void);
+int KeyboardAttachToForm(HWND formHandle, bool autohide);
+int KeyboardFromFormDetach(HWND formHandle);
+int KeyboardAutoShow(TObject *Sender);
+
+UnicodeString dirClavierVirtuel = "C:\\Users\\corentin.langlade\\Documents\\Stage\\Clavier_virtuel\\testclaviervirtuel\\touchkeyboard\\Win64\\Release\\touchkeyboard.dll";  //Modif 023 CL
+//Fin modif 023 CL
 //---------------------------------------------------------------------------
 
-// DLL exported function types
-typedef void (__stdcall *TShowKeyboardProc)(HWND targetHandle, int etat=-1);
-typedef void (__stdcall *THideKeyboardProc)();
-typedef void (__stdcall *TAttachKeyboardToFormProc)(HWND, bool);
-typedef void (__stdcall *TDetachKeyboardFromFormProc)(HWND);
 
 class TFormMain : public TForm
 {
 __published:
-    TLabel *Label1;
 	TEdit *Edit1;
 	TEdit *Edit2;
-	TButton *Button1;
     void __fastcall FormCreate(TObject *Sender);
-    void __fastcall FormDestroy(TObject *Sender);
-    void __fastcall TextControlEnter(TObject *Sender);
+    void __fastcall TextControlEnter(TObject* Sender);
 
 private:
-    HINSTANCE FDllHandle;
-    TShowKeyboardProc FShowKeyboard;
-    THideKeyboardProc FHideKeyboard;
-    TAttachKeyboardToFormProc FAttachKeyboardToForm;
-    TDetachKeyboardFromFormProc FDetachKeyboardFromForm;
-
-    bool LoadKeyboardDLL();
-    void UnloadKeyboardDLL();
-    
 public:
     __fastcall TFormMain(TComponent* Owner);
 };
+
+
 //---------------------------------------------------------------------------
 extern PACKAGE TFormMain *FormMain;
 //---------------------------------------------------------------------------

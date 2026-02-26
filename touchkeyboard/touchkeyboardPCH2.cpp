@@ -8,7 +8,8 @@
 
 #pragma hdrstop
 #pragma argsused
-#pragma comment(lib, "comctl32.lib")
+#pragma comment(lib, "comctl32")
+
 
 //---------------------------------------------------------------------------
 struct ControlInfo {
@@ -22,14 +23,32 @@ static bool g_AutoHide = true;
 //fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
 static HWND  g_CurrentTarget = NULL;
 static HHOOK g_MouseHook     = NULL;
+static HWND g_KeyboardHwnd = NULL;
+static bool g_KeyboardVisible = false;
+
 //fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
 static bool IsPointInsideWindow(HWND hwnd, const POINT& ptScreen)
 {
-    if (!hwnd) return false;
-    RECT rc{};
-    if (!GetWindowRect(hwnd, &rc)) return false;
-    return PtInRect(&rc, ptScreen) != 0;
+	if (!hwnd) return false;
+	RECT rc{};
+	if (!GetWindowRect(hwnd, &rc)) return false;
+	return PtInRect(&rc, ptScreen) != 0;
 }
+static bool IsInKeyboardWindow(HWND hwnd)
+{
+	if (!hwnd) return false;
+    if (!keyboard) return false;
+    HWND kb = keyboard->Handle;
+    if (!kb || !::IsWindow(kb)) return false;
+
+	if (hwnd == kb) return true;
+	if (::IsChild(kb, hwnd)) return true;
+
+	// Par prudence : comparer aussi la racine
+    HWND root = (HWND)::GetAncestor(hwnd, GA_ROOT);
+    return (root == kb);
+}
+
 
 
 //---------------------------------------------------------------------------
@@ -41,7 +60,7 @@ bool IsTextControl(HWND hwnd)
     return (wcscmp(className, L"Edit") == 0 ||
             wcscmp(className, L"RichEdit") == 0 ||
             wcscmp(className, L"RichEdit20A") == 0 ||
-            wcscmp(className, L"RichEdit20W") == 0 ||
+			wcscmp(className, L"RichEdit20W") == 0 ||
             wcscmp(className, L"TMemo") == 0 ||
             wcscmp(className, L"TEdit") == 0 ||
             wcscmp(className, L"TRichEdit") == 0 ||
@@ -51,47 +70,48 @@ bool IsTextControl(HWND hwnd)
 //---------------------------------------------------------------------------
 bool IsNumericControl(HWND hwnd)
 {
-    LONG style = GetWindowLong(hwnd, GWL_STYLE);
+	LONG style = GetWindowLong(hwnd, GWL_STYLE);
     return (style & ES_NUMBER) != 0;
 }
 
 //---------------------------------------------------------------------------
 LRESULT CALLBACK SubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
-                              UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
+							  UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 {
-    switch (uMsg)
-    {
-        case WM_SETFOCUS:
-        {
-            auto it = g_AttachedControls.find(hwnd);
-            if (it != g_AttachedControls.end()) {
-                int layout = it->second.isNumeric ? 0 : -1;
-                ShowKeyboard(hwnd, layout);
-            }
+	switch (uMsg)
+	{
+		case WM_SETFOCUS:
+		{
+			auto it = g_AttachedControls.find(hwnd);
+			if (it != g_AttachedControls.end()) {
+				KeyboardShow(hwnd);
+			}
             break;
         }
 
         case WM_KILLFOCUS:
-        {
-            if (g_AutoHide) {
+		{
+			if (g_AutoHide) {
                 HWND newFocus = (HWND)wParam;
-
-                if (g_AttachedControls.find(newFocus) == g_AttachedControls.end()) {
-                    HideKeyboard();
-                }
+		       	if (IsInKeyboardWindow(newFocus)) {
+					break;
+        		}
+				if (g_AttachedControls.find(newFocus) == g_AttachedControls.end()) {
+                    KeyboardHide();
+				}
             }
             break;
-        }
+		}
 
         case WM_DESTROY:
         {
-            RemoveWindowSubclass(hwnd, SubclassProc, uIdSubclass);
+			RemoveWindowSubclass(hwnd, SubclassProc, uIdSubclass);
             g_AttachedControls.erase(hwnd);
-            break;
-        }
+			break;
+		}
     }
 
-    return DefSubclassProc(hwnd, uMsg, wParam, lParam);
+	return DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
 
  //fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
@@ -106,10 +126,24 @@ LRESULT CALLBACK MouseHookProc(int nCode, WPARAM wParam, LPARAM lParam)
             MOUSEHOOKSTRUCT* mhs = reinterpret_cast<MOUSEHOOKSTRUCT*>(lParam);
             POINT pt = mhs->pt; // coordonnées écran
 
-            // Si le clic est en dehors de l'edit actuellement ciblé -> on cache le clavier
-            if (g_CurrentTarget && !IsPointInsideWindow(g_CurrentTarget, pt))
-            {
-                HideKeyboard();
+			HWND hwndHit = ::WindowFromPoint(pt);
+
+			if (IsInKeyboardWindow(hwndHit)) {
+				return CallNextHookEx(g_MouseHook, nCode, wParam, lParam);
+			}
+
+
+			if (g_CurrentTarget) {
+                if (IsPointInsideWindow(g_CurrentTarget, pt)) {
+                    if (!g_KeyboardVisible) {
+                        int layout = -1;
+                        auto it = g_AttachedControls.find(g_CurrentTarget);
+                        if (it != g_AttachedControls.end()) layout = it->second.isNumeric ? 0 : -1;
+                        KeyboardShow(g_CurrentTarget, layout);
+                    }
+                    return CallNextHookEx(g_MouseHook, nCode, wParam, lParam);
+                }
+                KeyboardHide();
             }
         }
     }
@@ -119,10 +153,6 @@ LRESULT CALLBACK MouseHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 //---------------------------------------------------------------------------
 BOOL CALLBACK EnumChildProc(HWND hwnd, LPARAM lParam)
 {
-    wchar_t className[256];
-    GetClassNameW(hwnd, className, 256);
-
-
     if (IsTextControl(hwnd)) {
         if (g_AttachedControls.find(hwnd) == g_AttachedControls.end()) {
             SetWindowSubclass(hwnd, SubclassProc, 0, 0);
@@ -142,12 +172,12 @@ BOOL CALLBACK EnumChildProc(HWND hwnd, LPARAM lParam)
 int WINAPI DllEntryPoint(HINSTANCE hinst, unsigned long reason, void* lpReserved)
 {
     if (reason == DLL_PROCESS_DETACH) {
-        for (auto& pair : g_AttachedControls) {
-            RemoveWindowSubclass(pair.first, SubclassProc, 0);
-        }
-        g_AttachedControls.clear();
+		for (auto& pair : g_AttachedControls) {
+			RemoveWindowSubclass(pair.first, SubclassProc, 0);
+		}
+		g_AttachedControls.clear();
 
-        //fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
+		//fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
         if (g_MouseHook) {
                 UnhookWindowsHookEx(g_MouseHook);
                 g_MouseHook = NULL;
@@ -169,7 +199,7 @@ void InitKeyboard(void)
 //---------------------------------------------------------------------------
 extern "C"
 {
-    __declspec(dllexport) void __stdcall ShowKeyboard(HWND targetHandle, int etat)
+    __declspec(dllexport) void __stdcall KeyboardShow(HWND targetHandle, int etat)
     {
         try {
             if (!keyboard) {
@@ -178,26 +208,29 @@ extern "C"
             }
 
             if (keyboard) {
-                g_CurrentTarget = targetHandle; //fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
+				g_CurrentTarget = targetHandle; //fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
+                g_KeyboardHwnd  = keyboard->Handle;
                 keyboard->Etat(etat);
                 keyboard->SetTargetControl(targetHandle);
                 keyboard->Show();
+                g_KeyboardVisible = true;
             }
-        } catch (...) {
+		} catch (...) {
         }
     }
 
-    __declspec(dllexport) void __stdcall HideKeyboard(void)
+    __declspec(dllexport) void __stdcall KeyboardHide(void)
     {
         try {
             if (keyboard) {
                 keyboard->Hide();
+                g_KeyboardVisible = false;
             }
         } catch (...) {
         }
     }
 
-    __declspec(dllexport) void __stdcall AttachKeyboardToForm(HWND formHandle, bool autoHide)
+    __declspec(dllexport) void __stdcall KeyboardAttachToForm(HWND formHandle, bool autoHide)
     {
         if (!formHandle || !::IsWindow(formHandle)) {
             MessageBoxW(NULL, L"formHandle invalide!", L"Erreur", MB_OK | MB_ICONERROR);
@@ -217,7 +250,7 @@ extern "C"
 
     }
 
-    __declspec(dllexport) void __stdcall DetachKeyboardFromForm(HWND formHandle)
+    __declspec(dllexport) void __stdcall KeyboardDetachFromForm(HWND formHandle)
     {
         if (!formHandle || !::IsWindow(formHandle)) return;
 
@@ -239,5 +272,31 @@ extern "C"
         }
 
     }
+
+    __declspec(dllexport) void __stdcall KeyboardAutoShow(TObject *Sender)
+    {
+        try {
+            auto Edit = dynamic_cast<TCustomEdit*>(Sender);
+            if (!Edit) return;
+
+            TWinControl* wc = Edit; // TCustomEdit dérive de TWinControl
+            bool isNumeric = false;
+
+            #if defined(_WIN64)
+                LONG_PTR style = ::GetWindowLongPtr(wc->Handle, GWL_STYLE);
+            #else
+                LONG style = ::GetWindowLong(wc->Handle, GWL_STYLE);
+            #endif
+
+            isNumeric = (style & ES_NUMBER) != 0; // true si “chiffres uniquement”
+
+            int layout = isNumeric ? 0 : -1;
+            KeyboardShow(wc->Handle, layout); // ou ShowKeyboard(...)
+        } catch (...) {
+            // ne laisse jamais sortir une exception de la DLL
+        }
+    }
+
+
 }
 //---------------------------------------------------------------------------

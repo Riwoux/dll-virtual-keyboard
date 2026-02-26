@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+﻿//---------------------------------------------------------------------------
 
 #include <vcl.h>
 #pragma hdrstop
@@ -12,11 +12,14 @@ Tkeyboard *keyboard = NULL;
 __fastcall Tkeyboard::Tkeyboard(TComponent* Owner)
 	: TForm(Owner), FTargetHandle(NULL)
 {
+    BorderStyle = bsSizeable;
 }
 //---------------------------------------------------------------------------
 
 void Tkeyboard::Etat(int etat)
 {
+    keyboard->Left = 500 ;
+    keyboard->Top = 500 ;
     if (etat==-1) {
     	TouchKeyboard1->Layout = "Standard";
         keyboard->Width = 997;

@@ -9,6 +9,7 @@
 #include <Vcl.Themes.hpp>
 USEFORM("MainForm.cpp", FormMain);
 //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 {
     try

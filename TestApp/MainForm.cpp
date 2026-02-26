@@ -11,12 +11,20 @@
 #pragma resource "*.dfm"
 TFormMain *FormMain;
 
+
+// Début modif 023 CL
+typedef void* (*FuncKeyboardShow)(HWND targetHandle, int etat);
+typedef void* (*FuncKeyboardHide)();
+typedef void* (*FuncKeyboardToFormAttach)(HWND formHandle, bool autoHide);
+typedef void* (*FuncKeyboardFromFormDetach)(HWND formHandle);
+typedef void* (*FuncKeyboardAutoShow)(TObject *Sender);
+//Fin modif 023 CL
+
 //---------------------------------------------------------------------------
 // Constructor
 //---------------------------------------------------------------------------
 __fastcall TFormMain::TFormMain(TComponent* Owner):
-	TForm(Owner), FDllHandle(NULL), FShowKeyboard(NULL), FHideKeyboard(NULL),
-    FAttachKeyboardToForm(NULL), FDetachKeyboardFromForm(NULL)
+	TForm(Owner)
 {
 }
 
@@ -25,87 +33,198 @@ __fastcall TFormMain::TFormMain(TComponent* Owner):
 //---------------------------------------------------------------------------
 void __fastcall TFormMain::FormCreate(TObject *Sender)
 {
-    if (!LoadKeyboardDLL()) {
-        ShowMessage("Error: Cannot load touchkeyboard.dll\n");
-    }
     Edit1->OnEnter = TextControlEnter;
     Edit2->OnEnter = TextControlEnter;
-    if (FAttachKeyboardToForm) {
-        FAttachKeyboardToForm(Handle, true);
+    if (KeyboardAttachToForm) {
+        KeyboardAttachToForm(Handle, true);
     }
 }
 
 //---------------------------------------------------------------------------
 // Form destruction event
 //---------------------------------------------------------------------------
-void __fastcall TFormMain::FormDestroy(TObject *Sender)
+void __fastcall TFormMain::TextControlEnter(TObject* Sender)
 {
-    if (FDetachKeyboardFromForm) {
-        FDetachKeyboardFromForm(Handle);
-    }
-    UnloadKeyboardDLL();
+    KeyboardAutoShow(Sender);
 }
 
-///---------------------------------------------------------------------------
-// Load the virtual keyboard DLL
-//---------------------------------------------------------------------------
-bool TFormMain::LoadKeyboardDLL()
+//Début modif 023 CL
+int KeyboardShow(HWND targetHandle, int etat)
 {
-    // First try to load from application directory
-    String dllPath = ExtractFilePath(Application->ExeName) + "touchkeyboard.dll";
-    FDllHandle = LoadLibraryW(dllPath.w_str());
+	HINSTANCE load;
+	wchar_t Ch[500], Ch1[500];
+	LPCSTR functionName = "KeyboardShow";
 
-    if (!FDllHandle) {
-        FDllHandle = LoadLibrary(TEXT("touchkeyboard.dll"));
+	Wstrcpy(Ch, Application->ExeName.c_str());
+	Wstrcpy(Ch1, dirClavierVirtuel.c_str());
+	Ch1[0] = Ch[0];
+	load = LoadLibrary(Ch1);
+	if (load)
+	{
+        // GetProcAddress returns a pointer to the loaded method
+    	FuncKeyboardShow myFunc = FuncKeyboardShow(GetProcAddress(load, functionName));
+
+        if (myFunc != nullptr) {
+            try {
+                myFunc(targetHandle, etat);
+                return 0;
+            } catch (...) {
+                ShowMessage("Function (" + UnicodeString(functionName) + ") not found in the DLL (" + dirClavierVirtuel + ")\nPlease update this DLL");
+				return -1;
+            }
+        }
+        else
+		 {
+			 ShowMessage("Function (" + UnicodeString(functionName) + ") not found in the DLL (" + dirClavierVirtuel + ")");
+			 return -1;
+		 }
     }
-
-    if (!FDllHandle) {
-        DWORD errCode = GetLastError();
-        ShowMessage("Failed to load touchkeyboard.dll\nError code: " + IntToStr((int)errCode));
-        return false;
-    }
-
-    // DLL loaded successfully, now get the exported functions
-    FShowKeyboard = (TShowKeyboardProc)GetProcAddress(FDllHandle, "ShowKeyboard");
-    FHideKeyboard = (THideKeyboardProc)GetProcAddress(FDllHandle, "HideKeyboard");
-    FAttachKeyboardToForm = (TAttachKeyboardToFormProc)GetProcAddress(FDllHandle, "AttachKeyboardToForm");
-    FDetachKeyboardFromForm = (TDetachKeyboardFromFormProc)GetProcAddress(FDllHandle, "DetachKeyboardFromForm");
-
-    if (!FShowKeyboard || !FHideKeyboard || !FAttachKeyboardToForm) {
-        ShowMessage("DLL loaded but functions not found!");
-        UnloadKeyboardDLL();
-        return false;
-    }
-
-    return true;
-}
-//---------------------------------------------------------------------------
-// Unload the DLL
-//---------------------------------------------------------------------------
-void TFormMain::UnloadKeyboardDLL()
-{
-    if (FDllHandle) {
-    	FreeLibrary(FDllHandle);
-        FDllHandle = NULL;
-        FShowKeyboard = NULL;
-        FHideKeyboard = NULL;
-        FAttachKeyboardToForm = NULL;
-        FDetachKeyboardFromForm = NULL;
+    else
+    {
+        return -1;
     }
 }
-//---------------------------------------------------------------------------
-void __fastcall TFormMain::TextControlEnter(TObject *Sender)
+
+int KeyboardHide()
 {
-    TWinControl *ctrl = dynamic_cast<TWinControl*>(Sender);
-    if (!ctrl || !FShowKeyboard) return;
+	HINSTANCE load;
+	wchar_t Ch[500], Ch1[500];
+	LPCSTR functionName = "KeyboardHide";
 
-    int layout = -1;  // Standard par défaut
+	Wstrcpy(Ch, Application->ExeName.c_str());
+	Wstrcpy(Ch1, dirClavierVirtuel.c_str());
+	Ch1[0] = Ch[0];
+	load = LoadLibrary(Ch1);
+	if (load)
+	{
+        // GetProcAddress returns a pointer to the loaded method
+    	FuncKeyboardHide myFunc = FuncKeyboardHide(GetProcAddress(load, functionName));
 
-    // Vérifier si c'est un Edit numérique
-    TEdit *edit = dynamic_cast<TEdit*>(Sender);
-    if (edit && edit->NumbersOnly) {
-        layout = 0;  // NumPad
+        if (myFunc != nullptr) {
+            try {
+                myFunc();
+                return 0;
+            } catch (...) {
+                ShowMessage("Function (" + UnicodeString(functionName) + ") not found in the DLL (" + dirClavierVirtuel + ")\nPlease update this DLL");
+				return -1;
+            }
+        }
+        else
+		 {
+			 ShowMessage("Function (" + UnicodeString(functionName) + ") not found in the DLL (" + dirClavierVirtuel + ")");
+			 return -1;
+		 }
     }
+    else
+    {
+        return -1;
+    }
+}
 
-    FShowKeyboard(ctrl->Handle, layout);
+int KeyboardAttachToForm(HWND formHandle, bool autoHide)
+{
+	HINSTANCE load;
+	wchar_t Ch[500], Ch1[500];
+	LPCSTR functionName = "KeyboardAttachToForm";
+
+	Wstrcpy(Ch, Application->ExeName.c_str());
+	Wstrcpy(Ch1, dirClavierVirtuel.c_str());
+	Ch1[0] = Ch[0];
+	load = LoadLibrary(Ch1);
+	if (load)
+	{
+        // GetProcAddress returns a pointer to the loaded method
+    	FuncKeyboardToFormAttach myFunc = FuncKeyboardToFormAttach(GetProcAddress(load, functionName));
+
+        if (myFunc != nullptr) {
+            try {
+                myFunc(formHandle, autoHide);
+                return 0;
+            } catch (...) {
+                ShowMessage("Function (" + UnicodeString(functionName) + ") not found in the DLL (" + dirClavierVirtuel + ")\nPlease update this DLL");
+				return -1;
+            }
+        }
+        else
+		 {
+			 ShowMessage("Function (" + UnicodeString(functionName) + ") not found in the DLL (" + dirClavierVirtuel + ")");
+			 return -1;
+		 }
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+int KeyboardDetachFromForm(HWND formHandle)
+{
+	HINSTANCE load;
+	wchar_t Ch[500], Ch1[500];
+	LPCSTR functionName = "KeyboardDetachFromForm";
+
+	Wstrcpy(Ch, Application->ExeName.c_str());
+	Wstrcpy(Ch1, dirClavierVirtuel.c_str());
+	Ch1[0] = Ch[0];
+	load = LoadLibrary(Ch1);
+	if (load)
+	{
+        // GetProcAddress returns a pointer to the loaded method
+    	FuncKeyboardFromFormDetach myFunc = FuncKeyboardFromFormDetach(GetProcAddress(load, functionName));
+
+        if (myFunc != nullptr) {
+            try {
+                myFunc(formHandle);
+                return 0;
+            } catch (...) {
+                ShowMessage("Function (" + UnicodeString(functionName) + ") not found in the DLL (" + dirClavierVirtuel + ")\nPlease update this DLL");
+				return -1;
+            }
+        }
+        else
+		 {
+			 ShowMessage("Function (" + UnicodeString(functionName) + ") not found in the DLL (" + dirClavierVirtuel + ")");
+			 return -1;
+		 }
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+int KeyboardAutoShow(TObject *Sender)
+{
+	HINSTANCE load;
+	wchar_t Ch[500], Ch1[500];
+	LPCSTR functionName = "KeyboardAutoShow";
+
+	Wstrcpy(Ch, Application->ExeName.c_str());
+	Wstrcpy(Ch1, dirClavierVirtuel.c_str());
+	Ch1[0] = Ch[0];
+	load = LoadLibrary(Ch1);
+	if (load)
+	{
+        // GetProcAddress returns a pointer to the loaded method
+    	FuncKeyboardAutoShow myFunc = FuncKeyboardAutoShow(GetProcAddress(load, functionName));
+
+        if (myFunc != nullptr) {
+            try {
+                myFunc(Sender);
+                return 0;
+            } catch (...) {
+                ShowMessage("Function (" + UnicodeString(functionName) + ") not found in the DLL (" + dirClavierVirtuel + ")\nPlease update this DLL");
+				return -1;
+            }
+        }
+        else
+		 {
+			 ShowMessage("Function (" + UnicodeString(functionName) + ") not found in the DLL (" + dirClavierVirtuel + ")");
+			 return -1;
+		 }
+    }
+    else
+    {
+        return -1;
+    }
 }
