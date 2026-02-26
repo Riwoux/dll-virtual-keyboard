@@ -45,7 +45,7 @@ void __fastcall TFormMain::FormCreate(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TFormMain::TextControlEnter(TObject* Sender)
 {
-    TWinControl *ctrl = dynamic_cast<TWinControl*>(Sender);  // Safe - same module
+    TWinControl *ctrl = dynamic_cast<TWinControl*>(Sender);
     if (ctrl) {
         KeyboardAutoShow(ctrl->Handle);
     }

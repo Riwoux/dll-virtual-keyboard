@@ -276,20 +276,14 @@ extern "C"
     __declspec(dllexport) void __stdcall KeyboardAutoShow(HWND hwnd)
     {
         try {
-            // Verify it's a valid window handle
-            if (!hwnd || !::IsWindow(hwnd)) return;
+            //if (!hwnd || !::IsWindow(hwnd)) return;
 
-            // Check if it's a text control using Windows API
-            if (!IsTextControl(hwnd)) return;
+            //if (!IsTextControl(hwnd)) return;
 
-            // Determine if it's numeric using Windows style
             bool isNumeric = IsNumericControl(hwnd);
-
-            // Show appropriate keyboard layout
             int layout = isNumeric ? 0 : -1;
             KeyboardShow(hwnd, layout);
         } catch (...) {
-            // Never let exceptions escape from DLL
         }
     }
 

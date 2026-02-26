@@ -9,6 +9,7 @@
 #include <Vcl.Forms.hpp>
 #include <Vcl.Touch.Keyboard.hpp>
 #include <Vcl.Touch.KeyboardTypes.hpp>
+
 //---------------------------------------------------------------------------
 class Tkeyboard : public TForm
 {

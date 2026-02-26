@@ -4,7 +4,7 @@
         <ProjectVersion>20.3</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>1048579</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -150,7 +150,6 @@
         <BT_BuildType>Debug</BT_BuildType>
         <LinkPackageStatics>vcl.lib;rtl.lib;vcltouch.lib;xmlrtl.lib</LinkPackageStatics>
         <DynamicRTL>true</DynamicRTL>
-        <UsingDelphiRTL>true</UsingDelphiRTL>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
