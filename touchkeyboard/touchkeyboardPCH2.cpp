@@ -273,27 +273,23 @@ extern "C"
 
     }
 
-    __declspec(dllexport) void __stdcall KeyboardAutoShow(TObject *Sender)
+    __declspec(dllexport) void __stdcall KeyboardAutoShow(HWND hwnd)
     {
         try {
-            auto Edit = dynamic_cast<TCustomEdit*>(Sender);
-            if (!Edit) return;
+            // Verify it's a valid window handle
+            if (!hwnd || !::IsWindow(hwnd)) return;
 
-            TWinControl* wc = Edit; // TCustomEdit dérive de TWinControl
-            bool isNumeric = false;
+            // Check if it's a text control using Windows API
+            if (!IsTextControl(hwnd)) return;
 
-            #if defined(_WIN64)
-                LONG_PTR style = ::GetWindowLongPtr(wc->Handle, GWL_STYLE);
-            #else
-                LONG style = ::GetWindowLong(wc->Handle, GWL_STYLE);
-            #endif
+            // Determine if it's numeric using Windows style
+            bool isNumeric = IsNumericControl(hwnd);
 
-            isNumeric = (style & ES_NUMBER) != 0; // true si “chiffres uniquement”
-
+            // Show appropriate keyboard layout
             int layout = isNumeric ? 0 : -1;
-            KeyboardShow(wc->Handle, layout); // ou ShowKeyboard(...)
+            KeyboardShow(hwnd, layout);
         } catch (...) {
-            // ne laisse jamais sortir une exception de la DLL
+            // Never let exceptions escape from DLL
         }
     }
 

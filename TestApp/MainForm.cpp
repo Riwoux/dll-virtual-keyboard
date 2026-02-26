@@ -17,7 +17,7 @@ typedef void* (*FuncKeyboardShow)(HWND targetHandle, int etat);
 typedef void* (*FuncKeyboardHide)();
 typedef void* (*FuncKeyboardToFormAttach)(HWND formHandle, bool autoHide);
 typedef void* (*FuncKeyboardFromFormDetach)(HWND formHandle);
-typedef void* (*FuncKeyboardAutoShow)(TObject *Sender);
+typedef void* (*FuncKeyboardAutoShow)(HWND hwnd);
 //Fin modif 023 CL
 
 //---------------------------------------------------------------------------
@@ -45,7 +45,10 @@ void __fastcall TFormMain::FormCreate(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TFormMain::TextControlEnter(TObject* Sender)
 {
-    KeyboardAutoShow(Sender);
+    TWinControl *ctrl = dynamic_cast<TWinControl*>(Sender);  // Safe - same module
+    if (ctrl) {
+        KeyboardAutoShow(ctrl->Handle);
+    }
 }
 
 //Début modif 023 CL
@@ -193,7 +196,7 @@ int KeyboardDetachFromForm(HWND formHandle)
     }
 }
 
-int KeyboardAutoShow(TObject *Sender)
+int KeyboardAutoShow(HWND hwnd)
 {
 	HINSTANCE load;
 	wchar_t Ch[500], Ch1[500];
@@ -210,7 +213,7 @@ int KeyboardAutoShow(TObject *Sender)
 
         if (myFunc != nullptr) {
             try {
-                myFunc(Sender);
+                myFunc(hwnd);
                 return 0;
             } catch (...) {
                 ShowMessage("Function (" + UnicodeString(functionName) + ") not found in the DLL (" + dirClavierVirtuel + ")\nPlease update this DLL");

@@ -10,7 +10,7 @@ extern "C" {
     __declspec(dllexport) void __stdcall KeyboardHide();
     __declspec(dllexport) void __stdcall KeyboardToFormAttach(HWND formHandle, bool autoHide = true);
     __declspec(dllexport) void __stdcall KeyboardFromFormDetach(HWND formHandle);
-    __declspec(dllexport) void __stdcall KeyboardAutoShow(TObject *Sender);
+    __declspec(dllexport) void __stdcall KeyboardAutoShow(HWND hwnd);
 }
 
 #endif

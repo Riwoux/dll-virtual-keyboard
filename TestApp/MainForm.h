@@ -14,12 +14,12 @@
 #include <Vcl.Touch.Keyboard.hpp>
 #include <Winapi.Windows.hpp>
 
-//Début modif 023 CL
+//Dï¿½but modif 023 CL
 int KeyboardShow(HWND targetHandle, int etat);
 int KeyboardHide(void);
 int KeyboardAttachToForm(HWND formHandle, bool autohide);
 int KeyboardFromFormDetach(HWND formHandle);
-int KeyboardAutoShow(TObject *Sender);
+int KeyboardAutoShow(HWND hwnd);
 
 UnicodeString dirClavierVirtuel = "C:\\Users\\corentin.langlade\\Documents\\Stage\\Clavier_virtuel\\testclaviervirtuel\\touchkeyboard\\Win64\\Release\\touchkeyboard.dll";  //Modif 023 CL
 //Fin modif 023 CL
