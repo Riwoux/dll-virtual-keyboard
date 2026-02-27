@@ -3,9 +3,9 @@
 #include <vcl.h>
 #pragma hdrstop
 
+#define LIBRARIE
 #include "clavier.h"
-#include <System.UITypes.hpp>
-#include <System.SysUtils.hpp>
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
