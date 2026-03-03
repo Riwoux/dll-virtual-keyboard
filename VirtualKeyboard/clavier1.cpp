@@ -68,9 +68,9 @@ void __fastcall TFVirtualKeyboard::KeyPress(TObject *Sender, wchar_t &Key)
 
     try {
         String className = FTargetControl->ClassName();
+        TCustomEdit* edit = static_cast<TCustomEdit*>(FTargetControl);
         if (Key == VK_BACK) {
             // Backspace
-            TCustomEdit* edit = static_cast<TCustomEdit*>(FTargetControl);
             String text = edit->Text;
             int selStart = edit->SelStart;
 
@@ -93,7 +93,20 @@ void __fastcall TFVirtualKeyboard::KeyPress(TObject *Sender, wchar_t &Key)
             }
             return;
         }
-        TCustomEdit* edit = static_cast<TCustomEdit*>(FTargetControl);
+
+        // Permet de faire de faire respecter le NumbersOnly
+        class TCustomEditAccessor : public TCustomEdit {
+        public:
+            bool GetNumbersOnly() const { return NumbersOnly; }
+        };
+
+        TCustomEditAccessor* accessor = reinterpret_cast<TCustomEditAccessor*>(edit);
+        bool isNumbersOnly = accessor->GetNumbersOnly();
+        if (isNumbersOnly) {
+            if (Key < L'0' || Key > L'9') {
+                return;  // Rejeter tout ce qui n'est pas 0-9
+            }
+        }
         edit->SelLength = 0;
         edit->SelText = String(Key);
     } catch (...) {
