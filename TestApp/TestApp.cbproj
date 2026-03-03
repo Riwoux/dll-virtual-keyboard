@@ -4,7 +4,7 @@
         <ProjectVersion>20.3</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>1048579</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -90,9 +90,11 @@
         <Icon_MainIcon>$(BDS)\bin\cbuilder_PROJECTICON.ico</Icon_MainIcon>
         <UWP_CppLogo44>$(BDS)\bin\Artwork\Windows\UWP\cppreg_UwpDefault_44.png</UWP_CppLogo44>
         <UWP_CppLogo150>$(BDS)\bin\Artwork\Windows\UWP\cppreg_UwpDefault_150.png</UWP_CppLogo150>
-        <AllPackageLibs>vcl.lib;rtl.lib;vcltouch.lib;xmlrtl.lib</AllPackageLibs>
+        <AllPackageLibs>vcl.lib;rtl.lib;vcltouch.lib;xmlrtl.lib;Gestion.lib</AllPackageLibs>
         <Custom_Styles>&quot;Aqua Light Slate|VCLSTYLE|$(BDSCOMMONDIR)\Styles\AquaLightSlate.vsf&quot;;Glow|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Glow.vsf;&quot;Iceberg Classico|VCLSTYLE|$(BDSCOMMONDIR)\Styles\IcebergClassico.vsf&quot;;&quot;Lavender Classico|VCLSTYLE|$(BDSCOMMONDIR)\Styles\LavenderClassico.vsf&quot;;Sky|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Sky.vsf;&quot;Slate Classico|VCLSTYLE|$(BDSCOMMONDIR)\Styles\SlateClassico.vsf&quot;;&quot;Tablet Dark|VCLSTYLE|$(BDSCOMMONDIR)\Styles\TabletDark.vsf&quot;;&quot;Tablet Light|VCLSTYLE|$(BDSCOMMONDIR)\Styles\TabletLight.vsf&quot;</Custom_Styles>
         <_TCHARMapping>wchar_t</_TCHARMapping>
+        <IncludePath>C:\User\Composants\C10\Gestion\Edit_Int\;C:\User\Composants\C10\Gestion\Edit_Dbl;$(IncludePath)</IncludePath>
+        <ILINK_LibraryPath>C:\User\Composants\C10\Gestion\Edit_Int\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <PackageImports>bdertl;rtl;dbrtl;IndyCore;IndySystem;IndyProtocols;inet;inetdbbde;inetdbxpress;inetdb;vcl;vclx;dbexpress;vcldb;vcldbx;bdertl;vclactnband;vclsmp;xmlrtl;vclimg;svnui;svn;bdertl;$(PackageImports)</PackageImports>
@@ -108,6 +110,7 @@
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <ILINK_LibraryPath>C:\User\Lib\C10\Mobile\;C:\User\Composants\C10\Supervision\Win64\;C:\User\Lib\C10\Supervision_DLL\;C:\User\Lib\C10\Wide\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+        <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64x)'!=''">
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
@@ -148,11 +151,12 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
-        <LinkPackageStatics>vcl.lib;rtl.lib;vcltouch.lib;xmlrtl.lib</LinkPackageStatics>
+        <LinkPackageStatics>vcl.lib;rtl.lib;vcltouch.lib;xmlrtl.lib;Gestion.lib</LinkPackageStatics>
         <DynamicRTL>true</DynamicRTL>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
+        <ILINK_LibraryPath>C:\User\Composants\C10\Gestion\Win64\;C:\User\Composants\C10\Gestion\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64x)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>

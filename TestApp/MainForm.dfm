@@ -21,7 +21,6 @@ object FormMain: TFormMain
     NumbersOnly = True
     TabOrder = 0
     Text = 'Edit1'
-    OnEnter = TextControlEnter
   end
   object Edit2: TEdit
     Left = 248
@@ -30,6 +29,13 @@ object FormMain: TFormMain
     Height = 21
     TabOrder = 1
     Text = 'Edit2'
-    OnEnter = TextControlEnter
+  end
+  object Edit_Int1: TEdit_Int
+    Left = 176
+    Top = 248
+    Width = 121
+    Height = 21
+    TabOrder = 2
+    Text = '0'
   end
 end

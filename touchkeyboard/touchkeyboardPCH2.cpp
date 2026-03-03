@@ -1,11 +1,6 @@
 ﻿//---------------------------------------------------------------------------
-#include <vcl.h>
-#include <windows.h>
-#include <commctrl.h>
-#include <map>
-#include "clavier.h"
-#include "touchkeyboardPCH2.h"
 
+#include "touchkeyboardPCH2.h"
 #pragma hdrstop
 #pragma argsused
 #pragma comment(lib, "comctl32")
@@ -19,8 +14,6 @@ struct ControlInfo {
 
 static std::map<HWND, ControlInfo> g_AttachedControls;
 static bool g_AutoHide = true;
-
-//fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
 static HWND  g_CurrentTarget = NULL;
 static HHOOK g_MouseHook     = NULL;
 static HWND g_KeyboardHwnd = NULL;
@@ -28,7 +21,6 @@ static bool g_KeyboardVisible = false;
 
 //---------------------------------------------------------------------------
 
-//fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
 static bool IsPointInsideWindow(HWND hwnd, const POINT& ptScreen)
 {
 	if (!hwnd) return false;
@@ -62,8 +54,7 @@ bool IsTextControl(HWND hwnd)
 			wcscmp(className, L"RichEdit20W") == 0 ||
             wcscmp(className, L"TMemo") == 0 ||
             wcscmp(className, L"TEdit") == 0 ||
-            wcscmp(className, L"TRichEdit") == 0 ||
-            wcsstr(className, L"Edit") != NULL);
+            wcscmp(className, L"TRichEdit") == 0);
 }
 
 bool IsNumericControl(HWND hwnd)
@@ -115,7 +106,6 @@ LRESULT CALLBACK SubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	return DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
 
- //fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
  // Recupere le focus en dessous di clique de la souris
 LRESULT CALLBACK MouseHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -176,7 +166,6 @@ int WINAPI DllEntryPoint(HINSTANCE hinst, unsigned long reason, void* lpReserved
 		}
 		g_AttachedControls.clear();
 
-		//fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
         if (g_MouseHook) {
                 UnhookWindowsHookEx(g_MouseHook);
                 g_MouseHook = NULL;
@@ -205,7 +194,7 @@ extern "C"
 
             // prend le focus sur le clavier et l'affiche en le mettant au premier plan
             if (keyboard) {
-				g_CurrentTarget = targetHandle; //fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
+				g_CurrentTarget = targetHandle;
                 g_KeyboardHwnd  = keyboard->Handle;
                 keyboard->Etat(etat);
                 keyboard->SetTargetControl(targetHandle);
@@ -231,13 +220,12 @@ extern "C"
     __declspec(dllexport) void __stdcall KeyboardAttachToForm(HWND formHandle, bool autoHide)
     {
         if (!formHandle || !::IsWindow(formHandle)) {
-            MessageBoxW(NULL, L"formHandle invalide!", L"Erreur", MB_OK | MB_ICONERROR);
+            MessageBoxW(NULL, L"formHandle invalide!", L"Error", MB_OK | MB_ICONERROR);
             return;
         }
         g_AutoHide = autoHide;
         // Énumérer tous les contrôles enfants pour gérer toutes les fenetres
         ::EnumChildWindows(formHandle, EnumChildProc, 0);
-        //fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
         if (!g_MouseHook) {
                 g_MouseHook = SetWindowsHookEx(WH_MOUSE, MouseHookProc, NULL, GetCurrentThreadId());
         }
@@ -261,7 +249,6 @@ extern "C"
             }
         }
 
-        //fais partis du principe de cacher le clavier lorsque que la souris clique en dehors de la zone
         if (g_AttachedControls.empty() && g_MouseHook) {
                 UnhookWindowsHookEx(g_MouseHook);
                 g_MouseHook = NULL;
@@ -283,6 +270,4 @@ extern "C"
         } catch (...) {
         }
     }
-
-
 }

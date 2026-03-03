@@ -1,9 +1,12 @@
 ﻿#ifndef touchkeyboardH
 #define touchkeyboardH
 
-
-#include <vcl.h>
 #include <tchar.h>
+#include <vcl.h>
+#include <windows.h>
+#include <commctrl.h>
+#include <map>
+#include "clavier.h"
 
 extern "C" {
     __declspec(dllexport) void __stdcall KeyboardShow(HWND targetHandle, int etat=-1);

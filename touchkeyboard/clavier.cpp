@@ -16,7 +16,6 @@ __fastcall Tkeyboard::Tkeyboard(TComponent* Owner)
 {
     BorderStyle = bsSizeable;
 }
-//---------------------------------------------------------------------------
 
 void Tkeyboard::Etat(int etat)
 {
