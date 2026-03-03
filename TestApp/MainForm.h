@@ -18,7 +18,7 @@
 
 //Début modif 023 CL
 int KeyboardShow(TObject* Sender);
-int KeyboardHide(void);
+int KeyboardHide();
 
 UnicodeString dirClavierVirtuel = "C:\\Users\\corentin.langlade\\Documents\\Stage\\Clavier_virtuel\\testclaviervirtuel\\VirtualKeyboard\\Win64\\Debug\\VirtualKeyboard.dll";  //Modif 023 CL
 //Fin modif 023 CL
@@ -31,7 +31,7 @@ __published:
 	TEdit *Edit1;
 	TEdit *Edit2;
 	TEdit_Int *Edit_Int1;
-	TTouchKeyboard *TouchKeyboard1;
+	TMemo *Memo1;
     void __fastcall FormCreate(TObject *Sender);
 private:
     void __fastcall AutoShow(TObject *Sender);

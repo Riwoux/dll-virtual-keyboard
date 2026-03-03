@@ -14,8 +14,8 @@ object FormMain: TFormMain
   OnCreate = FormCreate
   TextHeight = 13
   object Edit1: TEdit
-    Left = 112
-    Top = 152
+    Left = 8
+    Top = 32
     Width = 121
     Height = 21
     NumbersOnly = True
@@ -23,8 +23,8 @@ object FormMain: TFormMain
     Text = 'Edit1'
   end
   object Edit2: TEdit
-    Left = 248
-    Top = 104
+    Left = 152
+    Top = 32
     Width = 121
     Height = 21
     TabOrder = 1
@@ -38,13 +38,13 @@ object FormMain: TFormMain
     TabOrder = 2
     Text = '0'
   end
-  object TouchKeyboard1: TTouchKeyboard
+  object Memo1: TMemo
     Left = 8
-    Top = 152
-    Width = 550
-    Height = 180
-    GradientEnd = clSilver
-    GradientStart = clGray
-    Layout = 'Standard'
+    Top = 80
+    Width = 121
+    Height = 81
+    Lines.Strings = (
+      'Memo1')
+    TabOrder = 3
   end
 end

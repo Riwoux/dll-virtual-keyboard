@@ -11,6 +11,7 @@
 
 //---------------------------------------------------------------------------
 #include "clavier1.h"
+#include "C:\User\Lib\C10\Wide\wide.h"
 
 //---------------------------------------------------------------------------
 TFVirtualKeyboard *FVirtualKeyboard;
@@ -24,6 +25,7 @@ __fastcall TFVirtualKeyboard::TFVirtualKeyboard(TComponent* Owner)
 void __fastcall TFVirtualKeyboard::FormClose(TObject *Sender, TCloseAction &Action)
 {
     Hide();
+    Action = caHide;
 }
 
 void __fastcall TFVirtualKeyboard::FormCloseQuery(TObject *Sender, bool &CanClose)
@@ -53,3 +55,47 @@ void TFVirtualKeyboard::Etat(bool etat)
 
 }
 
+void TFVirtualKeyboard::SetTargetControl(TObject* Target)
+{
+    FTargetControl = Target;
+}
+
+void __fastcall TFVirtualKeyboard::KeyPress(TObject *Sender, wchar_t &Key)
+{
+    if (FTargetControl == NULL) {
+        return;
+    }
+
+    try {
+        String className = FTargetControl->ClassName();
+        if (Key == VK_BACK) {
+            // Backspace
+            TCustomEdit* edit = static_cast<TCustomEdit*>(FTargetControl);
+            String text = edit->Text;
+            int selStart = edit->SelStart;
+
+            if (selStart > 0) {
+                text.Delete(selStart, 1);
+                edit->Text = text;
+                edit->SelStart = selStart - 1;
+            }
+            return;
+        }
+        else if (Key == VK_RETURN) {
+            // Enter : pour les Memo uniquement
+            if (className == "TMemo" || className == "TRichEdit") {
+                TMemo* memo = static_cast<TMemo*>(FTargetControl);
+                int selStart = memo->SelStart;
+                String text = memo->Text;
+                text.Insert(L"\r\n", selStart + 1);
+                memo->Text = text;
+                memo->SelStart = selStart + 2;
+            }
+            return;
+        }
+        TCustomEdit* edit = static_cast<TCustomEdit*>(FTargetControl);
+        edit->SelLength = 0;
+        edit->SelText = String(Key);
+    } catch (...) {
+    }
+}

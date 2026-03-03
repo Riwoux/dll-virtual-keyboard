@@ -13,6 +13,7 @@ object FVirtualKeyboard: TFVirtualKeyboard
   Font.Style = []
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
+  OnKeyPress = KeyPress
   DesignSize = (
     984
     261)

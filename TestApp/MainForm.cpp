@@ -37,6 +37,8 @@ void __fastcall TFormMain::FormCreate(TObject *Sender)
     Edit2->OnExit = AutoHide;
     Edit_Int1->OnEnter = AutoShow;
     Edit_Int1->OnExit = AutoHide;
+    Memo1->OnEnter = AutoShow;
+    Memo1->OnExit = AutoHide;
 }
 
 void __fastcall TFormMain::AutoShow(TObject *Sender)

@@ -18,10 +18,13 @@ __published:	// Composants gérés par l'EDI
 	TTouchKeyboard *TouchKeyboard1;
     void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
     void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
+    void __fastcall KeyPress(TObject* Sender, wchar_t &Key);
 private:	// Déclarations utilisateur
+    TObject* FTargetControl;
 public:		// Déclarations utilisateur
 	__fastcall TFVirtualKeyboard(TComponent* Owner);
     void Etat(bool etat);
+    void SetTargetControl(TObject* Target);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TFVirtualKeyboard *FVirtualKeyboard;

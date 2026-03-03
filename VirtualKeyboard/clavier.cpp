@@ -63,8 +63,8 @@ extern "C"
         try {
             InitKeyboard();
             int etat = NumberStatus(Sender);
+            FVirtualKeyboard->SetTargetControl(Sender);
             FVirtualKeyboard->Etat(etat);
-            FVirtualKeyboard->Refresh();
             FVirtualKeyboard->Show();
         } catch (...) {
         }
