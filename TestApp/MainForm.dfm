@@ -38,4 +38,13 @@ object FormMain: TFormMain
     TabOrder = 2
     Text = '0'
   end
+  object TouchKeyboard1: TTouchKeyboard
+    Left = 8
+    Top = 152
+    Width = 550
+    Height = 180
+    GradientEnd = clSilver
+    GradientStart = clGray
+    Layout = 'Standard'
+  end
 end

@@ -3,8 +3,8 @@ object FVirtualKeyboard: TFVirtualKeyboard
   Top = 0
   Anchors = [akLeft, akTop, akRight, akBottom]
   Caption = 'FVirtualKeyboard'
-  ClientHeight = 334
-  ClientWidth = 937
+  ClientHeight = 261
+  ClientWidth = 984
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,17 +14,17 @@ object FVirtualKeyboard: TFVirtualKeyboard
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   DesignSize = (
-    937
-    334)
+    984
+    261)
   TextHeight = 15
   object TouchKeyboard1: TTouchKeyboard
     Left = 0
     Top = 0
-    Width = 938
-    Height = 332
+    Width = 985
+    Height = 257
     Anchors = [akLeft, akTop, akRight, akBottom]
     GradientEnd = clSilver
     GradientStart = clGray
-    Layout = 'NumPad'
+    Layout = 'Standard'
   end
 end

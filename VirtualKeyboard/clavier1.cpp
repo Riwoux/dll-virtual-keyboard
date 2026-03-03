@@ -38,13 +38,17 @@ void TFVirtualKeyboard::Etat(bool etat)
     Top = 700 ;
     if (!etat) {
     	TouchKeyboard1->Layout = "Standard";
-        Width = 1000;
-    	Height = 300;
+        ClientWidth = 1000;
+        ClientHeight = 300;
+        TouchKeyboard1->Width = 1000;
+    	TouchKeyboard1->Height = 300;
     }
-    if (etat) {
+    else if (etat) {
         TouchKeyboard1->Layout = "NumPad" ;
-        Width = 300;
-    	Height = 300;
+        ClientWidth = 300;
+        ClientHeight = 300;
+        TouchKeyboard1->Width = 300;
+    	TouchKeyboard1->Height = 300;
     }
 
 }

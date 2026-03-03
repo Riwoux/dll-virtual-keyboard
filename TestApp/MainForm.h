@@ -31,6 +31,7 @@ __published:
 	TEdit *Edit1;
 	TEdit *Edit2;
 	TEdit_Int *Edit_Int1;
+	TTouchKeyboard *TouchKeyboard1;
     void __fastcall FormCreate(TObject *Sender);
 private:
     void __fastcall AutoShow(TObject *Sender);

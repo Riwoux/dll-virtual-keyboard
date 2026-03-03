@@ -39,37 +39,22 @@ void InitKeyboard(void)
     }
 }
 
-// Ne fonctionne pas car NumbersOnly dan TCustomEdit est protected mais les TEdit donnés semble etr des TCustomEdit
 bool NumberStatus(TObject* Obj)
 {
     if (Obj == NULL) {
         return false;
     }
     try {
-        //tous les types possibles qui ont NumbersOnly en paramètre
-        TEdit* Edit = dynamic_cast<TEdit*>(Obj);
-        if (Edit != NULL) {
-            return Edit->NumbersOnly;
+        TWinControl* WinCtrl = static_cast<TWinControl*>(Obj);
+        if (WinCtrl && WinCtrl->HandleAllocated()) {
+            int style = GetWindowLongW(WinCtrl->Handle, GWL_STYLE);
+            return (style & ES_NUMBER) != 0;
         }
-        TCustomEdit* CustomEdit = dynamic_cast<TCustomEdit*>(Obj);
-        if (CustomEdit != NULL) {
-            return CustomEdit->NumbersOnly;
-        }
-        TLabeledEdit* LabeledEdit = dynamic_cast<TLabeledEdit*>(Obj);
-        if (LabeledEdit != NULL) {
-            return LabeledEdit->NumbersOnly;
-        }
-        TButtonedEdit* ButtonedEdit = dynamic_cast<TButtonedEdit*>(Obj);
-        if (ButtonedEdit != NULL) {
-            return ButtonedEdit->NumbersOnly;
-        }
-
     } catch (...) {
         return false;
     }
     return false;
 }
-
 
 extern "C"
 {
@@ -79,6 +64,7 @@ extern "C"
             InitKeyboard();
             int etat = NumberStatus(Sender);
             FVirtualKeyboard->Etat(etat);
+            FVirtualKeyboard->Refresh();
             FVirtualKeyboard->Show();
         } catch (...) {
         }
