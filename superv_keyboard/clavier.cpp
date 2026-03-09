@@ -29,19 +29,34 @@
 #pragma argsused
 
 //---------------------------------------------------------------------------
-float ratio = 1;
+TFVirtualKeyboard *FVirtualKeyboard = NULL;
 
 //---------------------------------------------------------------------------
 int WINAPI DllEntryPoint(HINSTANCE hinst, unsigned long reason, void* lpReserved)
 {
-	return 1;
-}
-//---------------------------------------------------------------------------
-void InitKeyboard(void)
-{
-    if (!FVirtualKeyboard) {
-        Application->CreateForm(__classid(TFVirtualKeyboard), &FVirtualKeyboard);
+    try
+    {
+        if (reason == DLL_PROCESS_ATTACH)
+        {
+        }
+        else if (reason == DLL_PROCESS_DETACH)
+        {
+            if (FVirtualKeyboard)
+            {
+                delete FVirtualKeyboard;
+                FVirtualKeyboard = NULL;
+            }
+        }
     }
+    catch (Exception &exception)
+    {
+        return 0;
+    }
+    catch (...)
+    {
+        return 0;
+    }
+    return 1;
 }
 //---------------------------------------------------------------------------
 bool NumberStatus(TObject* Obj)
@@ -61,42 +76,47 @@ bool NumberStatus(TObject* Obj)
     return false;
 }
 //---------------------------------------------------------------------------
-void KeyboardLocation(int Left, int Top)
-{
-	FVirtualKeyboard->Left = Left;
-	FVirtualKeyboard->Top = Top;
-}
-//---------------------------------------------------------------------------
 extern "C"
 {
-	__declspec(dllexport) void __stdcall KeyboardShow(TObject* Sender, int Type=-1, int Left=700, int Top=500)
-	{
-		try {
-			InitKeyboard();
-            if (Type == -1) {
-				Type = NumberStatus(Sender);
-			}
-			FVirtualKeyboard->SetTargetControl(Sender);
-			FVirtualKeyboard->Etat(Type, ratio);
-			KeyboardLocation(Left, Top);
-            FVirtualKeyboard->Show();
-        } catch (...) {
+    __declspec(dllexport) void __stdcall KeyboardSetLocation(int Left, int Top)
+    {
+        if (FVirtualKeyboard) {
+            FVirtualKeyboard->Left = Left;
+        	FVirtualKeyboard->Top = Top;
+        }
+    }
+    //---------------------------------------------------------------------------
+    __declspec(dllexport) void __stdcall KeyboardShow(TObject *Sender, int Type=0, int Left=700, int Top=500, float ratio=1)
+    {
+        HWND hPreviousWindow = GetForegroundWindow();
+        
+        if (!FVirtualKeyboard)
+        {
+            Application->Handle = 0;
+            Application->CreateForm(__classid(TFVirtualKeyboard), &FVirtualKeyboard);
+        }
+        
+        if (Type == -1) Type = NumberStatus(Sender);
+        
+        if (ratio<0.7) ratio = 0.7;
+        if (ratio > 2) ratio = 2;
+        
+        FVirtualKeyboard->Etat(Type, ratio);
+        KeyboardSetLocation(Left, Top);
+        FVirtualKeyboard->Show();
+        if (hPreviousWindow && (hPreviousWindow != FVirtualKeyboard->Handle))
+        {
+            SetForegroundWindow(hPreviousWindow);
+
+            SetWindowPos(FVirtualKeyboard->Handle, HWND_TOPMOST, 0, 0, 0, 0,
+                         SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
         }
     }
     //---------------------------------------------------------------------------
     __declspec(dllexport) void __stdcall KeyboardHide(void)
     {
-        try {
-            if (FVirtualKeyboard) {
-            	FVirtualKeyboard->Hide();
-            }
-        } catch (...) {
+        if (FVirtualKeyboard) {
+            FVirtualKeyboard->Hide();
         }
-    }
-    //---------------------------------------------------------------------------
-    __declspec(dllexport) void __stdcall KeyboardResize(float coeff)
-    {
-        if (coeff < 0.7) coeff=0.7;
-        ratio = coeff;
     }
 }

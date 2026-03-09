@@ -1,7 +1,6 @@
 object FVirtualKeyboard: TFVirtualKeyboard
   Left = 0
   Top = 0
-  Anchors = [akLeft, akTop, akRight, akBottom]
   Caption = 'FVirtualKeyboard'
   ClientHeight = 261
   ClientWidth = 984
@@ -11,10 +10,9 @@ object FVirtualKeyboard: TFVirtualKeyboard
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  Visible = True
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
-  OnKeyDown = FormKeyDown
-  OnKeyUp = FormKeyUp
   DesignSize = (
     984
     261)
