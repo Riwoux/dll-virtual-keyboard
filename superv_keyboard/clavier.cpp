@@ -76,6 +76,92 @@ bool NumberStatus(TObject* Obj)
     return false;
 }
 //---------------------------------------------------------------------------
+HWND GetTargetWindowFromSender(TObject* Sender)
+{
+    // 1. Essayer de récupérer depuis le Sender (si c'est un TWinControl)
+    if (Sender)
+    {
+        TWinControl* WinCtrl = dynamic_cast<TWinControl*>(Sender);
+        if (WinCtrl && WinCtrl->HandleAllocated())
+        {
+            return WinCtrl->Handle;
+        }
+    }
+
+    // 2. Fallback : récupérer la fenêtre active avec GetGUIThreadInfo
+    HWND hActiveWindow = GetForegroundWindow();
+    if (hActiveWindow)
+    {
+        GUITHREADINFO gti = {0};
+        gti.cbSize = sizeof(GUITHREADINFO);
+
+        DWORD dwThread = GetWindowThreadProcessId(hActiveWindow, NULL);
+        if (GetGUIThreadInfo(dwThread, &gti))
+        {
+            if (gti.hwndFocus && IsWindow(gti.hwndFocus))
+            {
+                return gti.hwndFocus;
+            }
+        }
+    }
+
+    return hActiveWindow;
+}
+//---------------------------------------------------------------------------
+void CalculateAutoPosition(HWND hTarget, int keyboardWidth, int keyboardHeight,
+                           int offsetY, int* outLeft, int* outTop)
+{
+    // Valeurs par défaut
+    *outLeft = 700;
+    *outTop = 500;
+
+    if (!hTarget || !IsWindow(hTarget))
+        return;
+
+    // Récupérer la position du contrôle à l'écran
+    RECT rect;
+    GetWindowRect(hTarget, &rect);
+
+    // Position initiale : sous le contrôle
+    int left = rect.left;
+    int top = rect.bottom + offsetY;
+
+    // Gestion multi-moniteurs
+    HMONITOR hMonitor = MonitorFromWindow(hTarget, MONITOR_DEFAULTTONEAREST);
+    MONITORINFO mi = {0};
+    mi.cbSize = sizeof(MONITORINFO);
+
+    if (GetMonitorInfo(hMonitor, &mi))
+    {
+        RECT wa = mi.rcWork;  // Zone de travail (sans barre des tâches)
+
+        // Si déborde en bas, placer au-dessus
+        if (top + keyboardHeight > wa.bottom)
+        {
+            top = rect.top - keyboardHeight - offsetY;
+
+            // Si déborde encore en haut, forcer en bas de l'écran
+            if (top < wa.top)
+            {
+                top = wa.bottom - keyboardHeight - 10;
+            }
+        }
+
+        // Ajustements horizontaux
+        if (left + keyboardWidth > wa.right)
+        {
+            left = wa.right - keyboardWidth - 10;
+        }
+        if (left < wa.left)
+        {
+            left = wa.left + 10;
+        }
+    }
+
+    *outLeft = left;
+    *outTop = top;
+}
+//---------------------------------------------------------------------------
 extern "C"
 {
     __declspec(dllexport) void __stdcall KeyboardSetLocation(int Left, int Top)
@@ -88,28 +174,132 @@ extern "C"
     //---------------------------------------------------------------------------
     __declspec(dllexport) void __stdcall KeyboardShow(TObject *Sender, int Type=0, int Left=700, int Top=500, float ratio=1)
     {
-        HWND hPreviousWindow = GetForegroundWindow();
-        
-        if (!FVirtualKeyboard)
+        try
         {
-            Application->Handle = 0;
-            Application->CreateForm(__classid(TFVirtualKeyboard), &FVirtualKeyboard);
-        }
-        
-        if (Type == -1) Type = NumberStatus(Sender);
-        
-        if (ratio<0.7) ratio = 0.7;
-        if (ratio > 2) ratio = 2;
-        
-        FVirtualKeyboard->Etat(Type, ratio);
-        KeyboardSetLocation(Left, Top);
-        FVirtualKeyboard->Show();
-        if (hPreviousWindow && (hPreviousWindow != FVirtualKeyboard->Handle))
-        {
-            SetForegroundWindow(hPreviousWindow);
+            // 1. Récupérer la fenêtre/contrôle cible AVANT de créer le clavier
+            HWND hTargetWindow = GetTargetWindowFromSender(Sender);
+            HWND hPreviousWindow = GetForegroundWindow();
 
-            SetWindowPos(FVirtualKeyboard->Handle, HWND_TOPMOST, 0, 0, 0, 0,
-                         SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+            // 2. Créer le clavier si nécessaire
+            if (!FVirtualKeyboard)
+            {
+                Application->Handle = 0;
+                Application->CreateForm(__classid(TFVirtualKeyboard), &FVirtualKeyboard);
+            }
+
+            // 3. Détection automatique du type (numérique ou non)
+            if (Type == -1)
+            {
+                Type = NumberStatus(Sender);
+            }
+
+            // 4. Validation du ratio
+            if (ratio < 0.7f) ratio = 0.7f;
+            if (ratio > 2.0f) ratio = 2.0f;
+
+            // 5. Configurer l'état du clavier
+            FVirtualKeyboard->Etat(Type, ratio);
+
+            // 6. Position automatique si Left et Top sont à leurs valeurs par défaut
+            bool isDefaultPosition = (Left == 700 && Top == 500);
+
+            if (isDefaultPosition && hTargetWindow)
+            {
+                // Calculer position automatique sous le contrôle
+                int autoLeft, autoTop;
+                CalculateAutoPosition(
+                    hTargetWindow,
+                    FVirtualKeyboard->Width,
+                    FVirtualKeyboard->Height,
+                    50,  // Offset de 50 pixels
+                    &autoLeft,
+                    &autoTop
+                );
+
+                KeyboardSetLocation(autoLeft, autoTop);
+            }
+            else
+            {
+                // Position manuelle spécifiée
+                KeyboardSetLocation(Left, Top);
+            }
+
+            // 7. Sauvegarder le contrôle cible
+            if (hTargetWindow)
+            {
+                FVirtualKeyboard->TargetWindow = hTargetWindow;
+            }
+
+            // 8. Afficher le clavier
+            FVirtualKeyboard->Show();
+
+            // 9. Restaurer le focus
+            if (hPreviousWindow && (hPreviousWindow != FVirtualKeyboard->Handle))
+            {
+                SetForegroundWindow(hPreviousWindow);
+                SetWindowPos(FVirtualKeyboard->Handle, HWND_TOPMOST, 0, 0, 0, 0,
+                             SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+            }
+        }
+        catch (...)
+        {
+            // Suppression des exceptions pour éviter les crashs dans l'application hôte
+        }
+    }
+    //---------------------------------------------------------------------------
+    __declspec(dllexport) void __stdcall KeyboardShowAuto(TObject *Sender, int Type=0, int offsetY=50, float ratio=1)
+    {
+        try
+        {
+            HWND hTargetWindow = GetTargetWindowFromSender(Sender);
+            HWND hPreviousWindow = GetForegroundWindow();
+
+            if (!FVirtualKeyboard)
+            {
+                Application->Handle = 0;
+                Application->CreateForm(__classid(TFVirtualKeyboard), &FVirtualKeyboard);
+            }
+
+            if (Type == -1)
+            {
+                Type = NumberStatus(Sender);
+            }
+
+            if (ratio < 0.7f) ratio = 0.7f;
+            if (ratio > 2.0f) ratio = 2.0f;
+
+            FVirtualKeyboard->Etat(Type, ratio);
+
+            // TOUJOURS calculer position automatique
+            int autoLeft, autoTop;
+            CalculateAutoPosition(
+                hTargetWindow,
+                FVirtualKeyboard->Width,
+                FVirtualKeyboard->Height,
+                offsetY,
+                &autoLeft,
+                &autoTop
+            );
+
+            KeyboardSetLocation(autoLeft, autoTop);
+
+            if (hTargetWindow)
+            {
+                FVirtualKeyboard->TargetWindow = hTargetWindow;
+            }
+
+            FVirtualKeyboard->Show();
+
+            if (hPreviousWindow && (hPreviousWindow != FVirtualKeyboard->Handle))
+            {
+                SetForegroundWindow(hPreviousWindow);
+                SetWindowPos(FVirtualKeyboard->Handle, HWND_TOPMOST, 0, 0, 0, 0,
+                             SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+            }
+        }
+        catch (...)
+        {
+            // Suppression des exceptions pour éviter les crashs dans l'application hôte
         }
     }
     //---------------------------------------------------------------------------
@@ -118,5 +308,10 @@ extern "C"
         if (FVirtualKeyboard) {
             FVirtualKeyboard->Hide();
         }
+    }
+    //---------------------------------------------------------------------------
+    __declspec(dllexport) BOOL __stdcall KeyboardIsVisible(void)
+    {
+        return (FVirtualKeyboard && FVirtualKeyboard->Visible);
     }
 }
