@@ -13,22 +13,17 @@ class TFVirtualKeyboard : public TForm
 {
 __published:	// Composants gérés par l'EDI
 	TTouchKeyboard *TouchKeyboard1;
-    void __fastcall FormCreate(TObject *Sender);
     void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
     void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
+    void __fastcall KeyPress(TObject* Sender, wchar_t &Key);
+	void __fastcall FormKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
+	void __fastcall FormKeyUp(TObject *Sender, WORD &Key, TShiftState Shift);
 private:	// Déclarations utilisateur
-    HWND FTargetWindow;
-protected:
-    virtual void __fastcall CreateParams(TCreateParams &Params);
-    void __fastcall WMMouseActivate(TWMMouseActivate &Message);
-
-    BEGIN_MESSAGE_MAP
-        VCL_MESSAGE_HANDLER(WM_MOUSEACTIVATE, TWMMouseActivate, WMMouseActivate)
-    END_MESSAGE_MAP(TForm)
+    TObject* FTargetControl;
 public:		// Déclarations utilisateur
 	__fastcall TFVirtualKeyboard(TComponent* Owner);
-    __property HWND TargetWindow = {read=FTargetWindow, write=FTargetWindow};
     void Etat(bool etat, float ratio);
+    void SetTargetControl(TObject* Target);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TFVirtualKeyboard *FVirtualKeyboard;
