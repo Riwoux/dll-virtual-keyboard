@@ -17,10 +17,10 @@
 #include "Edit_Dbl.h"
 
 //Début modif 023 CL
-int KeyboardShow(TObject* Sender);
+int KeyboardShow(int Type=-1, int Left=700, int Top=500, int ratio=1);
 int KeyboardHide();
 
-UnicodeString dirClavierVirtuel = "C:\\Users\\corentin.langlade\\Documents\\Stage\\Clavier_virtuel\\testclaviervirtuel\\VirtualKeyboard\\Win64\\Debug\\VirtualKeyboard.dll";  //Modif 023 CL
+UnicodeString dirClavierVirtuel = "C:\\User\\Util\\C10\\DLL.C13\\Superv_Keyboard.dll";  //Modif 023 CL
 //Fin modif 023 CL
 //---------------------------------------------------------------------------
 
@@ -34,7 +34,8 @@ __published:
 	TMemo *Memo1;
     void __fastcall FormCreate(TObject *Sender);
 private:
-    void __fastcall AutoShow(TObject *Sender);
+	void __fastcall AutoShow(TObject *Sender);
+    void __fastcall AutoShowNumPad(TObject *Sender);
     void __fastcall AutoHide(TObject *Sender);
 public:
     __fastcall TFormMain(TComponent* Owner);

@@ -14,7 +14,7 @@ TFormMain *FormMain;
 
 
 // Début modif 023 CL
-typedef void* (*FuncKeyboardShow)(TObject* Sender);
+typedef void* (*FuncKeyboardShow)(int Type, int Left, int Top, int ratio);
 typedef void* (*FuncKeyboardHide)();
 //Fin modif 023 CL
 
@@ -31,27 +31,33 @@ __fastcall TFormMain::TFormMain(TComponent* Owner):
 //---------------------------------------------------------------------------
 void __fastcall TFormMain::FormCreate(TObject *Sender)
 {
-    Edit1->OnEnter = AutoShow;
+	Edit1->OnEnter = AutoShow;
     Edit1->OnExit = AutoHide;
     Edit2->OnEnter = AutoShow;
     Edit2->OnExit = AutoHide;
     Edit_Int1->OnEnter = AutoShow;
     Edit_Int1->OnExit = AutoHide;
-    Memo1->OnEnter = AutoShow;
-    Memo1->OnExit = AutoHide;
+	Memo1->OnEnter = AutoShowNumPad;
+	Memo1->OnExit = AutoHide;
 }
 
 void __fastcall TFormMain::AutoShow(TObject *Sender)
 {
-    KeyboardShow(Sender);
+	KeyboardShow();
 }
+
+void __fastcall TFormMain::AutoShowNumPad(TObject *Sender)
+{
+	KeyboardShow(1);
+}
+
 
 void __fastcall TFormMain::AutoHide(TObject *Sender)
 {
     KeyboardHide();
 }
 
-int KeyboardShow(TObject* Sender)
+int KeyboardShow(int Type, int Left, int Top, int ratio)
 {
 	HINSTANCE load;
 	wchar_t Ch[500], Ch1[500];
@@ -67,8 +73,8 @@ int KeyboardShow(TObject* Sender)
     	FuncKeyboardShow myFunc = FuncKeyboardShow(GetProcAddress(load, functionName));
 
         if (myFunc != nullptr) {
-            try {
-                myFunc(Sender);
+			try {
+				myFunc(Type, Left, Top, ratio);
                 return 0;
             } catch (...) {
                 ShowMessage("Function (" + UnicodeString(functionName) + ") not found in the DLL (" + dirClavierVirtuel + ")\nPlease update this DLL");
